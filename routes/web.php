@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
+use App\Http\Controllers\ProductController;
+
+Route::get('/', [ProductController::class, 'index'])->name('home');
 
 Route::get('/', function () {
     return view('welcome');
