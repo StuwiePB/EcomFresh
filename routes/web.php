@@ -1,5 +1,5 @@
 <?php
-
+//use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -10,10 +10,13 @@ Route::get('/customer', [ProductController::class, 'index'])->name('customer.mai
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-    
-Route::get('/', function () {
-    return view('welcome');
+
+Route::get('/admin/adminlogin', function () {
+    return view('admin.adminlogin');
 })->name('home');
 
 Route::view('dashboard', 'admin.dashboard')
