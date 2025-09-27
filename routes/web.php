@@ -10,7 +10,6 @@ Route::get('/customer', [ProductController::class, 'index'])->name('customer.mai
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-
     
 Route::get('/', function () {
     return view('welcome');
