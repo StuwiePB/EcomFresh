@@ -7,17 +7,14 @@ use App\Http\Controllers\ProductController;
 
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-    
+ 
 Route::get('/', function () {
-    return view('welcome');
+    return view('customer.welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
+Route::view('dashboard', 'admin.dashboard')
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('dashboard');   
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
