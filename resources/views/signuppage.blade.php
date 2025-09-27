@@ -13,7 +13,7 @@
         }
         
         body {
-            background-color: #f5f5f5;
+            background-color: #009DFF;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -36,7 +36,7 @@
         }
         
         .logo h1 {
-            color: #2c3e50;
+            color: #009DFF;
             font-size: 28px;
             font-weight: 700;
         }
@@ -108,7 +108,7 @@
         }
         
         .signup-button:disabled {
-            background-color: #95a5a6;
+            background-color: #009DFF;
             cursor: not-allowed;
         }
     </style>
