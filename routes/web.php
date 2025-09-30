@@ -12,19 +12,42 @@ Route::get('/', function () {
     return view('customer.welcome');
 })->name('home');
 
-// Admin login routes
-Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login']);
-Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+// --------------------
+// Admin login form
+// --------------------
+Route::get('/admin/login', function () {
+    return view('admin.login');
+})->name('admin.login');
 
-Route::get('/admin/adminlogin', function () {
-    return view('admin.adminlogin');
-});
+// --------------------
+// Admin login process
+// --------------------
+Route::post('/admin/login', function (Request $request) {
+    $credentials = $request->only(['email', 'password']); // ✅ works, because $request is an instance
 
-// Dashboard (admin version)
-Route::view('dashboard', 'admin.dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    if (Auth::attempt($credentials)) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return back()->withErrors([
+        'email' => 'Invalid credentials.',
+    ]);
+})->name('admin.login.submit');
+
+// --------------------
+// Admin logout
+// --------------------
+Route::post('/admin/logout', function () {
+    Auth::logout();
+    return redirect()->route('admin.login');
+})->name('admin.logout');
+
+// --------------------
+// Admin dashboard
+// --------------------
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+})->middleware('auth')->name('admin.dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
