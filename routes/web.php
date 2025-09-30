@@ -1,33 +1,30 @@
 <?php
-//use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AdminAuthController;
 
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 
-<<<<<<< HEAD
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Home page for customers
+Route::get('/', function () {
+    return view('customer.welcome');
+})->name('home');
+
+// Admin login routes
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-
 Route::get('/admin/adminlogin', function () {
     return view('admin.adminlogin');
-=======
- 
-Route::get('/', function () {
-    return view('customer.welcome');
->>>>>>> a168d57bc56c052a58136c393bd81bb710ebde3f
-})->name('home');
+});
 
+// Dashboard (admin version)
 Route::view('dashboard', 'admin.dashboard')
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');   
+    ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
