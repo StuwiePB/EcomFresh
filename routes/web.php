@@ -1,54 +1,28 @@
-<?php
+web.php: <?php
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminAuthController;
 
-Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
-
-// Home page for customers
+// Customer routes
 Route::get('/', function () {
     return view('customer.welcome');
 })->name('home');
 
-// --------------------
-// Admin login form
-// --------------------
-Route::get('/admin/login', function () {
-    return view('admin.login');
-})->name('admin.login');
+Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 
-// --------------------
-// Admin login process
-// --------------------
-Route::post('/admin/login', function (Request $request) {
-    $credentials = $request->only(['email', 'password']); // ✅ works, because $request is an instance
+// Admin login routes
+Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-    if (Auth::attempt($credentials)) {
-        return redirect()->route('admin.dashboard');
-    }
-
-    return back()->withErrors([
-        'email' => 'Invalid credentials.',
-    ]);
-})->name('admin.login.submit');
-
-// --------------------
-// Admin logout
-// --------------------
-Route::post('/admin/logout', function () {
-    Auth::logout();
-    return redirect()->route('admin.login');
-})->name('admin.logout');
-
-// --------------------
 // Admin dashboard
-// --------------------
-Route::get('/admin/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware('auth')->name('admin.dashboard');
+Route::get('/admin/dashboard', [AdminAuthController::class, 'dashboard'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.dashboard');
 
+// Volt settings routes
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
@@ -67,5 +41,3 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
-
-require __DIR__.'/auth.php';
