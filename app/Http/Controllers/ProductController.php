@@ -29,4 +29,36 @@ class ProductController extends Controller
 
         return view('customer.main', compact('categories'));
     }
+public function index()
+    {
+        $products = Product::all();
+        return view('admin.items.index', compact('products'));
+    }
+
+    /**
+     * Show Add Item form
+     */
+    public function create()
+    {
+        return view('admin.items.create'); // resources/views/admin/items/create.blade.php
+    }
+
+    /**
+     * Handle saving a new item
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:100',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+        ]);
+
+        Product::create($request->all());
+
+        return redirect()->route('items.index')
+                         ->with('success', 'Item added successfully!');
+    }
+
 }

@@ -5,6 +5,8 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminAuthController;
+use App\Models\Product;
+
 
 // --------------------
 // Customer routes
@@ -36,9 +38,29 @@ Route::get('/admin/items', function () {
     return view('admin.chicken-crud'); // resources/views/admin/item-list.blade.php
 })->name('admin.items');
 
+// Admin Chicken CRUD
 Route::get('/admin/chicken-crud', function () {
     return view('admin.chicken-crud'); 
 })->name('admin.chicken-crud');
+
+// Admin add new item
+Route::get('/admin/items/create', function () {
+    return view('admin.adminaddnewitem'); // resources/views/admin/adminaddnewitem.blade.php
+})->name('items.create');
+
+// Save new item (form submit)
+Route::post('/admin/items', function (Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'category' => 'required|string|max:100',
+        'price' => 'required|numeric|min:0',
+        'stock' => 'required|integer|min:0',
+    ]);
+
+    Product::create($request->all());
+
+    return redirect()->route('items.index')->with('success', 'Item added successfully!');
+})->name('items.store');
 
 // --------------------
 // Volt settings routes
