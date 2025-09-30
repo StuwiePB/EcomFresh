@@ -52,15 +52,18 @@
     </div>
 
     <!-- Item list -->
-    <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-5">
-      <div class="text-gray-700 font-semibold mb-3 text-base sm:text-lg">Item List</div>
-      <ul class="space-y-1 text-sm sm:text-base">
-        <li class="font-semibold">Whole Chicken <span class="font-normal text-gray-600">– 42 pcs</span></li>
-        <li class="font-semibold">Chicken Thigh <span class="font-normal text-gray-600">– 28 pcs</span></li>
-        <li class="font-semibold">Chicken Wings <span class="font-normal text-gray-600">– 50 pcs</span></li>
-        <li class="text-gray-400">……….</li>
-      </ul>
-    </section>
+<a href="{{ route('admin.chicken-crud') }}" class="block">
+  <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-5 hover:bg-gray-50 transition">
+    <div class="text-gray-700 font-semibold mb-3 text-base sm:text-lg">Item List</div>
+    <ul class="space-y-1 text-sm sm:text-base">
+      <li class="font-semibold">Whole Chicken <span class="font-normal text-gray-600">– 42 pcs</span></li>
+      <li class="font-semibold">Chicken Thigh <span class="font-normal text-gray-600">– 28 pcs</span></li>
+      <li class="font-semibold">Chicken Wings <span class="font-normal text-gray-600">– 50 pcs</span></li>
+      <li class="text-gray-400">……….</li>
+    </ul>
+  </section>
+</a>
+
 
     <!-- Priority alert -->
     <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-5">

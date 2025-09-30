@@ -36,6 +36,10 @@ Route::get('/admin/items', function () {
     return view('admin.chicken-crud'); // resources/views/admin/item-list.blade.php
 })->name('admin.items');
 
+Route::get('/admin/chicken-crud', function () {
+    return view('admin.chicken-crud'); 
+})->name('admin.chicken-crud');
+
 // --------------------
 // Volt settings routes
 // --------------------
