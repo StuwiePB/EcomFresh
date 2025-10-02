@@ -5,16 +5,20 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\CustomerAuthController; // ADD THIS IMPORT
+use App\Http\Controllers\CustomerAuthController;
 use App\Models\Product;
-use Illuminate\Http\Request; // ADD THIS IMPORT
+use Illuminate\Http\Request;
 
 // --------------------
-// Customer routes
+// Customer routes (PUBLIC - no login required)
 // --------------------
+
+// Customer main page (PUBLIC)
+Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
+
 // Customer login page
 Route::get('/login', function () {
-    return view('customer.login'); // This will display your HTML login page
+    return view('customer.login');
 })->name('login');
 
 // Customer login form submission
@@ -23,14 +27,17 @@ Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.
 // Customer logout
 Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
 
-// Customer protected routes
+// Customer PROTECTED routes (require login)
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         return view('customer.welcome');
     })->name('home');
-
-    Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 });
+
+// ... rest of your admin routes stay the same
+
+// Chicken products page
+Route::get('/customer/chicken', [ProductController::class, 'chickenProducts'])->name('customer.chicken');
 
 // --------------------
 // Admin login/logout
