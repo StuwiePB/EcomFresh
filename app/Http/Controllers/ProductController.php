@@ -17,6 +17,81 @@ class ProductController extends Controller
     }
 
     /**
+ * Show chicken products comparison page
+ */
+public function chickenProducts()
+{
+    $chickenProducts = [
+        [
+            'name' => 'Chicken Breast',
+            'stores' => [
+                [
+                    'store_name' => 'Supa Save',
+                    'price' => 3.50,
+                    'distance' => '2.1 km',
+                    'rating' => 4.2,
+                    'is_favourite' => true
+                ],
+                [
+                    'store_name' => 'Hua Ho',
+                    'price' => 4.30,
+                    'distance' => '1.8 km', 
+                    'rating' => 4.4,
+                    'is_favourite' => false
+                ],
+                [
+                    'store_name' => 'Soon Lee',
+                    'price' => 3.10,
+                    'distance' => '3.2 km',
+                    'rating' => 4.0,
+                    'is_favourite' => false
+                ]
+            ]
+        ],
+        [
+            'name' => 'Whole Chicken',
+            'stores' => [
+                [
+                    'store_name' => 'Supa Save',
+                    'price' => 5.50,
+                    'distance' => '2.1 km',
+                    'rating' => 4.2,
+                    'is_favourite' => true
+                ],
+                [
+                    'store_name' => 'Hua Ho', 
+                    'price' => 6.80,
+                    'distance' => '1.8 km',
+                    'rating' => 4.4,
+                    'is_favourite' => false
+                ]
+            ]
+        ],
+        [
+            'name' => 'Chicken Thigh',
+            'stores' => [
+                [
+                    'store_name' => 'Hua Ho',
+                    'price' => 4.25,
+                    'distance' => '1.8 km',
+                    'rating' => 4.4,
+                    'is_favourite' => false
+                ],
+                [
+                    'store_name' => 'Supa Save',
+                    'price' => 4.90,
+                    'distance' => '2.1 km',
+                    'rating' => 4.2,
+                    'is_favourite' => true
+                ]
+            ]
+        ]
+    ];
+
+    return view('customer.chicken-products', compact('chickenProducts'));
+}
+
+    /**
      * Show admin products index page
      */
 public function adminIndex()

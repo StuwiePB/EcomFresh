@@ -49,21 +49,21 @@ class Product extends Model
     return [
         [
             'name' => 'Chicken',
-            'description' => 'Fresh poultry products',
+            'description' => 'Compare chicken prices across stores',
             'image' => 'images/categories/chicken.jpg' 
         ],
         [
             'name' => 'Beef', 
-            'description' => 'Quality beef selections',
-            'image' => 'images/categories/beef.jpg' // ← ADD THIS
+            'description' => 'Find the best beef deals nearby',
+            'image' => 'images/categories/beef.jpg' // ← ADD images here (name sensitive)
         ],
         [
             'name' => 'Vegetables',
-            'description' => 'Farm-fresh vegetables',
+            'description' => 'Compare fresh vegetable prices',
             'image' => 'images/categories/vegetables.jpg' // ← ADD THIS
         ],
         [
-            'name' => 'discounted',
+            'name' => 'discounted produce',
             'description' => 'Special offers and discounts',
             'image' => 'images/categories/discounted.jpg' // ← ADD THIS
         ]
