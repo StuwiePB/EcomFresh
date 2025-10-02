@@ -16,80 +16,259 @@ class ProductController extends Controller
         return view('customer.main', compact('categories'));
     }
 
-    /**
- * Show chicken products comparison page
+  /**
+ * Show products for a specific category
  */
-public function chickenProducts()
+public function categoryProducts($category)
 {
-    $chickenProducts = [
-        [
-            'name' => 'Chicken Breast',
-            'stores' => [
+    $categoryData = $this->getCategoryData($category);
+    
+    if (!$categoryData) {
+        abort(404, 'Category not found');
+    }
+
+    return view('customer.category-products', compact('categoryData', 'category'));
+}
+
+/**
+ * Get products data for each category
+ */
+private function getCategoryData($categoryName)
+{
+    $categories = [
+        'chicken' => [
+            'name' => 'Chicken',
+            'description' => 'Fresh poultry products at the best prices',
+            'image' => 'images/categories/chicken.jpg',
+            'products' => [
                 [
-                    'store_name' => 'Supa Save',
-                    'price' => 3.50,
-                    'distance' => '2.1 km',
-                    'rating' => 4.2,
-                    'is_favourite' => true
+                    'name' => 'Chicken Breast',
+                    'image' => 'images/products/chicken-breast.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 3.60,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => true,
+                            'store_hours' => '8AM-9PM'
+                        ],
+                        [
+                            'store_name' => 'Hua Ho',
+                            'price' => 4.10,
+                            'distance' => '1.8 km', 
+                            'rating' => 4.4,
+                            'is_favourite' => false,
+                            'store_hours' => '7:30AM-10PM'
+                        ],
+                        [
+                            'store_name' => 'Soon Lee',
+                            'price' => 3.10,
+                            'distance' => '3.2 km',
+                            'rating' => 4.0,
+                            'is_favourite' => false,
+                            'store_hours' => '9AM-8PM'
+                        ]
+                    ]
                 ],
                 [
-                    'store_name' => 'Hua Ho',
-                    'price' => 4.30,
-                    'distance' => '1.8 km', 
-                    'rating' => 4.4,
-                    'is_favourite' => false
+                    'name' => 'Whole Chicken',
+                    'image' => 'images/products/whole-chicken.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 5.50,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => true,
+                            'store_hours' => '8AM-9PM'
+                        ],
+                        [
+                            'store_name' => 'Hua Ho', 
+                            'price' => 6.30,
+                            'distance' => '1.8 km',
+                            'rating' => 4.4,
+                            'is_favourite' => false,
+                            'store_hours' => '7:30AM-10PM'
+                        ]
+                    ]
                 ],
                 [
-                    'store_name' => 'Soon Lee',
-                    'price' => 3.10,
-                    'distance' => '3.2 km',
-                    'rating' => 4.0,
-                    'is_favourite' => false
+                    'name' => 'Chicken Thigh',
+                    'image' => 'images/products/chicken-thigh.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Hua Ho',
+                            'price' => 5.00,
+                            'distance' => '1.8 km',
+                            'rating' => 4.4,
+                            'is_favourite' => false,
+                            'store_hours' => '7:30AM-10PM'
+                        ],
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 4.10,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => true,
+                            'store_hours' => '8AM-9PM'
+                        ]
+                    ]
                 ]
             ]
         ],
-        [
-            'name' => 'Whole Chicken',
-            'stores' => [
+        'beef' => [
+            'name' => 'Beef',
+            'description' => 'Quality beef selections across stores',
+            'image' => 'images/categories/beef.jpg',
+            'products' => [
                 [
-                    'store_name' => 'Supa Save',
-                    'price' => 5.50,
-                    'distance' => '2.1 km',
-                    'rating' => 4.2,
-                    'is_favourite' => true
+                    'name' => 'Chuck steak',
+                    'image' => 'images/products/beef-sirloin.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Hua Ho',
+                            'price' => 13.50,
+                            'distance' => '1.8 km',
+                            'rating' => 4.4,
+                            'is_favourite' => true,
+                            'store_hours' => '7:30AM-10PM'
+                        ],
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 12.00,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => false,
+                            'store_hours' => '8AM-9PM'
+                        ]
+                    ]
                 ],
                 [
-                    'store_name' => 'Hua Ho', 
-                    'price' => 6.80,
-                    'distance' => '1.8 km',
-                    'rating' => 4.4,
-                    'is_favourite' => false
+                    'name' => 'Ribeye steak',
+                    'image' => 'images/products/ground-beef.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 10.00,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => true,
+                            'store_hours' => '8AM-9PM'
+                        ],
+                        [
+                            'store_name' => 'Soon Lee',
+                            'price' => 8.50,
+                            'distance' => '3.2 km',
+                            'rating' => 4.0,
+                            'is_favourite' => false,
+                            'store_hours' => '9AM-8PM'
+                        ]
+                    ]
+                ],
+                [
+                    'name' => 'Striploin',
+                    'image' => 'images/products/beef-ribeye.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Hua Ho',
+                            'price' => 22.00,
+                            'distance' => '1.8 km',
+                            'rating' => 4.4,
+                            'is_favourite' => false,
+                            'store_hours' => '7:30AM-10PM'
+                        ],
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 19.50,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => true,
+                            'store_hours' => '8AM-9PM'
+                        ]
+                    ]
                 ]
             ]
         ],
-        [
-            'name' => 'Chicken Thigh',
-            'stores' => [
+        'vegetables' => [
+            'name' => 'Vegetables',
+            'description' => 'Fresh vegetables from local markets',
+            'image' => 'images/categories/vegetables.jpg',
+            'products' => [
                 [
-                    'store_name' => 'Hua Ho',
-                    'price' => 4.25,
-                    'distance' => '1.8 km',
-                    'rating' => 4.4,
-                    'is_favourite' => false
+                    'name' => 'Carrots',
+                    'image' => 'images/products/tomatoes.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 2.50,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => true,
+                            'store_hours' => '8AM-9PM'
+                        ],
+                        [
+                            'store_name' => 'Hua Ho',
+                            'price' => 3,10,
+                            'distance' => '1.8 km',
+                            'rating' => 4.4,
+                            'is_favourite' => false,
+                            'store_hours' => '7:30AM-10PM'
+                        ]
+                    ]
                 ],
                 [
-                    'store_name' => 'Supa Save',
-                    'price' => 4.90,
-                    'distance' => '2.1 km',
-                    'rating' => 4.2,
-                    'is_favourite' => true
+                    'name' => 'Cabbages',
+                    'image' => 'images/products/potatoes.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Soon Lee',
+                            'price' => 1.80,
+                            'distance' => '3.2 km',
+                            'rating' => 4.0,
+                            'is_favourite' => false,
+                            'store_hours' => '9AM-8PM'
+                        ],
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 2.50,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => true,
+                            'store_hours' => '8AM-9PM'
+                        ]
+                    ]
+                ],
+                [
+                    'name' => 'Beansprouts',
+                    'image' => 'images/products/carrots.jpg',
+                    'stores' => [
+                        [
+                            'store_name' => 'Hua Ho',
+                            'price' => 1.90,
+                            'distance' => '1.8 km',
+                            'rating' => 4.4,
+                            'is_favourite' => true,
+                            'store_hours' => '7:30AM-10PM'
+                        ],
+                        [
+                            'store_name' => 'Supa Save',
+                            'price' => 2.40,
+                            'distance' => '2.1 km',
+                            'rating' => 4.2,
+                            'is_favourite' => false,
+                            'store_hours' => '8AM-9PM'
+                        ]
+                    ]
                 ]
             ]
         ]
+        
     ];
 
-    return view('customer.chicken-products', compact('chickenProducts'));
+    return $categories[strtolower($categoryName)] ?? null;
 }
+
 
     /**
      * Show admin products index page

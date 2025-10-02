@@ -34,10 +34,10 @@ Route::middleware(['auth'])->group(function () {
     })->name('home');
 });
 
+// Dynamic category products page for CUSTOMER
+Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
 // ... rest of your admin routes stay the same
 
-// Chicken products page
-Route::get('/customer/chicken', [ProductController::class, 'chickenProducts'])->name('customer.chicken');
 
 // --------------------
 // Admin login/logout

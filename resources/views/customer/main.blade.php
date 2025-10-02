@@ -18,7 +18,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1e90ff 0%, #ffffff 100%);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             min-height: 100vh;
         }
         
@@ -63,10 +63,10 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-      <div class="space-y-6">
+   <div class="space-y-6">
+     <main class="container mx-auto px-4 py-8">
     @foreach($categories as $category)
-    <a href="{{ route('customer.chicken') }}" class="block category-card bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-blue-50 hover:no-underline">
+    <a href="{{ route('customer.category', ['category' => strtolower($category['name'])]) }}" class="block category-card bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-blue-50 hover:no-underline">
         <div class="flex items-center p-6">
             <!-- Category Image -->
             <div class="w-24 h-24 rounded-lg overflow-hidden mr-6 border border-blue-200 flex-shrink-0">
