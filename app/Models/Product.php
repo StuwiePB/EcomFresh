@@ -45,26 +45,30 @@ class Product extends Model
      * Available categories for products
      */
     public static function getCategories()
-    {
-        return [
-            [
-                'name' => 'Chicken',
-                'description' => 'Fresh poultry products'
-            ],
-            [
-                'name' => 'Beef', 
-                'description' => 'Quality beef selections'
-            ],
-            [
-                'name' => 'Vegetables',
-                'description' => 'Farm-fresh vegetables'
-            ],
-            [
-                'name' => 'Discounted produce',
-                'description' => 'Special offers and discounts'
-            ]
-        ];
-    }
+{
+    return [
+        [
+            'name' => 'Chicken',
+            'description' => 'Fresh poultry products',
+            'image' => 'images/categories/chicken.jpg' 
+        ],
+        [
+            'name' => 'Beef', 
+            'description' => 'Quality beef selections',
+            'image' => 'images/categories/beef.jpg' // ← ADD THIS
+        ],
+        [
+            'name' => 'Vegetables',
+            'description' => 'Farm-fresh vegetables',
+            'image' => 'images/categories/vegetables.jpg' // ← ADD THIS
+        ],
+        [
+            'name' => 'discounted',
+            'description' => 'Special offers and discounts',
+            'image' => 'images/categories/discounted.jpg' // ← ADD THIS
+        ]
+    ];
+}
 
     /**
      * Get category names as array

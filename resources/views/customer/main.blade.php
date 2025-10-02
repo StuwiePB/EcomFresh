@@ -34,6 +34,14 @@
         .logo-placeholder {
             background: linear-gradient(135deg, #1e90ff, #00bfff);
         }
+        .category-image {
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-image {
+    transform: scale(1.05);
+}
     </style>
 </head>
 <body class="min-h-screen">
@@ -64,11 +72,23 @@
                 @foreach($categories as $category)
                 <div class="category-card bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-blue-50">
                     <div class="flex items-center p-6">
-                        <!-- Category Image Placeholder -->
-                        <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-50 rounded-lg flex items-center justify-center mr-6 border border-blue-200">
-                            <i class="fas fa-image text-blue-400 text-2xl"></i>
-                        </div>
-                        
+
+                         <!-- Category Image -->
+        <div class="w-24 h-24 rounded-lg overflow-hidden mr-6 border border-blue-200 flex-shrink-0">
+            @if(file_exists(public_path($category['image'])))
+                <img 
+                    src="{{ asset($category['image']) }}" 
+                    alt="{{ $category['name'] }}"
+                    class="w-full h-full object-cover"
+                >
+            @else
+                <!-- Fallback placeholder if image doesn't exist -->
+                <div class="w-full h-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
+                    <i class="fas fa-image text-blue-400 text-2xl"></i>
+                </div>
+            @endif
+        </div>
+        
                         <!-- Category Info -->
                         <div class="flex-1">
                             <h3 class="text-xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 700;">{{ $category['name'] }}</h3>
