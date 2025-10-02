@@ -5,17 +5,32 @@ use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\EditItemController;
+use App\Http\Controllers\CustomerAuthController; // ADD THIS IMPORT
 use App\Models\Product;
+use Illuminate\Http\Request; // ADD THIS IMPORT
 
 // --------------------
 // Customer routes
 // --------------------
-Route::get('/', function () {
-    return view('customer.welcome'); // resources/views/customer/welcome.blade.php
-})->name('home');
+// Customer login page
+Route::get('/login', function () {
+    return view('customer.login'); // This will display your HTML login page
+})->name('login');
 
-Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
+// Customer login form submission
+Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
+
+// Customer logout
+Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
+
+// Customer protected routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        return view('customer.welcome');
+    })->name('home');
+
+    Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
+});
 
 // --------------------
 // Admin login/logout
