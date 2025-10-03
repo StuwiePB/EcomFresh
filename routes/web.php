@@ -6,6 +6,7 @@ use Livewire\Volt\Volt;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\PriceController;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 // Customer main page (PUBLIC)
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 
+Route::get('/todaysprice', [PriceController::class, 'todaysPrice']);
 
 // Customer login page
 Route::get('/login', function () {
