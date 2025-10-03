@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 // Customer main page (PUBLIC)
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 
+
 // Customer login page
 Route::get('/login', function () {
     return view('customer.login');

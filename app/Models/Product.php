@@ -63,8 +63,8 @@ class Product extends Model
             'image' => 'images/categories/vegetables.jpg' // ← ADD THIS
         ],
         [
-            'name' => 'discounted produce',
-            'description' => 'Special offers and discounts',
+            'name' => 'Todays Prices',
+            'description' => 'Price drops and promotion offers',
             'image' => 'images/categories/discounted.jpg' // ← ADD THIS
         ]
     ];
