@@ -203,6 +203,28 @@
                                 <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
                                     <i class="fas fa-phone mr-2"></i>Call Store
                                 </button>
+                                <!-- TODAY'S PRICES CARD -->
+<a href="/todaysprice" class="block category-card bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-blue-50 hover:no-underline">
+    <div class="flex items-center p-6">
+        <!-- Category Image -->
+        <div class="w-24 h-24 rounded-lg overflow-hidden mr-6 border border-blue-200 flex-shrink-0">
+            <div class="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
+                <i class="fas fa-tag text-green-500 text-2xl"></i>
+            </div>
+        </div>
+        
+        <!-- Category Info -->
+        <div class="flex-1">
+            <h3 class="text-xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 700;">Today's Prices</h3>
+            <p class="text-gray-600 mt-1 font-medium">Price drops and promotion offers</p>
+        </div>
+        
+        <!-- Arrow Indicator -->
+        <div class="text-blue-600">
+            <i class="fas fa-chevron-right text-lg"></i>
+        </div>
+    </div>
+</a>
                             </div>
                         </div>
                         @endforeach

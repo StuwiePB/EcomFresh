@@ -110,4 +110,7 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
+        Route::get('/todaysprice', function () {
+    dd('Route works!'); // This will show if the route is accessible
+});
 });

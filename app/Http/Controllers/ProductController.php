@@ -24,7 +24,7 @@ public function categoryProducts($category)
     $categoryData = $this->getCategoryData($category);
     
     if (!$categoryData) {
-        abort(404, 'Category not found');
+        return redirect('/todaysprice');
     }
 
     return view('customer.category-products', compact('categoryData', 'category'));
