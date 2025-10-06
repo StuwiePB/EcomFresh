@@ -110,25 +110,25 @@
   </main>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          let res = await fetch("{{ route('logout') }}", {
-            method: "POST",
-            headers: {
-              "X-CSRF-TOKEN": "{{ csrf_token() }}",
-              "Accept": "application/json",
-            },
-          });
-          if (res.ok) {
-            window.location.href = "/"; // redirect after logout
-          } else {
-            alert("Logout failed");
-          }
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        let res = await fetch("{{ route('logout') }}", {
+          method: "POST",
+          headers: {
+            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "Accept": "application/json",
+          },
         });
-      }
-    });
-  </script>
+        if (res.ok) {
+          window.location.href = "/login"; // ✅ redirect after logout
+        } else {
+          alert("Logout failed");
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>

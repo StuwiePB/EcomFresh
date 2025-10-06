@@ -9,6 +9,16 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\PriceController;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+// ✅ Global logout route (fixes "Route [logout] not defined")
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login'); // redirect to main login page
+})->name('logout');
 
 // --------------------
 // Customer routes (PUBLIC - no login required)
@@ -27,9 +37,6 @@ Route::get('/login', function () {
 // Customer login form submission
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 
-// Customer logout
-Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
-
 // Customer PROTECTED routes (require login)
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
@@ -39,8 +46,6 @@ Route::middleware(['auth'])->group(function () {
 
 // Dynamic category products page for CUSTOMER
 Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
-// ... rest of your admin routes stay the same
-
 
 // --------------------
 // Admin login/logout
@@ -53,7 +58,7 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admi
 // Admin dashboard
 // --------------------
 Route::get('/admin/dashboard', [AdminAuthController::class, 'dashboard'])
-    ->middleware(['auth']) // keep it simple: 'auth' only
+    ->middleware(['auth'])
     ->name('admin.dashboard');
 
 // --------------------
@@ -70,7 +75,6 @@ Route::get('/admin/chicken-crud', [ProductController::class, 'adminIndex'])->nam
 Route::get('/admin/items/create', function () {
     return view('admin.adminaddnewitem'); // resources/views/admin/adminaddnewitem.blade.php
 })->name('items.create');
-
 
 // Save new item (form submit)
 Route::post('/admin/items', function (Request $request) {
@@ -89,6 +93,11 @@ Route::post('/admin/items', function (Request $request) {
 // Edit Item form
 Route::get('/admin/items/{id}/edit', [ProductController::class, 'edit'])->name('items.edit');
 Route::put('/admin/items/{id}', [ProductController::class, 'update'])->name('items.update');
+//item confirmation
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::view('/itemconfirmation', 'admin.itemconfirmation');
+});
+
 
 // --------------------
 // Volt settings routes
@@ -110,7 +119,9 @@ Route::middleware(['auth'])->group(function () {
             ),
         )
         ->name('two-factor.show');
-        Route::get('/todaysprice', function () {
-    dd('Route works!'); // This will show if the route is accessible
-});
+
+    // Just for debugging (optional)
+    Route::get('/todaysprice', function () {
+        dd('Route works!');
+    });
 });

@@ -16,7 +16,6 @@
       flex-direction: column;
     }
 
-    /* Toggle buttons wrapper */
     .role-toggle {
       display: flex;
       justify-content: center;
@@ -25,7 +24,6 @@
       max-width: 350px;
     }
 
-    /* Individual role buttons */
     .role-btn {
       flex: 1;
       text-align: center;
@@ -53,7 +51,6 @@
       background: #f2f2f2;
     }
 
-    /* Login Box */
     .container {
       background: white;
       padding: 30px;
@@ -141,9 +138,10 @@
   <div class="container">
     <h2>Welcome Back!</h2>
     <p>Sign in to your account</p>
-    <form>
-      <input type="text" class="input-field" placeholder="Username" required>
-      <input type="password" class="input-field" placeholder="Password" required>
+    <form method="POST" id="loginForm">
+      @csrf
+      <input type="text" name="email" class="input-field" placeholder="Email" required>
+      <input type="password" name="password" class="input-field" placeholder="Password" required>
       <a href="#" class="forgot">Forgot Password?</a>
       <button type="submit" class="btn">Sign In</button>
       <div class="signup">
@@ -153,7 +151,10 @@
   </div>
 
   <script>
+    let currentRole = 'admin'; // Default to Admin
+
     function setRole(role) {
+      currentRole = role;
       document.querySelectorAll(".role-btn").forEach(btn => btn.classList.remove("active"));
       if (role === "admin") {
         document.querySelectorAll(".role-btn")[0].classList.add("active");
@@ -161,6 +162,15 @@
         document.querySelectorAll(".role-btn")[1].classList.add("active");
       }
     }
+
+    // Change form action dynamically
+    document.getElementById("loginForm").addEventListener("submit", function () {
+      if (currentRole === "admin") {
+        this.action = "{{ route('admin.login.submit') }}";
+      } else {
+        this.action = "{{ route('customer.login.submit') }}";
+      }
+    });
   </script>
 
 </body>
