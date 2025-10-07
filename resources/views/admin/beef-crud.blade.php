@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>ECOM FRESH - Item List</title>
+  <title>ECOM FRESH - Beef List</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -11,7 +11,6 @@
   <!-- Header -->
   <header class="bg-blue-700 text-white flex items-center px-4 py-3">
     <a href="{{ url()->previous() }}" class="mr-3">
-      <!-- Back arrow -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
            viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -21,10 +20,8 @@
     <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold">ECOM FRESH</h1>
   </header>
 
-  <!-- Item list container -->
   <main class="flex-1 p-4 flex flex-col items-center">
 
-    <!-- ✅ Success message after delete -->
     @if (session('success'))
       <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center w-full max-w-md md:max-w-2xl lg:max-w-3xl">
         {{ session('success') }}
@@ -32,62 +29,38 @@
     @endif
 
     <div class="w-full max-w-md md:max-w-2xl lg:max-w-3xl">
-      <h2 class="text-center text-xl md:text-2xl font-bold mb-4">Item List</h2>
+      <h2 class="text-center text-xl md:text-2xl font-bold mb-4">Beef List</h2>
 
-      <!-- Dropdown Menu -->
-<div class="relative flex justify-center mb-6">
-  <div id="dropdownButton" 
-       class="bg-white px-6 py-2 rounded-lg flex items-center shadow cursor-pointer">
-    <span id="selectedCategory" class="font-semibold">Chicken</span>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none"
-         viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M19 9l-7 7-7-7" />
-    </svg>
-  </div>
+      <!-- Dropdown -->
+      <div class="flex justify-center mb-6">
+        <div class="bg-white px-6 py-2 rounded-lg flex items-center shadow">
+          <span class="font-semibold">Beef</span>
+          <div class="ml-3 flex flex-col">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
-  <!-- Dropdown list -->
-  <div id="dropdownMenu" class="absolute mt-2 hidden bg-white rounded-lg shadow w-40">
-    <a href="{{ route('admin.chicken-crud') }}" class="block px-4 py-2 hover:bg-gray-100">Chicken</a>
-    <a href="{{ route('admin.beef-crud') }}" class="block px-4 py-2 hover:bg-gray-100">Beef</a>
-  </div>
-</div>
-
-<script>
-  const dropdownButton = document.getElementById('dropdownButton');
-  const dropdownMenu = document.getElementById('dropdownMenu');
-
-  dropdownButton.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('hidden');
-  });
-
-  // Optional: close dropdown when clicking outside
-  window.addEventListener('click', (e) => {
-    if (!dropdownButton.contains(e.target)) {
-      dropdownMenu.classList.add('hidden');
-    }
-  });
-</script>
-
-
-      <!-- Items grid (responsive) -->
+      <!-- Items grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @foreach($chickens as $chicken)
+        @foreach($beefs as $beef)
         <div class="bg-white rounded-xl shadow p-4 flex items-center justify-between">
           <div class="flex items-center gap-4">
-            <!-- Icon -->
-            <div class="text-4xl">🍗</div>
+            <div class="text-4xl">🥩</div>
             <div class="flex flex-col space-y-1">
-              <h3 class="font-bold text-lg">{{ $chicken->name }}</h3>
-              <p class="text-sm text-gray-500">Category: {{ $chicken->category }}</p>
-              <p class="text-sm font-semibold">${{ number_format($chicken->price, 2) }}</p>
-              <p class="text-sm">Stock: {{ $chicken->stock }}</p>
+              <h3 class="font-bold text-lg">{{ $beef->name }}</h3>
+              <p class="text-sm text-gray-500">Category: {{ $beef->category }}</p>
+              <p class="text-sm font-semibold">${{ number_format($beef->price, 2) }}</p>
+              <p class="text-sm">Stock: {{ $beef->stock }}</p>
             </div>
           </div>
 
-          <!-- Actions -->
           <div class="flex gap-2">
-            <a href="{{ route('items.edit', $chicken->id) }}" class="bg-blue-100 p-2 rounded-lg flex items-center justify-center">
+            <a href="{{ route('admin.beef.edit', $beef->id) }}" class="bg-blue-100 p-2 rounded-lg flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" 
                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -95,8 +68,7 @@
               </svg>
             </a>
 
-            <!-- ✅ Delete button with confirmation -->
-            <form action="{{ route('items.destroy', $chicken->id) }}" method="POST" onsubmit="return confirmDelete(event)">
+            <form action="{{ route('admin.beef.destroy', $beef->id) }}" method="POST" onsubmit="return confirmDelete(event)">
               @csrf
               @method('DELETE')
               <button type="submit" class="bg-red-100 p-2 rounded-lg">
@@ -114,8 +86,7 @@
     </div>
   </main>
 
-  <!-- Floating Add Button -->
-  <a href="{{ route('items.create') }}" 
+  <a href="{{ route('admin.beef.create') }}" 
      class="fixed bottom-6 right-6 bg-blue-700 text-white p-4 rounded-full shadow-lg hover:bg-blue-800 transition">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
          viewBox="0 0 24 24" stroke="currentColor">
@@ -124,7 +95,6 @@
     </svg>
   </a>
 
-  <!-- ✅ Delete confirmation JS -->
   <script>
     function confirmDelete(event) {
       event.preventDefault();

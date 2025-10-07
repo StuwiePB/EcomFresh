@@ -358,4 +358,11 @@ public function adminChickenIndex()
 
     return redirect()->route('admin.chicken-crud')->with('success', 'Item updated successfully');
 }
+    public function destroy($id)
+{
+    $item = Product::findOrFail($id);
+    $item->delete();
+
+    return redirect()->back()->with('success', 'Item deleted successfully!');
+}
 }
