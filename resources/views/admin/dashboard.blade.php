@@ -96,18 +96,19 @@
       </div>
     </section>
 
-    <!-- Delete history -->
-    <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-10">
-      <div class="flex items-center gap-3">
-        <div class="text-xl sm:text-2xl">🗑️</div>
-        <div class="text-gray-800 font-extrabold text-base sm:text-lg">Delete History</div>
-      </div>
-      <ol class="mt-3 list-decimal pl-6 space-y-1 text-sm sm:text-base">
-        <li class="font-semibold">Chicken Thigh</li>
-        <li class="font-semibold">Striploin</li>
-      </ol>
-    </section>
-  </main>
+<!-- Delete history (Clickable Box) -->
+<a href="{{ route('admin.deletehistory') }}" class="block">
+  <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-10 hover:bg-gray-50 transition cursor-pointer">
+    <div class="flex items-center gap-3">
+      <div class="text-xl sm:text-2xl">🗑️</div>
+      <div class="text-gray-800 font-extrabold text-base sm:text-lg">Delete History</div>
+    </div>
+    <ol class="mt-3 list-decimal pl-6 space-y-1 text-sm sm:text-base text-gray-700">
+      <li class="font-semibold">Chicken Thigh</li>
+      <li class="font-semibold">Striploin</li>
+    </ol>
+  </section>
+</a>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {

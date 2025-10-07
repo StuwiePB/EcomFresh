@@ -11,6 +11,8 @@ use App\Http\Controllers\PriceController;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\AdminProduct;
+
 
 // ✅ Global logout route
 Route::post('/logout', function (Request $request) {
@@ -91,6 +93,17 @@ Route::get('/admin/beef/{id}/edit', [BeefController::class, 'edit'])->name('admi
 Route::put('/admin/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
 Route::delete('/admin/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
 
+//STORE INFO
+Route::get('/admin/storeinfo', function () {
+    return view('admin.storeinfo');
+})->name('admin.storeinfo');
+Route::post('/admin/storeinfo', [AdminAuthController::class, 'updateStoreInfo'])->name('admin.storeinfo.update');
+
+// Delete History Page
+Route::get('/admin/deletehistory', function () {
+    $deletedItems = AdminProduct::onlyTrashed()->get();
+    return view('admin.deletehistory', compact('deletedItems'));
+})->name('admin.deletehistory');
 // --------------------
 // VOLT SETTINGS
 // --------------------
