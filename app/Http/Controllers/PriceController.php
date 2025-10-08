@@ -96,7 +96,7 @@ class PriceController extends Controller
             ]
         ];
 
-        return view('todays-price', $data);
+        return view('customer.todays-price', $data);
         
     }
 }

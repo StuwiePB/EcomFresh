@@ -32,43 +32,26 @@
     @endif
 
     <div class="w-full max-w-md md:max-w-2xl lg:max-w-3xl">
-      <h2 class="text-center text-xl md:text-2xl font-bold mb-4">Item List</h2>
+      
+      <!-- Page header with title and controls -->
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Item List</h2>
 
-      <!-- Dropdown Menu -->
-<div class="relative flex justify-center mb-6">
-  <div id="dropdownButton" 
-       class="bg-white px-6 py-2 rounded-lg flex items-center shadow cursor-pointer">
-    <span id="selectedCategory" class="font-semibold">Chicken</span>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none"
-         viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M19 9l-7 7-7-7" />
-    </svg>
-  </div>
+        <div class="flex gap-2">
+          <!-- Dropdown for item type -->
+          <select id="itemType" class="border rounded px-3 py-2" onchange="navigateToPage()">
+            <option value="{{ route('admin.chicken-crud') }}" {{ request()->is('admin/chicken-crud') ? 'selected' : '' }}>Chicken</option>
+            <option value="{{ route('admin.beef-crud') }}" {{ request()->is('admin/beef-crud') ? 'selected' : '' }}>Beef</option>
+            <option value="{{ route('admin.vegetable-crud') }}" {{ request()->is('admin/vegetable-crud') ? 'selected' : '' }}>Vegetable</option>
+          </select>
 
-  <!-- Dropdown list -->
-  <div id="dropdownMenu" class="absolute mt-2 hidden bg-white rounded-lg shadow w-40">
-    <a href="{{ route('admin.chicken-crud') }}" class="block px-4 py-2 hover:bg-gray-100">Chicken</a>
-    <a href="{{ route('admin.beef-crud') }}" class="block px-4 py-2 hover:bg-gray-100">Beef</a>
-  </div>
-</div>
-
-<script>
-  const dropdownButton = document.getElementById('dropdownButton');
-  const dropdownMenu = document.getElementById('dropdownMenu');
-
-  dropdownButton.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('hidden');
-  });
-
-  // Optional: close dropdown when clicking outside
-  window.addEventListener('click', (e) => {
-    if (!dropdownButton.contains(e.target)) {
-      dropdownMenu.classList.add('hidden');
-    }
-  });
-</script>
-
+          <!-- New button -->
+          <a id="newButton" href="{{ route('items.create') }}" 
+             class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">
+            New
+          </a>
+        </div>
+      </div>
 
       <!-- Items grid (responsive) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -132,6 +115,25 @@
         event.target.submit();
       }
     }
+
+    function navigateToPage() {
+      var dropdown = document.getElementById("itemType");
+      var selectedUrl = dropdown.value;
+
+      // Navigate to the selected CRUD page
+      window.location.href = selectedUrl;
+    }
+
+    // Optional: dynamically update "New" button based on selected type
+    const newButton = document.getElementById('newButton');
+    const dropdown = document.getElementById('itemType');
+
+    dropdown.addEventListener('change', function() {
+      const type = dropdown.options[dropdown.selectedIndex].text.toLowerCase();
+      if(type === 'chicken') newButton.href = "{{ route('items.create') }}"; // or chicken create route
+      else if(type === 'beef') newButton.href = "{{ route('admin.beef.create') }}";
+      else if(type === 'vegetable') newButton.href = "{{ route('admin.vegetable.create') }}";
+    });
   </script>
 
 </body>

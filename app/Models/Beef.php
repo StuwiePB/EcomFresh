@@ -7,8 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Beef extends Model
 {
-    use HasFactory;
+    use HasFactory; // remove SoftDeletes
 
-     protected $table = 'beefs'; // optional if you follow Laravel naming convention
-    protected $fillable = ['name', 'price', 'stock'];
+    protected $table = 'beefs';
+    protected $fillable = ['name','price','stock','description','image','status'];
+    protected $casts = [
+        'price' => 'decimal:2',
+        'stock' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 }

@@ -3,23 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CustomerAuthController extends Controller
 {
+    // Fake login for testing: any email/password works
     public function login(Request $request)
     {
-        // For now, just redirect to home page
-        // You can add actual authentication logic later
+        $request->session()->put('customer_logged_in', true);
         return redirect()->route('home');
     }
 
+    // Fake logout
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        
+        $request->session()->forget('customer_logged_in');
         return redirect('/login');
     }
 }

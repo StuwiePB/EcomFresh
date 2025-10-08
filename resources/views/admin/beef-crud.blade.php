@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>ECOM FRESH - Beef List</title>
+  <title>ECOM FRESH - Item List</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -22,6 +22,7 @@
 
   <main class="flex-1 p-4 flex flex-col items-center">
 
+    <!-- Success message -->
     @if (session('success'))
       <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center w-full max-w-md md:max-w-2xl lg:max-w-3xl">
         {{ session('success') }}
@@ -29,19 +30,24 @@
     @endif
 
     <div class="w-full max-w-md md:max-w-2xl lg:max-w-3xl">
-      <h2 class="text-center text-xl md:text-2xl font-bold mb-4">Beef List</h2>
 
-      <!-- Dropdown -->
-      <div class="flex justify-center mb-6">
-        <div class="bg-white px-6 py-2 rounded-lg flex items-center shadow">
-          <span class="font-semibold">Beef</span>
-          <div class="ml-3 flex flex-col">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                 viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
+      <!-- Page header + controls -->
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Item List</h2>
+
+        <div class="flex gap-2">
+          <!-- Dropdown for item type -->
+          <select id="itemType" class="border rounded px-3 py-2" onchange="navigateToPage()">
+            <option value="{{ route('admin.chicken-crud') }}" {{ request()->is('admin/chicken-crud') ? 'selected' : '' }}>Chicken</option>
+            <option value="{{ route('admin.beef-crud') }}" {{ request()->is('admin/beef-crud') ? 'selected' : '' }}>Beef</option>
+            <option value="{{ route('admin.vegetable-crud') }}" {{ request()->is('admin/vegetable-crud') ? 'selected' : '' }}>Vegetable</option>
+          </select>
+
+          <!-- New button -->
+          <a id="newButton" href="{{ route('admin.beef.create') }}" 
+             class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">
+            New
+          </a>
         </div>
       </div>
 
@@ -86,6 +92,7 @@
     </div>
   </main>
 
+  <!-- Floating Add Button -->
   <a href="{{ route('admin.beef.create') }}" 
      class="fixed bottom-6 right-6 bg-blue-700 text-white p-4 rounded-full shadow-lg hover:bg-blue-800 transition">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
@@ -95,6 +102,7 @@
     </svg>
   </a>
 
+  <!-- JS -->
   <script>
     function confirmDelete(event) {
       event.preventDefault();
@@ -102,6 +110,22 @@
         event.target.submit();
       }
     }
+
+    function navigateToPage() {
+      const dropdown = document.getElementById("itemType");
+      window.location.href = dropdown.value;
+    }
+
+    // Dynamic "New" button update
+    const newButton = document.getElementById('newButton');
+    const dropdown = document.getElementById('itemType');
+
+    dropdown.addEventListener('change', function() {
+      const type = dropdown.options[dropdown.selectedIndex].text.toLowerCase();
+      if(type === 'chicken') newButton.href = "{{ route('items.create') }}";
+      else if(type === 'beef') newButton.href = "{{ route('admin.beef.create') }}";
+      else if(type === 'vegetable') newButton.href = "{{ route('admin.vegetable.create') }}";
+    });
   </script>
 
 </body>

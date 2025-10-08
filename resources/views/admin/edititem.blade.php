@@ -10,9 +10,11 @@
     
     <!-- Header -->
     <header class="bg-blue-700 text-white flex items-center px-4 py-3">
-        <a href="{{ route('admin.chicken-crud') }}" class="mr-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        <a href="{{ route($backRoute) }}" class="mr-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
+                 viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M15 19l-7-7 7-7" />
             </svg>
         </a>
         <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold">ECOM FRESH</h1>
@@ -33,7 +35,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('items.update', $item->id) }}" method="POST" class="space-y-6">
+                <form action="{{ route($updateRoute, $item->id) }}" method="POST" class="space-y-6">
                     @csrf
                     @method('PUT')
 

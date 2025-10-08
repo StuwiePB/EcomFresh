@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class Vegetable extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'products'; // chicken table
-    protected $fillable = ['name','category','price','stock','description','image','status'];
-
+    protected $table = 'vegetables';
+    protected $fillable = ['name','price','stock','description','image','status'];
     protected $casts = [
         'price' => 'decimal:2',
         'stock' => 'integer',
@@ -24,11 +23,4 @@ class Product extends Model
     {
         return $query->where('stock', '>', 0);
     }
-    public static function getCategories()
-{
-    return self::select('category')
-        ->distinct()
-        ->pluck('category');
-}
-
 }
