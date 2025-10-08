@@ -51,9 +51,10 @@
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
-        <div class="container mx-auto px-4 py-6">
+   <!-- Header -->
+<header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <!-- Logo Placeholder -->
                 <div class="w-16 h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
@@ -62,11 +63,17 @@
                 <!-- App Name -->
                 <div>
                     <h1 class="text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
-                    <p class="text-blue-600 font-medium"></p>
+                    <p class="text-blue-600 font-medium">Compare Prices & Find the Best Deals</p>
                 </div>
             </div>
+            
+            <!-- Favorites Button (Right Side) -->
+            <a href="{{ route('customer.favorites') }}" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
+                <i class="fas fa-star mr-2"></i>My Favorites
+            </a>
         </div>
-    </header>
+    </div>
+</header>
 
     <!-- Main Content -->
    <div class="space-y-6">

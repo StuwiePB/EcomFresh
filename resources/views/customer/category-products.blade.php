@@ -39,9 +39,9 @@
             border: 2px solid #10B981;
         }
         
-        .favourite-btn.active {
-            color: #F59E0B;
-        }
+        .favorite-btn.active { 
+    color: #F59E0B; 
+}
         
         .product-image {
             transition: transform 0.3s ease;
@@ -50,31 +50,51 @@
         .product-card:hover .product-image {
             transform: scale(1.05);
         }
+        .favourite-notification {
+    transition: all 0.3s ease;
+}
+
+.product-card {
+    transition: all 0.5s ease;
+}
+
+/* Smooth reordering animation */
+.space-y-6 {
+    transition: all 0.5s ease;
+}
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <!-- Logo Placeholder -->
-                    <div class="w-16 h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
-                        <i class="fas fa-leaf text-white text-2xl"></i>
-                    </div>
-                    <!-- App Name -->
-                    <div>
-                        <h1 class="text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
-                        <p class="text-blue-600 font-medium">Compare Prices & Find the Best Deals</p>
-                    </div>
+   <!-- In the header section, replace with: -->
+<header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <!-- Logo Placeholder -->
+                <div class="w-16 h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
+                    <i class="fas fa-leaf text-white text-2xl"></i>
                 </div>
+                <!-- App Name -->
+                <div>
+                    <h1 class="text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
+                    <p class="text-blue-600 font-medium">Compare Prices & Find the Best Deals</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Buttons (Right Side) -->
+            <div class="flex items-center space-x-4">
+                <!-- Favorites Button -->
+                <a href="{{ route('customer.favorites') }}" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
+                    <i class="fas fa-star mr-2"></i>My Favorites
+                </a>
                 <!-- Back Button -->
                 <a href="{{ route('customer.main') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
                     <i class="fas fa-arrow-left mr-2"></i>Back to Categories
                 </a>
             </div>
         </div>
-    </header>
+    </div>
+</header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
@@ -133,24 +153,24 @@
                         </h3>
                         <p class="text-gray-600 text-sm">Fresh • Quality Guaranteed</p>
                     </div>
-                    <button class="favourite-btn text-gray-400 hover:text-yellow-500 transition duration-300 {{ $product['stores'][0]['is_favourite'] ? 'active text-yellow-500' : '' }}">
+                    <button class="favorite-btn text-gray-400 hover:text-yellow-500 transition duration-300 {{ $product['stores'][0]['is_favorite'] ? 'active text-yellow-500' : '' }}">
                         <i class="fas fa-star text-xl"></i>
                     </button>
                 </div>
                 
                 <!-- Stores Comparison -->
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-{{ count($product['stores']) }} gap-4">
-                        @foreach($product['stores'] as $store)
-                        @php
-                            $isBestPrice = $store['price'] === min(array_column($product['stores'], 'price'));
-                        @endphp
-                        <div class="store-card bg-white border border-gray-200 rounded-lg p-4 {{ $isBestPrice ? 'best-price' : '' }}">
-                            @if($isBestPrice)
-                            <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
-                                <i class="fas fa-trophy mr-1"></i>Best Price
-                            </div>
-                            @endif
+<div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-{{ count($product['stores']) }} gap-4">
+        @foreach($product['stores'] as $store)
+        @php
+            $isBestPrice = $store['price'] === min(array_column($product['stores'], 'price'));
+        @endphp
+        <div class="store-card bg-white border border-gray-200 rounded-lg p-4 {{ $isBestPrice ? 'best-price border-2 border-green-500' : '' }}">
+            @if($isBestPrice)
+            <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
+                <i class="fas fa-trophy mr-1"></i>Best Price
+            </div>
+            @endif
                             
                             <!-- Store Header with Logo -->
                             <div class="flex items-center justify-between mb-3">
@@ -170,7 +190,7 @@
                             </div>
                             
                             <!-- Price Highlight -->
-                            <div class="text-center mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <div class="text-center mb-4 p-3 bg-gray-50 rounded-lg border border-gray-00">
                                 <div class="text-2xl font-extrabold text-green-600">
                                     BND {{ number_format($store['price'], 2) }}
                                 </div>
@@ -243,17 +263,202 @@
     </footer>
 
     <!-- JavaScript for Favourite Toggle -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Favourite button functionality
-            document.querySelectorAll('.favourite-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    this.classList.toggle('text-yellow-500');
-                    this.classList.toggle('text-gray-400');
-                });
+<!-- JavaScript for Enhanced Favorite System with Complete Data Storage -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize favorites from localStorage
+        initializeFavorites();
+
+        // Favorite button functionality with sorting and storage
+        document.querySelectorAll('.favorite-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const productCard = this.closest('.product-card');
+                const productName = productCard.querySelector('h3').textContent.trim();
+                const category = '{{ $categoryData["name"] }}';
+                const isCurrentlyFavorite = this.classList.contains('active');
+                
+                // Toggle visual state
+                this.classList.toggle('active');
+                this.classList.toggle('text-yellow-500');
+                this.classList.toggle('text-gray-400');
+                
+                // Get complete product data
+                const productData = getCompleteProductData(productCard, category, productName);
+                
+                // Update storage
+                if (!isCurrentlyFavorite) {
+                    addToFavorites(productData);
+                } else {
+                    removeFromFavorites(productName, category);
+                }
+                
+                // Re-sort products in this category
+                sortProductsInCategory(productCard);
+                
+                // Show notification
+                showFavoriteNotification(!isCurrentlyFavorite, productCard);
             });
         });
-    </script>
-</body>
-</html>
+
+        // Extract COMPLETE product data from the card
+        function getCompleteProductData(productCard, category, productName) {
+            const stores = [];
+            const storeElements = productCard.querySelectorAll('.store-card');
+            
+            storeElements.forEach(storeElement => {
+                const storeName = storeElement.querySelector('h4').textContent.trim();
+                const priceElement = storeElement.querySelector('.text-2xl');
+                const price = priceElement ? parseFloat(priceElement.textContent.replace('BND', '').trim()) : 0;
+                
+                // Get all store details
+                const details = storeElement.querySelectorAll('.space-y-2 div');
+                let distance = 'N/A';
+                let travelTime = 'N/A'; 
+                let storeHours = '8AM-9PM'; // default
+                
+                details.forEach(detail => {
+                    const text = detail.textContent;
+                    if (text.includes('Distance:')) {
+                        distance = detail.querySelector('span:last-child').textContent;
+                    } else if (text.includes('Travel Time:')) {
+                        travelTime = detail.querySelector('span:last-child').textContent;
+                    } else if (text.includes('Store Hours:')) {
+                        storeHours = detail.querySelector('span:last-child').textContent;
+                    }
+                });
+
+                // Get rating
+                const ratingElement = storeElement.querySelector('.fa-star').parentElement;
+                const rating = ratingElement ? parseFloat(ratingElement.textContent.trim()) : 4.0;
+
+                // Get product image
+                const productImage = productCard.querySelector('.product-image')?.src || 
+                                   '{{ asset($categoryData["image"] ?? "images/categories/default.jpg") }}';
+
+                stores.push({
+                    store_name: storeName,
+                    price: price,
+                    distance: distance,
+                    travel_time: travelTime,
+                    store_hours: storeHours,
+                    rating: rating,
+                    is_favorite: true
+                });
+            });
+
+            // Get the actual product image
+            const productImageElement = productCard.querySelector('.product-image');
+            const productImage = productImageElement ? 
+                productImageElement.src.replace(window.location.origin, '') : 
+                '{{ $categoryData["image"] }}';
+
+            return {
+                name: productName,
+                category: category,
+                description: '{{ $categoryData["description"] }}',
+                image: productImage,
+                stores: stores,
+                favorited_at: new Date().toISOString()
+            };
+        }
+
+        // Add product to favorites in localStorage
+        function addToFavorites(productData) {
+            const favorites = getFavorites();
+            // Check if product already exists
+            const existingIndex = favorites.findIndex(fav => 
+                fav.name === productData.name && fav.category === productData.category
+            );
+            
+            if (existingIndex === -1) {
+                favorites.push(productData);
+                localStorage.setItem('ecomfresh_favorites', JSON.stringify(favorites));
+                console.log('Added to favorites:', productData);
+            } else {
+                // Update existing favorite
+                favorites[existingIndex] = productData;
+                localStorage.setItem('ecomfresh_favorites', JSON.stringify(favorites));
+            }
+        }
+
+        // Remove product from favorites
+        function removeFromFavorites(productName, category) {
+            const favorites = getFavorites();
+            const updatedFavorites = favorites.filter(fav => 
+                !(fav.name === productName && fav.category === category)
+            );
+            localStorage.setItem('ecomfresh_favorites', JSON.stringify(updatedFavorites));
+            console.log('Removed from favorites:', productName);
+        }
+
+        // Get favorites from localStorage
+        function getFavorites() {
+            return JSON.parse(localStorage.getItem('ecomfresh_favorites') || '[]');
+        }
+
+        // Initialize favorite buttons based on stored data
+        function initializeFavorites() {
+            const favorites = getFavorites();
+            const currentCategory = '{{ $categoryData["name"] }}';
+            
+            document.querySelectorAll('.product-card').forEach(card => {
+                const productName = card.querySelector('h3').textContent.trim();
+                const favoriteBtn = card.querySelector('.favorite-btn');
+                
+                // Check if this product is in favorites for current category
+                const isFavorite = favorites.some(fav => 
+                    fav.name === productName && fav.category === currentCategory
+                );
+                
+                if (isFavorite) {
+                    favoriteBtn.classList.add('active', 'text-yellow-500');
+                    favoriteBtn.classList.remove('text-gray-400');
+                }
+            });
+            
+            // Initial sort
+            document.querySelectorAll('.product-card').forEach(card => {
+                sortProductsInCategory(card);
+            });
+        }
+
+        // Sort products within a category (favorites first)
+        function sortProductsInCategory(clickedProductCard) {
+            const categorySection = clickedProductCard.closest('.space-y-6');
+            const productCards = Array.from(categorySection.querySelectorAll('.product-card'));
+            
+            productCards.sort((a, b) => {
+                const aFavorite = a.querySelector('.favorite-btn').classList.contains('active');
+                const bFavorite = b.querySelector('.favorite-btn').classList.contains('active');
+                
+                if (aFavorite && !bFavorite) return -1;
+                if (!aFavorite && bFavorite) return 1;
+                return 0;
+            });
+            
+            productCards.forEach(card => categorySection.appendChild(card));
+        }
+
+        // Show notification when favoriting
+        function showFavoriteNotification(added, productCard) {
+            const productName = productCard.querySelector('h3').textContent.trim();
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-transform duration-300 ${
+                added ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${added ? 'fa-star' : 'fa-star-half-alt'} mr-2"></i>
+                    <span>${added ? 'Added to favorites' : 'Removed from favorites'}: ${productName}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    });
+</script>

@@ -34,6 +34,7 @@ Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
 Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
+Route::get('/customer/favorites', function () {return view('customer.favorites');})->name('customer.favorites');
 
 // --------------------
 // ADMIN ROUTES
