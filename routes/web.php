@@ -25,9 +25,14 @@ Route::post('/logout', function (Request $request) {
 })->name('logout');
 
 // --------------------
+// ROOT ROUTE - Show Login Page First (CHANGED)
+// --------------------
+Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from customer.welcome to customer.login
+
+// --------------------
 // CUSTOMER ROUTES
 // --------------------
-Route::get('/', fn() => view('customer.welcome'))->name('home');
+Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome'); // ADDED: Welcome page as separate route
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice');
 Route::get('/login', fn() => view('customer.login'))->name('login');
