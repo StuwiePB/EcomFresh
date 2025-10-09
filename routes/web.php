@@ -126,3 +126,8 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
+
+// --------------------
+// WELCOME ROUTE FOR ADMIN BUTTON
+// --------------------
+Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome');

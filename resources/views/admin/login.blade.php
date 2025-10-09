@@ -16,12 +16,12 @@
       </div>
     @endif
 
-    <form action="{{ route('admin.login.submit') }}" method="POST" class="space-y-4">
+    <form action="/admin/login" method="POST" class="space-y-4">
       @csrf
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" name="email" required
+        <input type="email" name="email" required value="{{ old('email') }}"
                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
       </div>
 
@@ -36,6 +36,10 @@
         Login
       </button>
     </form>
+
+    <div class="mt-4 text-center">
+      <a href="/" class="text-blue-600 hover:text-blue-800 text-sm">← Back to Main Login</a>
+    </div>
   </div>
 </body>
 </html>
