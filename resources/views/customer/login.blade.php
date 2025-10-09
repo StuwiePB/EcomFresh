@@ -141,12 +141,11 @@
 </head>
 <body>
 
-  <!-- Role Toggle -->
-  <div class="role-toggle">
-    <div class="role-btn active" onclick="setRole('admin')">Admin</div>
-    <div class="role-btn" onclick="setRole('customer')">Customer</div>
-  </div>
-
+<!-- Role Toggle -->
+<div class="role-toggle">
+    <a href="/admin/login" class="role-btn active">Admin</a>
+    <a href="/customer" class="role-btn">Customer</a>
+</div>
   <!-- Login Box -->
   <div class="container">
     <h2>Welcome Back!</h2>
