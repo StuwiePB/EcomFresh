@@ -124,6 +124,19 @@
     .signup a:hover {
       text-decoration: underline;
     }
+
+    .message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      display: none;
+    }
+    
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
   </style>
 </head>
 <body>
@@ -138,14 +151,29 @@
   <div class="container">
     <h2>Welcome Back!</h2>
     <p>Sign in to your account</p>
+    
+    <!-- Display validation errors -->
+    @if($errors->any())
+      <div class="error" style="display: block; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">
+        {{ $errors->first() }}
+      </div>
+    @endif
+    
+    <!-- Display success message -->
+    @if(session('success'))
+      <div class="success" style="display: block; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;">
+        {{ session('success') }}
+      </div>
+    @endif
+    
     <form method="POST" id="loginForm">
       @csrf
-      <input type="text" name="email" class="input-field" placeholder="Email" required>
+      <input type="text" name="email" class="input-field" placeholder="Email" value="{{ old('email') }}" required>
       <input type="password" name="password" class="input-field" placeholder="Password" required>
       <a href="#" class="forgot">Forgot Password?</a>
       <button type="submit" class="btn">Sign In</button>
       <div class="signup">
-        Don’t have an account? <a href="#">Sign Up</a>
+        Don't have an account? <a href="#">Sign Up</a>
       </div>
     </form>
   </div>
@@ -164,12 +192,13 @@
     }
 
     // Change form action dynamically
-    document.getElementById("loginForm").addEventListener("submit", function () {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
       if (currentRole === "admin") {
         this.action = "{{ route('admin.login.submit') }}";
       } else {
         this.action = "{{ route('customer.login.submit') }}";
       }
+      // Form will now submit to the correct route
     });
   </script>
 

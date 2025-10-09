@@ -9,33 +9,24 @@ class AdminAuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('admin.adminlogin'); // Your login Blade
+        return view('admin.login');
     }
 
     public function login(Request $request)
     {
-        // Validate input
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => 'required|email',
+            'password' => 'required'
         ]);
 
-        // Attempt login
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // prevent session fixation
-            return redirect()->intended('/admin/dashboard');
+            $request->session()->regenerate();
+            return redirect()->route('admin.dashboard');
         }
 
-        // Login failed
         return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ])->withInput();
-    }
-
-    public function dashboard()
-    {
-        return view('admin.dashboard'); 
-        // Ensure Blade exists: resources/views/admin/dashboard.blade.php
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)
@@ -44,6 +35,16 @@ class AdminAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/admin/login');
+    }
 
-}
+    public function dashboard()
+    {
+        return view('admin.dashboard');
+    }
+
+    public function updateStoreInfo(Request $request)
+    {
+        // Add your store info update logic here
+        return back()->with('success', 'Store information updated successfully.');
+    }
 }

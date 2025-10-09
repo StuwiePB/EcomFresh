@@ -29,7 +29,7 @@ Route::post('/logout', function (Request $request) {
 // --------------------
 Route::get('/', fn() => view('customer.welcome'))->name('home');
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
-Route::get('/todaysprice', [PriceController::class, 'todaysPrice']);
+Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice');
 Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
@@ -67,13 +67,13 @@ Route::prefix('admin')->group(function () {
     // BEEF CRUD
     // --------------------
     Route::middleware('auth')->group(function () {
-    Route::get('/beef', [BeefController::class, 'index'])->name('admin.beef-crud');
-    Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
-    Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
-    Route::get('/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');
-    Route::put('/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
-    Route::delete('/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
-
+        Route::get('/beef', [BeefController::class, 'index'])->name('admin.beef-crud');
+        Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
+        Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
+        Route::get('/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');
+        Route::put('/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
+        Route::delete('/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
+    });
 
     // --------------------
     // VEGETABLE CRUD
@@ -88,14 +88,16 @@ Route::prefix('admin')->group(function () {
     });
 
     // Store info
-    Route::get('/storeinfo', fn() => view('admin.storeinfo'))->name('admin.storeinfo')->middleware('auth');
-    Route::post('/storeinfo', [AdminAuthController::class, 'updateStoreInfo'])->name('admin.storeinfo.update');
+    Route::middleware('auth')->group(function () {
+        Route::get('/storeinfo', fn() => view('admin.storeinfo'))->name('admin.storeinfo');
+        Route::post('/storeinfo', [AdminAuthController::class, 'updateStoreInfo'])->name('admin.storeinfo.update');
 
-    // Delete history
-    Route::get('/deletehistory', function () {
-        $deletedItems = AdminProduct::onlyTrashed()->get();
-        return view('admin.deletehistory', compact('deletedItems'));
-    })->middleware('auth')->name('admin.deletehistory');
+        // Delete history
+        Route::get('/deletehistory', function () {
+            $deletedItems = AdminProduct::onlyTrashed()->get();
+            return view('admin.deletehistory', compact('deletedItems'));
+        })->name('admin.deletehistory');
+    });
 });
 
 // --------------------
@@ -119,4 +121,3 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
-    });
