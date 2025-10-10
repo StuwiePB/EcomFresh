@@ -44,7 +44,6 @@ class PriceController extends Controller
                         ]
                     ]
                 ],
-                // ADD MORE PRODUCTS HERE
                 [
                     'name' => 'Ribeye Steak',
                     'description' => 'Fresh • Quality Guaranteed',
@@ -97,6 +96,59 @@ class PriceController extends Controller
         ];
 
         return view('customer.todays-price', $data);
-        
+    }
+
+    // NEW METHOD FOR PRICE HISTORY
+        public function priceHistory()
+    {
+        $data = [
+            'location' => 'Gadong, Brunei',
+            'products' => [
+                [
+                    'name' => 'Chicken Breast',
+                    'description' => 'Fresh • Quality Guaranteed',
+                    'currentPrice' => 3.40,
+                    'priceHistory' => [
+                        'current' => 3.40,
+                        'lastMonth' => 3.70,
+                        'twoMonthsAgo' => 3.65,
+                        'threeMonthsAgo' => 3.80
+                    ],
+                    'priceChange' => -0.30,
+                    'percentageChange' => -8.1,
+                    'trend' => 'decrease'
+                ],
+                [
+                    'name' => 'Ribeye Steak',
+                    'description' => 'Fresh • Quality Guaranteed',
+                    'currentPrice' => 18.90,
+                    'priceHistory' => [
+                        'current' => 18.90,
+                        'lastMonth' => 17.90,
+                        'twoMonthsAgo' => 17.50,
+                        'threeMonthsAgo' => 17.20
+                    ],
+                    'priceChange' => 1.00,
+                    'percentageChange' => 5.6,
+                    'trend' => 'increase'
+                ],
+                [
+                    'name' => 'Beansprouts',
+                    'description' => 'Fresh • Quality Guaranteed',
+                    'currentPrice' => 1.20,
+                    'priceHistory' => [
+                        'current' => 1.20,
+                        'lastMonth' => 1.20,
+                        'twoMonthsAgo' => 1.25,
+                        'threeMonthsAgo' => 1.30
+                    ],
+                    'priceChange' => 0.00,
+                    'percentageChange' => 0.0,
+                    'trend' => 'stable'
+                ]
+            ]
+        ];
+
+        return view('customer.pricehistory', $data);
     }
 }

@@ -35,6 +35,7 @@ Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from 
 Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome'); // ADDED: Welcome page as separate route
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice');
+Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
 Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
