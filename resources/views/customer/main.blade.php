@@ -38,16 +38,70 @@
         
         .logo-placeholder {
             background: linear-gradient(135deg, #1e90ff, #00bfff);
+            cursor: pointer;
         }
+        
         .category-image {
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
 
-.category-card:hover .category-image {
-    transform: scale(1.05);
-}
+        .category-card:hover .category-image {
+            transform: scale(1.05);
+        }
 
+        /* Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .popup-overlay.active .popup-content {
+            transform: scale(1);
+        }
+        
+        .profile-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            color: #374151;
+            text-decoration: none;
+        }
+        
+        .profile-link:hover {
+            background-color: #f3f4f6;
+            color: #1e40af;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -57,7 +111,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <!-- Logo Placeholder -->
-                <div class="w-16 h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
+                <div class="w-16 h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md" id="logoButton">
                     <i class="fas fa-leaf text-white text-2xl"></i>
                 </div>
                 <!-- App Name -->
@@ -67,8 +121,8 @@
                 </div>
             </div>
             
-            <!-- Favorites Button (Right Side) -->
-            <a href="{{ route('customer.favorites') }}" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
+           <!-- Favorites Button (Right Side) -->
+            <a href="/customer/favorites" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
                 <i class="fas fa-star mr-2"></i>My Favorites
             </a>
         </div>
@@ -76,6 +130,7 @@
 </header>
 
     <!-- Main Content -->
+   <!-- Main Content -->
    <div class="space-y-6">
      <main class="container mx-auto px-4 py-8">
     @foreach($categories as $category)
@@ -112,11 +167,104 @@
     @endforeach
 </div>
 
+    <!-- Profile Popup -->
+    <div class="popup-overlay" id="profilePopup">
+        <div class="popup-content">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-t-2xl">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold">User Profile</h2>
+                    <button id="closePopup" class="text-white hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Profile Content -->
+            <div class="p-6">
+                <!-- User Info -->
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
+                        S
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Stuart</h3>
+                        <p class="text-gray-600">Customer</p>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">Quick Links</h3>
+                    <div class="space-y-2">
+                        <!-- Today's Prices Link -->
+                        <a href="/todaysprice" class="profile-link">
+                            <i class="fas fa-chart-line text-blue-500 mr-3"></i>
+                            <div>
+                                <div class="font-medium">Today's Prices</div>
+                                <div class="text-sm text-gray-500">View current market prices</div>
+                            </div>
+                        </a>
+                        
+                        <!-- Price History Link -->
+                        <a href="/pricehistory" class="profile-link">
+                            <i class="fas fa-history text-green-500 mr-3"></i>
+                            <div>
+                                <div class="font-medium">Price History</div>
+                                <div class="text-sm text-gray-500">Track price trends over time</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Account Actions -->
+                <a href="/customer/settings" class="profile-link">
+    <i class="fas fa-cog text-gray-500 mr-3"></i>
+    <div class="font-medium">Settings</div>
+</a>
+        </a>
+        
+        <a href="#" class="profile-link">
+            <i class="fas fa-sign-out-alt text-red-500 mr-3"></i>
+            <div class="font-medium">Logout</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-white/80 backdrop-blur-md border-t border-blue-100 mt-12">
         <div class="container mx-auto px-4 py-6 text-center">
             <p class="text-gray-700 font-medium">&copy; 2025 EcomFresh. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        // Popup functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoButton = document.getElementById('logoButton');
+            const profilePopup = document.getElementById('profilePopup');
+            const closePopup = document.getElementById('closePopup');
+            
+            // Open popup when logo is clicked
+            logoButton.addEventListener('click', function() {
+                profilePopup.classList.add('active');
+            });
+            
+            // Close popup when close button is clicked
+            closePopup.addEventListener('click', function() {
+                profilePopup.classList.remove('active');
+            });
+            
+            // Close popup when clicking outside the content
+            profilePopup.addEventListener('click', function(e) {
+                if (e.target === profilePopup) {
+                    profilePopup.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

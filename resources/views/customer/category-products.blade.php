@@ -84,11 +84,11 @@
             <!-- Navigation Buttons (Right Side) -->
             <div class="flex items-center space-x-4">
                 <!-- Favorites Button -->
-                <a href="{{ route('customer.favorites') }}" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
+                <a href="/customer/favorites" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
                     <i class="fas fa-star mr-2"></i>My Favorites
                 </a>
                 <!-- Back Button -->
-                <a href="{{ route('customer.main') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
+                <a href="/customer" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
                     <i class="fas fa-arrow-left mr-2"></i>Back to Categories
                 </a>
             </div>
