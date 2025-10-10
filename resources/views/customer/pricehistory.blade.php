@@ -92,7 +92,7 @@
         <!-- Page Title -->
         <div class="text-center mb-8">
             <h2 class="text-4xl font-extrabold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 800;">Price History</h2>
-            <p class="text-xl text-gray-600">Track price trends over the last 3 months</p>
+            <p class="text-xl text-gray-600">Tracks average price trends over the last 3 months</p>
         </div>
 
         <!-- Products Price History -->
