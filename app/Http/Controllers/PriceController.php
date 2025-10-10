@@ -49,11 +49,11 @@ class PriceController extends Controller
                     'description' => 'Fresh • Quality Guaranteed',
                     'stores' => [
                         [
-                            'name' => 'Supa Save',
+                            'name' => 'Hua Ho',
                             'rating' => 4.2,
                             'distance' => 2.1,
-                            'currentPrice' => 9.00,
-                            'originalPrice' => 10.00,
+                            'currentPrice' => 17.95,
+                            'originalPrice' => 18.75,
                             'travelTime' => 6,
                             'hours' => '8AM–9PM'
                         ],
@@ -61,8 +61,8 @@ class PriceController extends Controller
                             'name' => 'Soon Lee',
                             'rating' => 4.0,
                             'distance' => 3.2,
-                            'currentPrice' => 7.20,
-                            'originalPrice' => 8.50,
+                            'currentPrice' => 16.90,
+                            'originalPrice' => 17.90,
                             'travelTime' => 10,
                             'hours' => '9AM–8PM'
                         ]
@@ -77,7 +77,7 @@ class PriceController extends Controller
                             'rating' => 4.4,
                             'distance' => 1.8,
                             'currentPrice' => 1.80,
-                            'originalPrice' => 1.90,
+                            'originalPrice' => 2.00,
                             'travelTime' => 6,
                             'hours' => '7:30AM–10PM'
                         ],
@@ -85,8 +85,8 @@ class PriceController extends Controller
                             'name' => 'Supa Save',
                             'rating' => 4.2,
                             'distance' => 2.1,
-                            'currentPrice' => 2.10,
-                            'originalPrice' => 2.40,
+                            'currentPrice' => 1.50,
+                            'originalPrice' => 1.80,
                             'travelTime' => 10,
                             'hours' => '8AM–9PM'
                         ]
@@ -107,44 +107,44 @@ class PriceController extends Controller
                 [
                     'name' => 'Chicken Breast',
                     'description' => 'Fresh • Quality Guaranteed',
-                    'currentPrice' => 3.40,
+                    'currentPrice' => 3.60,
                     'priceHistory' => [
-                        'current' => 3.40,
+                        'current' => 3.60,
                         'lastMonth' => 3.70,
                         'twoMonthsAgo' => 3.65,
                         'threeMonthsAgo' => 3.80
                     ],
-                    'priceChange' => -0.30,
-                    'percentageChange' => -8.1,
+                    'priceChange' => -0.10,
+                    'percentageChange' => -2.7,
                     'trend' => 'decrease'
                 ],
                 [
                     'name' => 'Ribeye Steak',
                     'description' => 'Fresh • Quality Guaranteed',
-                    'currentPrice' => 18.90,
+                    'currentPrice' => 18.30,
                     'priceHistory' => [
-                        'current' => 18.90,
+                        'current' => 18.30,
                         'lastMonth' => 17.90,
                         'twoMonthsAgo' => 17.50,
                         'threeMonthsAgo' => 17.20
                     ],
-                    'priceChange' => 1.00,
-                    'percentageChange' => 5.6,
+                    'priceChange' => 0.40,
+                    'percentageChange' => 2.23,
                     'trend' => 'increase'
                 ],
                 [
                     'name' => 'Beansprouts',
                     'description' => 'Fresh • Quality Guaranteed',
-                    'currentPrice' => 1.20,
+                    'currentPrice' => 1.80,
                     'priceHistory' => [
-                        'current' => 1.20,
-                        'lastMonth' => 1.20,
-                        'twoMonthsAgo' => 1.25,
-                        'threeMonthsAgo' => 1.30
+                        'current' => 1.80,
+                        'lastMonth' => 1.50,
+                        'twoMonthsAgo' => 1.45,
+                        'threeMonthsAgo' => 1.45
                     ],
-                    'priceChange' => 0.00,
-                    'percentageChange' => 0.0,
-                    'trend' => 'stable'
+                    'priceChange' => 0.30,
+                    'percentageChange' => 20.0,
+                    'trend' => 'increase'
                 ]
             ]
         ];
