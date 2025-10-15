@@ -164,16 +164,16 @@ class ProductController extends Controller
      */
     public function adminIndex()
     {
-        $products = Product::all();
+        $chickens = Product::all();
 
         // If no products exist, create sample data
-        if ($products->count() === 0) {
+        if ($chickens->count() === 0) {
             Product::create(['name'=>'Chicken Breast','category'=>'Meat','price'=>3.50,'stock'=>30,'status'=>'active']);
             Product::create(['name'=>'Whole Chicken','category'=>'Meat','price'=>5.50,'stock'=>30,'status'=>'active']);
-            $products = Product::all();
+            $chickens = Product::all();
         }
 
-        return view('admin.chicken-crud', compact('products'));
+        return view('admin.chicken-crud', compact('chickens'));
     }
 
     /**
@@ -181,7 +181,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('admin.items.create');
+        
+        return view('admin.adminaddnewitem');
     }
 
     /**
@@ -206,10 +207,14 @@ class ProductController extends Controller
      * Show edit form
      */
     public function edit($id)
-    {
-        $product = Product::findOrFail($id);
-        return view('admin.edititem', compact('product'));
-    }
+{
+    $item = Product::findOrFail($id); // or Beef::findOrFail($id), etc.
+    return view('admin.edititem', [
+        'item' => $item,
+        'updateRoute' => 'admin.chicken.update', // change per controller
+        'backRoute' => 'admin.chicken-crud', // change per controller
+    ]);
+}
 
     /**
      * Update item

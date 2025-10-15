@@ -61,20 +61,21 @@ Route::prefix('admin')->group(function () {
     // --------------------
     // CHICKEN CRUD
     // --------------------
-    Route::middleware('auth')->group(function () {
-        Route::get('/chicken-crud', [ProductController::class, 'adminIndex'])->name('admin.chicken-crud');
-        Route::get('/chicken/create', [ProductController::class, 'create'])->name('admin.chicken.create');
-        Route::post('/chicken', [ProductController::class, 'store'])->name('admin.chicken.store');
-        Route::get('/chicken/{id}/edit', [ProductController::class, 'edit'])->name('admin.chicken.edit');
-        Route::put('/chicken/{id}', [ProductController::class, 'update'])->name('admin.chicken.update');
-        Route::delete('/chicken/{id}', [ProductController::class, 'destroy'])->name('admin.chicken.destroy');
-    });
+   Route::middleware('auth')->group(function () {
+    Route::get('/chicken-crud', [ProductController::class, 'adminIndex'])->name('admin.chicken-crud');
+    Route::get('/chicken/create', [ProductController::class, 'create'])->name('admin.chicken.create');
+    Route::post('/chicken', [ProductController::class, 'store'])->name('admin.chicken.store');
+    Route::get('/chicken/{id}/edit', [ProductController::class, 'edit'])->name('admin.chicken.edit');
+    Route::put('/chicken/{id}', [ProductController::class, 'update'])->name('admin.chicken.update');
+    Route::delete('/chicken/{id}', [ProductController::class, 'destroy'])->name('admin.chicken.destroy');
+});
+
 
     // --------------------
     // BEEF CRUD
     // --------------------
     Route::middleware('auth')->group(function () {
-        Route::get('/beef', [BeefController::class, 'index'])->name('admin.beef-crud');
+        Route::get('/beef-crud', [BeefController::class, 'index'])->name('admin.beef-crud');
         Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
         Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
         Route::get('/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');

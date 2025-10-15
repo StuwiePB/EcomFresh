@@ -24,9 +24,13 @@ class VegetableController extends Controller
 
     // Show form to add new vegetable
     public function create()
-    {
-        return view('admin.items.create'); // shared blade or create separate if needed
-    }
+{
+    return view('admin.adminaddnewitem', [
+        'item' => null,
+        'storeRoute' => 'admin.vegetable.store',
+        'backRoute' => 'admin.vegetable-crud'
+    ]);
+}
 
     // Store new vegetable
     public function store(Request $request)
@@ -44,16 +48,16 @@ class VegetableController extends Controller
     }
 
     // Show edit form (shared blade)
-    public function edit($id)
-    {
-        $item = Vegetable::findOrFail($id);
-
-        return view('admin.edititem', [
-            'item' => $item,
-            'backRoute' => route('admin.vegetable-crud'),
-            'updateRoute' => route('admin.vegetable.update', $item->id)
-        ]);
-    }
+   public function edit($id)
+{
+    $item = Vegetable::findOrFail($id);
+    return view('admin.edititem', [
+        'item' => $item,
+        'updateRoute' => 'admin.vegetable.update',
+        'storeRoute' => 'admin.vegetable.store',
+        'backRoute' => 'admin.vegetable-crud'
+    ]);
+}
 
     // Update vegetable
     public function update(Request $request, $id)

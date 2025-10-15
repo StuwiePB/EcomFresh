@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>ECOM FRESH - Item List</title>
+  <title>ECOM FRESH - Beef List</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -10,7 +10,7 @@
 
   <!-- Header -->
   <header class="bg-blue-700 text-white flex items-center px-4 py-3">
-    <a href="{{ url()->previous() }}" class="mr-3">
+     <a href="{{ route('admin.dashboard') }}" class="mr-3">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
            viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -33,7 +33,7 @@
 
       <!-- Page header + controls -->
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Item List</h2>
+        <h2 class="text-2xl font-bold">Beef List</h2>
 
         <div class="flex gap-2">
           <!-- Dropdown for item type -->
@@ -59,7 +59,7 @@
             <div class="text-4xl">🥩</div>
             <div class="flex flex-col space-y-1">
               <h3 class="font-bold text-lg">{{ $beef->name }}</h3>
-              <p class="text-sm text-gray-500">Category: {{ $beef->category }}</p>
+              <p class="text-sm text-gray-500">Category: {{ $beef->category ?? 'Beef' }}</p>
               <p class="text-sm font-semibold">${{ number_format($beef->price, 2) }}</p>
               <p class="text-sm">Stock: {{ $beef->stock }}</p>
             </div>
@@ -102,11 +102,10 @@
     </svg>
   </a>
 
-  <!-- JS -->
   <script>
     function confirmDelete(event) {
       event.preventDefault();
-      if (confirm('Are you sure you want to delete this item?')) {
+      if(confirm('Are you sure you want to delete this item?')) {
         event.target.submit();
       }
     }
@@ -116,13 +115,13 @@
       window.location.href = dropdown.value;
     }
 
-    // Dynamic "New" button update
+    // Dynamic New button
     const newButton = document.getElementById('newButton');
     const dropdown = document.getElementById('itemType');
 
     dropdown.addEventListener('change', function() {
       const type = dropdown.options[dropdown.selectedIndex].text.toLowerCase();
-      if(type === 'chicken') newButton.href = "{{ route('items.create') }}";
+      if(type === 'chicken') newButton.href = "{{ route('admin.chicken.create') }}";
       else if(type === 'beef') newButton.href = "{{ route('admin.beef.create') }}";
       else if(type === 'vegetable') newButton.href = "{{ route('admin.vegetable.create') }}";
     });

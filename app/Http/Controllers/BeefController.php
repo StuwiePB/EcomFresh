@@ -40,10 +40,13 @@ class BeefController extends Controller
      * Show Add Beef form
      */
     public function create()
-    {
-        return view('admin.beef-create');
-    }
-
+{
+    return view('admin.adminaddnewitem', [
+        'item' => null,
+        'storeRoute' => 'admin.beef.store',
+        'backRoute' => 'admin.beef-crud'
+    ]);
+}
     /**
      * Store new beef
      */
@@ -63,13 +66,14 @@ class BeefController extends Controller
     /**
      * Show Edit Beef form
      */
-    public function edit($id)
+public function edit($id)
 {
     $item = Beef::findOrFail($id);
     return view('admin.edititem', [
         'item' => $item,
-        'updateRoute' => 'admin.beef.update',  // <-- this MUST match your PUT route
-        'backRoute'   => 'admin.beef-crud'    // <-- for back button
+        'updateRoute' => 'admin.beef.update',
+        'storeRoute' => 'admin.beef.store',
+        'backRoute' => 'admin.beef-crud'
     ]);
 }
 public function update(Request $request, $id)

@@ -10,7 +10,8 @@
   <div class="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
     <h2 class="text-2xl font-bold text-center text-blue-600 mb-6">Add New Item</h2>
 
-    <form action="{{ route('items.store') }}" method="POST" class="space-y-4">
+    <!-- Only one form -->
+    <form id="addItemForm" method="POST" class="space-y-4">
       @csrf
 
       <div>
@@ -21,12 +22,12 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Category</label>
-        <select name="category" required
+        <select id="categorySelect" name="category" required
                 class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-          <option value="Chicken">Chicken</option>
-          <option value="Beef">Beef</option>
-          <option value="Vegetables">Vegetables</option>
-          <option value="Seafood">Seafood</option>
+          <option value="">-- Select Category --</option>
+          <option value="chicken">Chicken</option>
+          <option value="beef">Beef</option>
+          <option value="vegetable">Vegetables</option>
         </select>
       </div>
 
@@ -48,5 +49,36 @@
       </button>
     </form>
   </div>
+
+  <script>
+    const form = document.getElementById('addItemForm');
+    const categorySelect = document.getElementById('categorySelect');
+
+    form.addEventListener('submit', function(e) {
+      const category = categorySelect.value;
+
+      if (!category) {
+        e.preventDefault();
+        alert('Please select a category.');
+        return;
+      }
+
+      // Set the action dynamically based on selected category
+      switch(category) {
+        case 'chicken':
+          form.action = "{{ route('admin.chicken.store') }}";
+          break;
+        case 'beef':
+          form.action = "{{ route('admin.beef.store') }}";
+          break;
+        case 'vegetable':
+          form.action = "{{ route('admin.vegetable.store') }}";
+          break;
+        default:
+          e.preventDefault();
+          alert('Invalid category selected.');
+      }
+    });
+  </script>
 </body>
 </html>
