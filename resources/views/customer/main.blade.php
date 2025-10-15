@@ -102,29 +102,64 @@
             background-color: #f3f4f6;
             color: #1e40af;
         }
+        
+        /* Mobile Optimizations */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .header-flex {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .mobile-stack {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .mobile-stack a,
+    .mobile-stack button {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .mobile-text {
+        font-size: 1.5rem !important;
+    }
+    
+    .mobile-subtext {
+        font-size: 0.875rem !important;
+    }
+}
     </style>
 </head>
 <body class="min-h-screen">
-   <!-- Header -->
+<!-- Header -->
 <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
-    <div class="container mx-auto px-4 py-6">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-4">
+    <div class="container mx-auto px-4 py-4">
+        <div class="header-flex flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center justify-center md:justify-start space-x-4">
                 <!-- Logo Placeholder -->
-                <div class="w-16 h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md" id="logoButton">
-                    <i class="fas fa-leaf text-white text-2xl"></i>
+                <div class="w-12 h-12 md:w-16 md:h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md" id="logoButton">
+                    <i class="fas fa-leaf text-white text-xl md:text-2xl"></i>
                 </div>
                 <!-- App Name -->
-                <div>
-                    <h1 class="text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
-                    <p class="text-blue-600 font-medium">Compare Prices & Find the Best Deals</p>
+                <div class="text-center md:text-left">
+                    <h1 class="mobile-text text-2xl md:text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
+                    <p class="mobile-subtext text-blue-600 font-medium text-sm md:text-base">Compare Prices & Find the Best Deals</p>
                 </div>
             </div>
             
-           <!-- Favorites Button (Right Side) -->
-            <a href="/customer/favorites" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
-                <i class="fas fa-star mr-2"></i>My Favorites
-            </a>
+            <!-- Favorites Button -->
+            <div class="flex justify-center md:justify-end">
+                <a href="/customer/favorites" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium text-sm w-full md:w-auto text-center">
+                    <i class="fas fa-star mr-2"></i>My Favorites
+                </a>
+            </div>
         </div>
     </div>
 </header>

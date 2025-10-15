@@ -62,33 +62,78 @@
 .space-y-6 {
     transition: all 0.5s ease;
 }
-    </style>
-</head>
-<body class="min-h-screen">
-   <!-- In the header section, replace with: -->
+  /* Mobile Optimizations */
+    @media (max-width: 768px) {
+        .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        
+        .product-card {
+            margin: 0.5rem 0;
+        }
+        
+        .store-card {
+            min-height: auto;
+        }
+        
+        /* Stack header elements vertically on mobile */
+        .header-flex {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        /* Adjust product header for mobile */
+        .product-header-flex {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+        
+        /* Make buttons full width on mobile */
+        .mobile-stack {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .mobile-stack a,
+        .mobile-stack button {
+            width: 100%;
+            text-align: center;
+        }
+        
+        /* Adjust text sizes for mobile */
+        .mobile-text {
+            font-size: 1.5rem !important; /* text-2xl */
+        }
+        
+        .mobile-subtext {
+            font-size: 0.875rem !important; /* text-sm */
+        }
+    }
+</style>
+
 <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
-    <div class="container mx-auto px-4 py-6">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <!-- Logo Placeholder -->
-                <div class="w-16 h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
-                    <i class="fas fa-leaf text-white text-2xl"></i>
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <!-- Logo and Title Section -->
+            <div class="flex items-center justify-center md:justify-start space-x-4">
+                <div class="w-12 h-12 md:w-16 md:h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
+                    <i class="fas fa-leaf text-white text-xl md:text-2xl"></i>
                 </div>
-                <!-- App Name -->
-                <div>
-                    <h1 class="text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
-                    <p class="text-blue-600 font-medium">Compare Prices & Find the Best Deals</p>
+                <div class="text-center md:text-left">
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
+                    <p class="text-blue-600 font-medium text-sm md:text-base">Compare Prices & Find the Best Deals</p>
                 </div>
             </div>
             
-            <!-- Navigation Buttons (Right Side) -->
-            <div class="flex items-center space-x-4">
-                <!-- Favorites Button -->
-                <a href="/customer/favorites" class="bg-yellow-500 text-white px-6 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium">
+            <!-- Navigation Buttons -->
+            <div class="flex flex-col sm:flex-row items-center gap-2 justify-center">
+                <a href="/customer/favorites" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
                     <i class="fas fa-star mr-2"></i>My Favorites
                 </a>
-                <!-- Back Button -->
-                <a href="/customer" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
+                <a href="/customer" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
                     <i class="fas fa-arrow-left mr-2"></i>Back to Categories
                 </a>
             </div>
@@ -104,18 +149,7 @@
             <p class="text-xl text-gray-600">{{ $categoryData['description'] }}</p>
         </div>
 
-        <!-- Location Filter -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-blue-50 p-6 mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">📍 Your Location</h3>
-                    <p class="text-gray-600">Showing stores near <span class="font-semibold">Gadong, Brunei</span></p>
-                </div>
-                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
-                    <i class="fas fa-map-marker-alt mr-2"></i>Change Location
-                </button>
-            </div>
-        </div>
+      
 
         <!-- Products Comparison -->
         <div class="space-y-6">
@@ -183,7 +217,7 @@
                                         <h4 class="font-bold text-gray-800 text-lg">{{ $store['store_name'] }}</h4>
                                         <div class="flex items-center text-sm text-gray-600">
                                             <i class="fas fa-star text-yellow-500 mr-1"></i>
-                                            {{ $store['rating'] }} • {{ $store['distance'] }}
+                                            {{ $store['rating'] }} 
                                         </div>
                                     </div>
                                 </div>
@@ -200,13 +234,12 @@
                             <!-- Store Details -->
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">📍 Distance:</span>
-                                    <span class="font-semibold text-blue-600">{{ $store['distance'] }}</span>
+                                   <span class="text-gray-600">📦 In Stock:</span>
+        <span class="font-semibold text-green-600">Available</span>
                                 </div>
                                 
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">⏱️ Travel Time:</span>
-                                    <span class="font-semibold text-gray-700">~{{ round((float)$store['distance'] * 3) }} min</span>
+                                   
                                 </div>
                                 
                                 <div class="flex justify-between items-center">
@@ -217,11 +250,9 @@
                             
                             <!-- Action Buttons -->
                             <div class="mt-4 space-y-2">
-                                <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-semibold text-sm">
-                                    <i class="fas fa-directions mr-2"></i>Get Directions
-                                </button>
+                               
                                 <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
-                                    <i class="fas fa-phone mr-2"></i>Call Store
+                                    <i class=></i>Store Details
                                 </button>
                                 <!-- TODAY'S PRICES CARD -->
 <a href="/todaysprice" class="block category-card bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-blue-50 hover:no-underline">
@@ -462,3 +493,4 @@
         }
     });
 </script>
+
