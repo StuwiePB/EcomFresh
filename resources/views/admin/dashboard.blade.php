@@ -52,18 +52,28 @@
     </div>
 
     <!-- Item list -->
-<a href="{{ route('admin.chicken-crud') }}" class="block">
-  <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-5 hover:bg-gray-50 transition">
-    <div class="text-gray-700 font-semibold mb-3 text-base sm:text-lg">Item List</div>
-    <ul class="space-y-1 text-sm sm:text-base">
-      <li class="font-semibold">Whole Chicken <span class="font-normal text-gray-600">– 42 pcs</span></li>
-      <li class="font-semibold">Chicken Thigh <span class="font-normal text-gray-600">– 28 pcs</span></li>
-      <li class="font-semibold">Chicken Wings <span class="font-normal text-gray-600">– 50 pcs</span></li>
-      <li class="text-gray-400">……….</li>
-    </ul>
-  </section>
-</a>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mt-8 mb-16">
+  <!-- Chicken -->
+  <a href="{{ route('admin.chicken-crud') }}" 
+     class="group flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🐔</div>
+    <h3 class="text-lg font-semibold text-gray-800 group-hover:text-yellow-600 transition-colors">Chicken</h3>
+  </a>
 
+  <!-- Beef -->
+  <a href="{{ route('admin.beef-crud') }}" 
+     class="group flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🥩</div>
+    <h3 class="text-lg font-semibold text-gray-800 group-hover:text-red-600 transition-colors">Beef</h3>
+  </a>
+
+  <!-- Vegetable -->
+  <a href="{{ route('admin.vegetable-crud') }}" 
+     class="group flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🥦</div>
+    <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors">Vegetable</h3>
+  </a>
+</div>
 
     <!-- Priority alert -->
     <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-5">
