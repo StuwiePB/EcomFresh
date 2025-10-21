@@ -40,13 +40,14 @@
     </div>
 
     <!-- Stat cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-5">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-5">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div class="text-gray-600 font-medium text-sm sm:text-base">Total Products</div>
+        <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none">{{ $totalProducts }}</div>
+    </div>
+</div>
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
-        <div class="text-gray-600 font-medium text-sm sm:text-base">Total Customers</div>
-        <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none">215</div>
-      </div>
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
-        <div class="text-gray-600 font-medium text-sm sm:text-base">Products Sold</div>
+        <div class="text-gray-600 font-medium text-sm sm:text-base">Low Stocks Item</div>
         <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none">28</div>
       </div>
     </div>

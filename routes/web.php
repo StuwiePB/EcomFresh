@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\PriceController;
 use App\Models\AdminProduct;
+use App\Models\Product;
 use Livewire\Volt\Volt;
 use Laravel\Fortify\Features;
 
@@ -28,6 +29,7 @@ Route::post('/logout', function (Request $request) {
 // ROOT ROUTE - Show Login Page First (CHANGED)
 // --------------------
 Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from customer.welcome to customer.login
+
 
 // --------------------
 // CUSTOMER ROUTES
@@ -54,9 +56,10 @@ Route::prefix('admin')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
     // Dashboard
-    Route::get('/dashboard', [AdminAuthController::class, 'dashboard'])
-        ->middleware('auth')
-        ->name('admin.dashboard');
+   Route::get('/dashboard', function () {
+    $totalProducts = Product::count();
+    return view('admin.dashboard', ['totalProducts' => $totalProducts]);
+})->middleware('auth')->name('admin.dashboard');
 
     // --------------------
     // CHICKEN CRUD
@@ -69,8 +72,6 @@ Route::prefix('admin')->group(function () {
     Route::put('/chicken/{id}', [ProductController::class, 'update'])->name('admin.chicken.update');
     Route::delete('/chicken/{id}', [ProductController::class, 'destroy'])->name('admin.chicken.destroy');
 });
-
-
     // --------------------
     // BEEF CRUD
     // --------------------
@@ -107,7 +108,6 @@ Route::prefix('admin')->group(function () {
         })->name('admin.deletehistory');
     });
 });
-
 // --------------------
 // VOLT SETTINGS
 // --------------------
