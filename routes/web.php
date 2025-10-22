@@ -12,6 +12,8 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\PriceController;
 use App\Models\AdminProduct;
 use App\Models\Product;
+use App\Models\Beef;
+use App\Models\Vegetable;
 use Livewire\Volt\Volt;
 use Laravel\Fortify\Features;
 
@@ -55,12 +57,14 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
-    // Dashboard
+    // Dashboard for total products
    Route::get('/dashboard', function () {
-    $totalProducts = Product::count();
-    return view('admin.dashboard', ['totalProducts' => $totalProducts]);
+    $totalProducts = Product::count() + Beef::count() + Vegetable::count();
+    
+    return view('admin.dashboard', [
+        'totalProducts' => $totalProducts,
+    ]);
 })->middleware('auth')->name('admin.dashboard');
-
     // --------------------
     // CHICKEN CRUD
     // --------------------
@@ -108,6 +112,57 @@ Route::prefix('admin')->group(function () {
         })->name('admin.deletehistory');
     });
 });
+// --------------------
+// SELLER DASHBOARD
+// --------------------
+Route::get('/dashboard', function () {
+
+    // Define what counts as low stock
+    $threshold = 5; // Anything <= 5 is low stock
+    $displayLimit = 10; // Limit number of names shown
+
+    // Count total products (all categories)
+    $totalProducts =
+        Product::count() +
+        Beef::count() +
+        Chicken::count() +
+        Vegetable::count();
+
+    // Fetch low stock items from each category
+    $beefLow = Beef::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
+    $chickenLow = Chicken::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
+    $vegeLow = Vegetable::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
+
+    // Merge them all together
+    $lowStockItems = collect()
+        ->merge($beefLow)
+        ->merge($chickenLow)
+        ->merge($vegeLow)
+        ->sortBy('stock')
+        ->take($displayLimit);
+
+    // Count total low-stock items
+    $totalLowStock = $lowStockItems->count();
+
+    // Send to Blade
+    return view('admin.dashboard', [
+        'totalProducts'  => $totalProducts,
+        'totalLowStock'  => $totalLowStock,
+        'lowStockItems'  => $lowStockItems,
+        'threshold'      => $threshold,
+    ]);
+})->middleware('auth')->name('admin.dashboard');
+
+
+// --------------------
+// GLOBAL LOGOUT
+// --------------------
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
 // --------------------
 // VOLT SETTINGS
 // --------------------

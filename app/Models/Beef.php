@@ -17,4 +17,8 @@ class Beef extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+    public function scopeInStock($query)
+    {
+        return $query->where('stock', '>', 0);
+    }
 }

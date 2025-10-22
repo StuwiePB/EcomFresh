@@ -47,10 +47,36 @@
     </div>
 </div>
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
-        <div class="text-gray-600 font-medium text-sm sm:text-base">Low Stocks Item</div>
-        <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none">28</div>
-      </div>
-    </div>
+  <div class="text-gray-600 font-medium text-sm sm:text-base flex items-center">
+    {{-- Red warning icon --}}
+    <svg class="w-4 h-4 text-red-500 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+    Low Stock Items
+  </div>
+
+  {{-- Total count (safe even if variable undefined) --}}
+  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none text-gray-900">
+    {{ $totalLowStock ?? 0 }}
+  </div>
+
+  {{-- Item names list (safe fallback if variable missing) --}}
+  @php $items = $lowStockItems ?? collect(); @endphp
+
+  @if ($items->count() > 0)
+    <ul class="mt-3 text-sm text-gray-700 space-y-1 max-h-32 overflow-y-auto">
+      @foreach ($items as $item)
+        <li class="flex items-center justify-between border-b border-gray-100 pb-1">
+          <span class="font-medium">{{ $item->name }}</span>
+          <span class="text-xs text-red-500">Stock: {{ $item->stock }}</span>
+        </li>
+      @endforeach
+    </ul>
+  @else
+    <p class="mt-3 text-sm text-gray-500">All items are well stocked ✅</p>
+  @endif
+</div>
+
 
     <!-- Item list -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mt-8 mb-16">
