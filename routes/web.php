@@ -32,7 +32,15 @@ Route::post('/logout', function (Request $request) {
 // --------------------
 Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from customer.welcome to customer.login
 
-
+// --------------------
+// ROOT ROUTE - Show Customer Main Page First (CHANGED)
+// --------------------
+Route::get('/', function() {
+    if (Auth::check()) {
+        return redirect()->route('customer.main');
+    }
+    return redirect()->route('login');
+})->name('home');
 // --------------------
 // CUSTOMER ROUTES
 // --------------------
@@ -44,9 +52,8 @@ Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
 Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
-Route::get('/customer/favorites', function () {return view('customer.favorites');})->name('customer.favorites');
-Route::get('/customer/settings', function () {return view('customer.settings');})->name('customer.settings');
-
+Route::get('/customer/favorites', function () {return view('customer.favorites');})->name('customer.favorites')->middleware('auth');
+Route::get('/customer/settings', function () {return view('customer.settings');})->name('customer.settings')->middleware('auth');
 // --------------------
 // ADMIN ROUTES
 // --------------------

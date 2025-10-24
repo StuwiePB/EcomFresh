@@ -16,6 +16,12 @@ class CustomerAuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            
+            // Check if there's an intended URL to redirect to
+            if ($request->session()->has('url.intended')) {
+                return redirect()->intended();
+            }
+            
             return redirect()->route('customer.main');
         }
 
@@ -30,5 +36,19 @@ class CustomerAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');
+    }
+
+    /**
+     * Handle redirect after authentication
+     * This method will be called automatically by Laravel's auth system
+     */
+    public function authenticated(Request $request, $user)
+    {
+        // Check if there's an intended URL (from middleware auth redirect)
+        if ($request->session()->has('url.intended')) {
+            return redirect()->intended();
+        }
+        
+        return redirect()->route('customer.main');
     }
 }
