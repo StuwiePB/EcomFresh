@@ -18,19 +18,31 @@
       <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold tracking-wide">ECOM FRESH</h1>
 
       @auth
-        <!-- User's name acts as logout button -->
-        <button id="logoutBtn"
-          class="hover:bg-white/20 text-sm sm:text-base font-medium px-3 py-1.5 rounded-lg transition">
-          {{ Auth::user()->name }}
-        </button>
-      @else
-        <!-- Show login if no user -->
-        <a href="{{ route('login') }}"
-          class="hover:bg-white/20 text-sm sm:text-base font-medium px-3 py-1.5 rounded-lg transition">
-          Login
-        </a>
-      @endauth
+
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <div class="relative" x-data="{ open: false }">
+    <!-- Profile button -->
+    <button @click="open = !open"
+      class="flex items-center gap-2 hover:bg-white/20 text-sm sm:text-base font-medium px-3 py-1.5 rounded-lg transition">
+      {{ Auth::user()->name }}
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+
+    <!-- Dropdown menu -->
+    <div x-show="open" @click.away="open = false" 
+         class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+      <a href="{{ route('admin.profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+      <a href="{{ route('admin.settings.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
+      </form>
     </div>
+  </div>
+@endauth
+
   </header>
 
   <main class="max-w-6xl mx-auto px-4 sm:px-6 mt-6 sm:mt-10">

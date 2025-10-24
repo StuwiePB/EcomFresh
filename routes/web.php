@@ -10,6 +10,9 @@ use App\Http\Controllers\VegetableController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\AdminProfileController;
+use App\Http\Controllers\AdminSettingsController;
+
 use App\Models\AdminProduct;
 use App\Models\Product;
 use App\Models\Beef;
@@ -152,6 +155,18 @@ Route::get('/dashboard', function () {
         'threshold'      => $threshold,
     ]);
 })->middleware('auth')->name('admin.dashboard');
+
+
+// ADMIN DROPDOWN PROFILE
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/profile', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
+    Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+});
+
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::get('settings', [AdminSettingsController::class, 'edit'])->name('admin.settings.edit');
+    Route::put('settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
+});
 
 
 // --------------------
