@@ -35,18 +35,16 @@ Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from 
 // --------------------
 // ROOT ROUTE - Show Customer Main Page First (CHANGED)
 // --------------------
-Route::get('/', function() {
-    if (Auth::check()) {
-        return redirect()->route('customer.main');
-    }
-    return redirect()->route('login');
-})->name('home');
+// --------------------
+// ROOT ROUTE - Show Customer Main Page First (Direct)
+// --------------------
+Route::get('/', [ProductController::class, 'index'])->name('home');
 // --------------------
 // CUSTOMER ROUTES
 // --------------------
 Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome'); // ADDED: Welcome page as separate route
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
-Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice');
+Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice')->middleware('auth');
 Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
 Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
