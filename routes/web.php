@@ -10,6 +10,9 @@ use App\Http\Controllers\VegetableController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\AdminProfileController;
+use App\Http\Controllers\AdminSettingsController;
+
 use App\Models\AdminProduct;
 use App\Models\Product;
 use App\Models\Beef;
@@ -52,6 +55,16 @@ Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name
 Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
 Route::get('/customer/favorites', function () {return view('customer.favorites');})->name('customer.favorites')->middleware('auth');
 Route::get('/customer/settings', function () {return view('customer.settings');})->name('customer.settings')->middleware('auth');
+//--------------------
+// Signup routes
+//--------------------
+Route::get('/signup', function () {
+    return view('customer.signuppage'); // Changed to match your filename
+})->name('signup');
+
+Route::post('/signup', [CustomerAuthController::class, 'register'])->name('customer.signup.submit');
+
+
 // --------------------
 // ADMIN ROUTES
 // --------------------
@@ -157,6 +170,18 @@ Route::get('/dashboard', function () {
         'threshold'      => $threshold,
     ]);
 })->middleware('auth')->name('admin.dashboard');
+
+
+// ADMIN DROPDOWN PROFILE
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/profile', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
+    Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+});
+
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::get('settings', [AdminSettingsController::class, 'edit'])->name('admin.settings.edit');
+    Route::put('settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
+});
 
 
 // --------------------

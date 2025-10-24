@@ -73,6 +73,12 @@
             border-color: #3498db;
         }
         
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
         .remember-me {
             display: flex;
             align-items: center;
@@ -108,8 +114,31 @@
         }
         
         .signup-button:disabled {
-            background-color: #009DFF;
+            background-color: #bdc3c7;
             cursor: not-allowed;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
         }
     </style>
 </head>
@@ -122,30 +151,91 @@
         <div class="signup-form">
             <h2>Sign Up</h2>
             
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" placeholder="Enter your username">
+            <!-- Success Message -->
+            @if(session('success'))
+                <div class="success-message">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
+            <form method="POST" action="{{ route('customer.signup.submit') }}">
+                @csrf
+                
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Enter your full name" required>
+                    @error('name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="Enter your email" required>
+                    @error('email')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    @error('password')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label for="password_confirmation">Confirm Password</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm your password" required>
+                </div>
+                
+                <div class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <button type="submit" class="signup-button">Sign Up</button>
+            </form>
+            
+            <div class="login-link">
+                <p>Already have an account? <a href="{{ route('login') }}">Sign In</a></p>
             </div>
-            
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Enter your email">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password">
-            </div>
-            
-            <div class="remember-me">
-                <input type="checkbox" id="remember">
-                <label for="remember">Remember me</label>
-            </div>
-            
-            <div class="divider"></div>
-            
-            <button class="signup-button" disabled>Sign Up</button>
         </div>
     </div>
+
+    <script>
+        // Simple client-side validation to enable/disable button
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const inputs = form.querySelectorAll('input[required]');
+            const submitButton = form.querySelector('.signup-button');
+            
+            function checkFormValidity() {
+                let allFilled = true;
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        allFilled = false;
+                    }
+                });
+                
+                // Check if passwords match
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('password_confirmation').value;
+                const passwordsMatch = password === confirmPassword && password.length > 0;
+                
+                submitButton.disabled = !allFilled || !passwordsMatch;
+            }
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', checkFormValidity);
+            });
+            
+            // Initial check
+            checkFormValidity();
+        });
+    </script>
 </body>
 </html>

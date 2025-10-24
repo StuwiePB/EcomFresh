@@ -172,7 +172,7 @@
       <a href="#" class="forgot">Forgot Password?</a>
       <button type="submit" class="btn">Sign In</button>
       <div class="signup">
-        Don't have an account? <a href="#">Sign Up</a>
+        Don't have an account? <a href="{{ route('signup') }}">Sign Up</a>
       </div>
     </form>
   </div>
@@ -199,6 +199,8 @@
       }
       // Form will now submit to the correct route
     });
+
+    
   </script>
 
 </body>
