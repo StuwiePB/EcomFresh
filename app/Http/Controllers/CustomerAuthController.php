@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Validation\ValidationException;
 
 class CustomerAuthController extends Controller
 {
@@ -24,6 +25,12 @@ class CustomerAuthController extends Controller
      */
     public function login(Request $request)
     {
+        // Check for too many login attempts
+        if ($this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+            return $this->sendLockoutResponse($request);
+        }
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -34,10 +41,13 @@ class CustomerAuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+            $this->clearLoginAttempts($request);
             
-            return redirect()->intended(route('customer.main'))
-                ->with('success', 'Welcome back!');
+            return $this->sendLoginResponse($request);
         }
+
+        // If login attempt was unsuccessful, increment login attempts
+        $this->incrementLoginAttempts($request);
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
@@ -81,12 +91,13 @@ class CustomerAuthController extends Controller
         // Log the user in
         Auth::login($user);
 
-        return redirect()->route('customer.main')
-            ->with('success', 'Account created successfully! Welcome to EcomFresh!');
+        // Call the registered method for additional actions
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath())->with('success', 'Account created successfully! Welcome to EcomFresh!');
     }
 
     /**
-     * Log the user out
+     * Log the user out and redirect to login page
      */
     public function logout(Request $request)
     {
@@ -94,7 +105,8 @@ class CustomerAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect('/')
+        // Redirect to login page after logout instead of home page
+        return redirect()->route('login')
             ->with('success', 'You have been logged out successfully.');
     }
 
@@ -143,5 +155,152 @@ class CustomerAuthController extends Controller
     {
         // Additional actions after registration
         // For example: Send welcome email, create user profile, etc.
+        
+        // Return null to continue with default redirect
+        return null;
+    }
+
+    /**
+     * NEW: Handle authenticated user - for redirecting after login
+     */
+    public function authenticated(Request $request, $user)
+    {
+        // Check if there's an intended URL (from middleware auth redirect)
+        if ($request->session()->has('url.intended')) {
+            return redirect()->intended();
+        }
+        
+        return redirect()->route('customer.main');
+    }
+
+    /**
+     * NEW: Simple redirect method for intended URLs
+     */
+    public function redirectToIntended()
+    {
+        return redirect()->intended(route('customer.main'));
+    }
+
+    /**
+     * NEW: Send the response after the user was authenticated.
+     */
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        if ($response = $this->authenticated($request, $this->guard()->user())) {
+            return $response;
+        }
+
+        return $request->wantsJson()
+                    ? new JsonResponse([], 204)
+                    : redirect()->intended($this->redirectPath());
+    }
+
+    /**
+     * NEW: Get the failed login response instance.
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        throw ValidationException::withMessages([
+            $this->username() => [trans('auth.failed')],
+        ]);
+    }
+
+    /**
+     * NEW: Get the login username to be used by the controller.
+     */
+    public function username()
+    {
+        return 'email';
+    }
+
+    /**
+     * NEW: Increment the login attempts for the user.
+     */
+    protected function incrementLoginAttempts(Request $request)
+    {
+        $this->limiter()->hit(
+            $this->throttleKey($request), $this->decayMinutes() * 60
+        );
+    }
+
+    /**
+     * NEW: Determine if the user has too many failed login attempts.
+     */
+    protected function hasTooManyLoginAttempts(Request $request)
+    {
+        return $this->limiter()->tooManyAttempts(
+            $this->throttleKey($request), $this->maxAttempts()
+        );
+    }
+
+    /**
+     * NEW: Clear the login locks for the given user credentials.
+     */
+    protected function clearLoginAttempts(Request $request)
+    {
+        $this->limiter()->clear($this->throttleKey($request));
+    }
+
+    /**
+     * NEW: Redirect the user after determining they are locked out.
+     */
+    protected function sendLockoutResponse(Request $request)
+    {
+        $seconds = $this->limiter()->availableIn(
+            $this->throttleKey($request)
+        );
+
+        throw ValidationException::withMessages([
+            $this->username() => [
+                trans('auth.throttle', [
+                    'seconds' => $seconds,
+                    'minutes' => ceil($seconds / 60),
+                ])
+            ],
+        ])->status(429);
+    }
+
+    /**
+     * NEW: Fire an event when a lockout occurs.
+     */
+    protected function fireLockoutEvent(Request $request)
+    {
+        // You can add custom lockout event here if needed
+    }
+
+    /**
+     * NEW: Get the throttle key for the given request.
+     */
+    protected function throttleKey(Request $request)
+    {
+        return strtolower($request->input($this->username())).'|'.$request->ip();
+    }
+
+    /**
+     * NEW: Get the maximum number of attempts to allow.
+     */
+    public function maxAttempts()
+    {
+        return 5; // 5 login attempts
+    }
+
+    /**
+     * NEW: Get the number of minutes to throttle for.
+     */
+    public function decayMinutes()
+    {
+        return 1; // 1 minute lockout
+    }
+
+    /**
+     * NEW: Get the rate limiter instance.
+     */
+    protected function limiter()
+    {
+        return app(\Illuminate\Cache\RateLimiter::class);
     }
 }
