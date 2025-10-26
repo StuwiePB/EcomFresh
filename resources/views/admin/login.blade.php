@@ -36,10 +36,12 @@
         Login
       </button>
     </form>
-
-    <div class="mt-4 text-center">
-      <a href="/" class="text-blue-600 hover:text-blue-800 text-sm">← Back to Main Login</a>
-    </div>
+{{-- Add this button somewhere in your admin login form --}}
+<div class="mt-4 text-center">
+    <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-900">
+        ← Back to Main Login
+    </a>
+</div>
   </div>
 </body>
 </html>
