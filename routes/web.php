@@ -42,6 +42,14 @@ Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from 
 // ROOT ROUTE - Show Customer Main Page First (Direct)
 // --------------------
 Route::get('/', [ProductController::class, 'index'])->name('home');
+
+// --------------------
+// NEW: UNIFIED LOGIN PAGE ROUTE
+// --------------------
+Route::get('/login', function() {
+    return view('login'); // This will use your new unified login page
+})->name('login');
+
 // --------------------
 // CUSTOMER ROUTES
 // --------------------
@@ -55,6 +63,8 @@ Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name
 Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
 Route::get('/customer/favorites', function () {return view('customer.favorites');})->name('customer.favorites')->middleware('auth');
 Route::get('/customer/settings', function () {return view('customer.settings');})->name('customer.settings')->middleware('auth');
+// Add this to your customer routes section
+Route::delete('/customer/delete-account', [CustomerAuthController::class, 'deleteAccount'])->name('customer.delete.account')->middleware('auth');
 //--------------------
 // Signup routes
 //--------------------
@@ -63,6 +73,11 @@ Route::get('/signup', function () {
 })->name('signup');
 
 Route::post('/signup', [CustomerAuthController::class, 'register'])->name('customer.signup.submit');
+
+// --------------------
+// NEW: CUSTOMER LOGIN FORM ROUTE
+// --------------------
+Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
 
 
 // --------------------
@@ -74,7 +89,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-
+    Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login'); 
     // Dashboard for total products
    Route::get('/dashboard', function () {
     $totalProducts = Product::count() + Beef::count() + Vegetable::count();
@@ -148,7 +164,11 @@ Route::get('/dashboard', function () {
 
     // Fetch low stock items from each category
     $beefLow = Beef::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
-    $chickenLow = Chicken::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
+    // Chicken items are stored in the Product model under the 'chicken' category
+    $chickenLow = Product::select('id', 'name', 'stock')
+        ->where('category', 'chicken')
+        ->where('stock', '<=', $threshold)
+        ->get();
     $vegeLow = Vegetable::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
 
     // Merge them all together

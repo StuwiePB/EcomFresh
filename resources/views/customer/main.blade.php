@@ -453,20 +453,21 @@
                     </div>
                 </div>
 
-                <!-- Danger Zone Section -->
-                <div class="settings-section">
-                    <h3 class="settings-section-title" style="color: #dc2626;">Danger Zone</h3>
-                    <div class="space-y-3">
-                        <div class="settings-item">
-                            <div class="settings-label">Delete Account</div>
-                            <div class="settings-value">Permanently remove your account</div>
-                            <div class="settings-action" style="color: #dc2626;">Delete</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <!--<!-- Danger Zone Section -->
+<div class="settings-section">
+    <h3 class="settings-section-title" style="color: #dc2626;">Danger Zone</h3>
+    <div class="space-y-3">
+        <div class="settings-item">
+            <div class="settings-label">Delete Account</div>
+            <div class="settings-value">Permanently remove your account</div>
+            <button class="settings-action text-red-600 hover:text-red-800 font-medium" 
+                    onclick="showDeleteConfirmation()" 
+                    style="color: #dc2626;">
+                Delete
+            </button>
         </div>
     </div>
+</div>
 
     <!-- Hidden Logout Form -->
     <form id="logout-form" action="{{ route('customer.logout') }}" method="POST" class="hidden">
@@ -549,5 +550,6 @@
             // The redirect will be handled by the server in the CustomerAuthController
         }
     </script>
+    
 </body>
 </html>

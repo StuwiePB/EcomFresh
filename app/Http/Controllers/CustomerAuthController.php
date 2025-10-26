@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -108,6 +109,26 @@ class CustomerAuthController extends Controller
         // Redirect to login page after logout instead of home page
         return redirect()->route('login')
             ->with('success', 'You have been logged out successfully.');
+    }
+
+    /**
+     * NEW: Delete user account
+     */
+    public function deleteAccount(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Logout the user first
+        Auth::logout();
+        
+        // Delete the user account
+        $user->delete();
+        
+        // Invalidate session and regenerate token
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect('/login')->with('success', 'Your account has been deleted successfully.');
     }
 
     /**

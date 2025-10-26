@@ -22,32 +22,34 @@
       margin-bottom: 20px;
       width: 100%;
       max-width: 350px;
+      background: white;
+      border-radius: 8px;
+      padding: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .role-btn {
       flex: 1;
       text-align: center;
       padding: 12px 0;
-      background: #fff;
-      border: 2px solid #ddd;
-      border-radius: 8px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
       font-size: 16px;
-    }
-
-    .role-btn:first-child {
-      margin-right: 10px;
+      text-decoration: none;
+      color: inherit;
     }
 
     .role-btn.active {
-      border-color: #007bff;
-      background: #e6f0ff;
-      color: #007bff;
+      background: #007bff;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
     }
 
-    .role-btn:hover {
+    .role-btn:hover:not(.active) {
       background: #f2f2f2;
     }
 
@@ -75,6 +77,7 @@
       border-radius: 20px;
       outline: none;
       font-size: 1em;
+      box-sizing: border-box;
     }
 
     .input-field:focus {
@@ -137,71 +140,101 @@
       color: #c62828;
       border: 1px solid #ffcdd2;
     }
+
+    .form-title {
+      transition: all 0.3s ease;
+    }
   </style>
 </head>
 <body>
 
 <!-- Role Toggle -->
 <div class="role-toggle">
-    <a href="/admin/login" class="role-btn active">Admin</a>
-    <a href="/customer" class="role-btn">Customer</a>
+    <a href="{{ route('admin.login') }}" class="role-btn active">Admin</a>
+    <a href="{{ route('customer.login') }}" class="role-btn">Customer</a>
 </div>
-  <!-- Login Box -->
-  <div class="container">
-    <h2>Welcome Back!</h2>
-    <p>Sign in to your account</p>
-    
-    <!-- Display validation errors -->
-    @if($errors->any())
-      <div class="error" style="display: block; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">
-        {{ $errors->first() }}
-      </div>
-    @endif
-    
-    <!-- Display success message -->
-    @if(session('success'))
-      <div class="success" style="display: block; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;">
-        {{ session('success') }}
-      </div>
-    @endif
-    
-    <form method="POST" id="loginForm">
-      @csrf
-      <input type="text" name="email" class="input-field" placeholder="Email" value="{{ old('email') }}" required>
-      <input type="password" name="password" class="input-field" placeholder="Password" required>
-      <a href="#" class="forgot">Forgot Password?</a>
-      <button type="submit" class="btn">Sign In</button>
-      <div class="signup">
-        Don't have an account? <a href="{{ route('signup') }}">Sign Up</a>
-      </div>
-    </form>
-  </div>
 
-  <script>
-    let currentRole = 'admin'; // Default to Admin
+<!-- Login Box -->
+<div class="container">
+  <h2 class="form-title" id="formTitle">Welcome Back, Admin!</h2>
+  <p id="formSubtitle">Sign in to your admin account</p>
+  
+  <!-- Display validation errors -->
+  @if($errors->any())
+    <div class="error" style="display: block; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">
+      {{ $errors->first() }}
+    </div>
+  @endif
+  
+  <!-- Display success message -->
+  @if(session('success'))
+    <div class="success" style="display: block; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;">
+      {{ session('success') }}
+    </div>
+  @endif
+  
+  <form method="POST" id="loginForm" action="{{ route('admin.login.submit') }}">
+    @csrf
+    <input type="text" name="email" class="input-field" placeholder="Email" value="{{ old('email') }}" required>
+    <input type="password" name="password" class="input-field" placeholder="Password" required>
+    <a href="#" class="forgot">Forgot Password?</a>
+    <button type="submit" class="btn" id="submitBtn">Sign In as Admin</button>
+    <div class="signup">
+      Don't have an account? <a href="#" id="signupLink">Sign Up</a>
+    </div>
+  </form>
+</div>
 
-    function setRole(role) {
-      currentRole = role;
-      document.querySelectorAll(".role-btn").forEach(btn => btn.classList.remove("active"));
-      if (role === "admin") {
-        document.querySelectorAll(".role-btn")[0].classList.add("active");
-      } else {
-        document.querySelectorAll(".role-btn")[1].classList.add("active");
-      }
-    }
-
-    // Change form action dynamically
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
-      if (currentRole === "admin") {
-        this.action = "{{ route('admin.login.submit') }}";
-      } else {
-        this.action = "{{ route('customer.login.submit') }}";
-      }
-      // Form will now submit to the correct route
+<script>
+  // Function to redirect when role buttons are clicked
+  document.addEventListener('DOMContentLoaded', function() {
+    const roleButtons = document.querySelectorAll('.role-btn');
+    
+    roleButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        // Remove active class from all buttons
+        roleButtons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        // The href of the button will handle the redirect
+        // No need to prevent default - let the link work normally
+      });
     });
+  });
 
-    
-  </script>
+  // Optional: If you want to keep the dynamic form updates for the current page
+  function updateFormForCurrentRole() {
+    const currentPath = window.location.pathname;
+    const isAdminLogin = currentPath.includes('/admin/login');
+    const formTitle = document.getElementById('formTitle');
+    const formSubtitle = document.getElementById('formSubtitle');
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const signupLink = document.getElementById('signupLink');
+
+    if (isAdminLogin) {
+      formTitle.textContent = 'Welcome Back, Admin!';
+      formSubtitle.textContent = 'Sign in to your admin account';
+      loginForm.action = "{{ route('admin.login.submit') }}";
+      submitBtn.textContent = 'Sign In as Admin';
+      signupLink.href = "#";
+      signupLink.textContent = "Contact Administrator";
+      signupLink.onclick = function() { alert('Please contact system administrator for admin account creation.'); return false; };
+    } else {
+      formTitle.textContent = 'Welcome, Customer!';
+      formSubtitle.textContent = 'Sign in to your customer account';
+      loginForm.action = "{{ route('customer.login.submit') }}";
+      submitBtn.textContent = 'Sign In as Customer';
+      signupLink.href = "{{ route('signup') }}";
+      signupLink.textContent = "Sign Up";
+      signupLink.onclick = null;
+    }
+  }
+
+  // Update form based on current URL
+  document.addEventListener('DOMContentLoaded', updateFormForCurrentRole);
+</script>
 
 </body>
 </html>
