@@ -51,45 +51,23 @@
       <div class="text-xl sm:text-2xl md:text-3xl font-extrabold italic">SELLER DASHBOARD</div>
     </div>
 
-    <!-- Stat cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-5">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
-        <div class="text-gray-600 font-medium text-sm sm:text-base">Total Products</div>
-        <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none">{{ $totalProducts }}</div>
-    </div>
-</div>
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
-  <div class="text-gray-600 font-medium text-sm sm:text-base flex items-center">
-    {{-- Red warning icon --}}
-    <svg class="w-4 h-4 text-red-500 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-    </svg>
-    Low Stock Items
+    <!-- Stat cards row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8">
+  
+  <!-- Left: Total Products -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6">
+    <div class="text-gray-600 font-medium text-sm sm:text-base">Total Products</div>
+    <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none">{{ $totalProducts }}</div>
   </div>
 
-  {{-- Total count (safe even if variable undefined) --}}
-  <div class="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold leading-none text-gray-900">
-    {{ $totalLowStock ?? 0 }}
-  </div>
+  <!-- Right: Customer Page -->
+  <a href="{{ route('customer.main') }}" 
+     class="group flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
+    <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🧍</div>
+    <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">Customer Page</h3>
+  </a>
 
-  {{-- Item names list (safe fallback if variable missing) --}}
-  @php $items = $lowStockItems ?? collect(); @endphp
-
-  @if ($items->count() > 0)
-    <ul class="mt-3 text-sm text-gray-700 space-y-1 max-h-32 overflow-y-auto">
-      @foreach ($items as $item)
-        <li class="flex items-center justify-between border-b border-gray-100 pb-1">
-          <span class="font-medium">{{ $item->name }}</span>
-          <span class="text-xs text-red-500">Stock: {{ $item->stock }}</span>
-        </li>
-      @endforeach
-    </ul>
-  @else
-    <p class="mt-3 text-sm text-gray-500">All items are well stocked ✅</p>
-  @endif
 </div>
-
-
     <!-- Item list -->
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mt-8 mb-16">
   <!-- Chicken -->
@@ -146,18 +124,39 @@
     </section>
 
 <!-- Delete history (Clickable Box) -->
+<@php
+  // Prevent undefined variable error
+  $recentDeletes = $recentDeletes ?? collect();
+@endphp
+
+<!-- Delete history (Clickable Box) -->
 <a href="{{ route('admin.deletehistory') }}" class="block">
   <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-10 hover:bg-gray-50 transition cursor-pointer">
     <div class="flex items-center gap-3">
       <div class="text-xl sm:text-2xl">🗑️</div>
       <div class="text-gray-800 font-extrabold text-base sm:text-lg">Delete History</div>
     </div>
-    <ol class="mt-3 list-decimal pl-6 space-y-1 text-sm sm:text-base text-gray-700">
-      <li class="font-semibold">Chicken Thigh</li>
-      <li class="font-semibold">Striploin</li>
-    </ol>
+
+    @if ($recentDeletes->isNotEmpty())
+      <ol class="mt-3 list-decimal pl-6 space-y-1 text-sm sm:text-base text-gray-700">
+        @foreach ($recentDeletes as $item)
+          <li class="font-semibold flex justify-between">
+            <span>
+              {{ $item->name }}
+              <span class="text-gray-500 text-xs">({{ $item->category }})</span>
+            </span>
+            <span class="text-gray-400 text-xs">
+              {{ optional($item->deleted_at)->format('d M') }}
+            </span>
+          </li>
+        @endforeach
+      </ol>
+    @else
+      <p class="mt-3 text-sm text-gray-500 italic">No deleted items yet.</p>
+    @endif
   </section>
 </a>
+  </main>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {

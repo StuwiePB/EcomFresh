@@ -26,9 +26,13 @@
   <!-- Main -->
   <main class="flex-1 flex flex-col items-center px-4 py-8 sm:py-10">
     <div class="w-full max-w-5xl bg-white rounded-2xl shadow p-6 sm:p-8">
-      <h2 class="text-xl sm:text-2xl font-extrabold text-[color:var(--brand)] mb-6 text-center">Delete History</h2>
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-[color:var(--brand)]">Delete History</h2>
+        <button id="refreshBtn" class="bg-[color:var(--brand)] text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
+          🔄 Refresh
+        </button>
+      </div>
 
-      <!-- Delete History Table -->
       <div class="overflow-x-auto">
         <table class="min-w-full border border-gray-200 text-sm sm:text-base">
           <thead class="bg-[color:var(--brand)] text-white">
@@ -40,25 +44,53 @@
               <th class="px-4 py-2 text-left">Deleted At</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200">
-            @forelse ($deletedItems as $index => $item)
+          <tbody id="deleteTable" class="divide-y divide-gray-200">
+            @foreach ($deletedItems as $index => $item)
               <tr>
                 <td class="px-4 py-2">{{ $index + 1 }}</td>
                 <td class="px-4 py-2 font-semibold">{{ $item->name }}</td>
                 <td class="px-4 py-2">{{ $item->category }}</td>
                 <td class="px-4 py-2">{{ $item->quantity ?? '-' }}</td>
-                <td class="px-4 py-2 text-gray-500">{{ $item->deleted_at->format('d M Y, h:i A') }}</td>
+                <td class="px-4 py-2 text-gray-500">
+                  {{ optional($item->deleted_at)->format('d M Y') }}
+                </td>
               </tr>
-            @empty
-              <tr>
-                <td colspan="5" class="text-center py-4 text-gray-500 italic">No deleted items yet.</td>
-              </tr>
-            @endforelse
+            @endforeach
           </tbody>
         </table>
       </div>
     </div>
   </main>
 
+  <script>
+    document.getElementById('refreshBtn').addEventListener('click', async () => {
+      const res = await fetch('{{ route("admin.deletehistory.fetch") }}');
+      const data = await res.json();
+
+      const table = document.getElementById('deleteTable');
+      table.innerHTML = '';
+
+      if (data.length === 0) {
+        table.innerHTML = `
+          <tr><td colspan="5" class="text-center py-4 text-gray-500 italic">No deleted items yet.</td></tr>
+        `;
+        return;
+      }
+
+      data.forEach((item, index) => {
+        const deletedAt = item.deleted_at
+          ? new Date(item.deleted_at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+          : '-';
+        table.innerHTML += `
+          <tr>
+            <td class="px-4 py-2">${index + 1}</td>
+            <td class="px-4 py-2 font-semibold">${item.name}</td>
+            <td class="px-4 py-2">${item.category}</td>
+            <td class="px-4 py-2">${item.quantity ?? '-'}</td>
+            <td class="px-4 py-2 text-gray-500">${deletedAt}</td>
+          </tr>`;
+      });
+    });
+  </script>
 </body>
 </html>

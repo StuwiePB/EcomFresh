@@ -3,36 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vegetable;
+use App\Models\DeleteHistoryTable;
 use Illuminate\Http\Request;
 
 class VegetableController extends Controller
 {
-    // List all vegetables
+    /**
+     * Display all vegetables (Admin)
+     */
     public function index()
     {
         $vegetables = Vegetable::all();
 
-        // If no vegetables exist, create sample data
+        // Create sample data if none exist
         if ($vegetables->count() === 0) {
-            Vegetable::create(['name' => 'Carrot', 'category' => 'Root', 'price' => 2.50, 'stock' => 20]);
-            Vegetable::create(['name' => 'Cabbage', 'category' => 'Leafy', 'price' => 1.80, 'stock' => 15]);
+            Vegetable::create(['name' => 'Carrot', 'category' => 'Root', 'price' => 2.50, 'stock' => 20, 'status' => 'active']);
+            Vegetable::create(['name' => 'Cabbage', 'category' => 'Leafy', 'price' => 1.80, 'stock' => 15, 'status' => 'active']);
             $vegetables = Vegetable::all();
         }
 
         return view('admin.vegetable-crud', compact('vegetables'));
     }
 
-    // Show form to add new vegetable
+    /**
+     * Show Add Vegetable form
+     */
     public function create()
-{
-    return view('admin.adminaddnewitem', [
-        'item' => null,
-        'storeRoute' => 'admin.vegetable.store',
-        'backRoute' => 'admin.vegetable-crud'
-    ]);
-}
+    {
+        return view('admin.adminaddnewitem', [
+            'item' => null,
+            'storeRoute' => 'admin.vegetable.store',
+            'backRoute' => 'admin.vegetable-crud'
+        ]);
+    }
 
-    // Store new vegetable
+    /**
+     * Store a new vegetable
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -44,22 +51,27 @@ class VegetableController extends Controller
 
         Vegetable::create($request->all());
 
-        return redirect()->route('admin.vegetable-crud')->with('success', 'Vegetable added successfully!');
+        return redirect()->route('admin.vegetable-crud')
+                         ->with('success', 'Vegetable added successfully!');
     }
 
-    // Show edit form (shared blade)
-   public function edit($id)
-{
-    $item = Vegetable::findOrFail($id);
-    return view('admin.edititem', [
-        'item' => $item,
-        'updateRoute' => 'admin.vegetable.update',
-        'storeRoute' => 'admin.vegetable.store',
-        'backRoute' => 'admin.vegetable-crud'
-    ]);
-}
+    /**
+     * Show Edit form
+     */
+    public function edit($id)
+    {
+        $item = Vegetable::findOrFail($id);
+        return view('admin.edititem', [
+            'item' => $item,
+            'updateRoute' => 'admin.vegetable.update',
+            'storeRoute' => 'admin.vegetable.store',
+            'backRoute' => 'admin.vegetable-crud'
+        ]);
+    }
 
-    // Update vegetable
+    /**
+     * Update a vegetable
+     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -70,29 +82,42 @@ class VegetableController extends Controller
         ]);
 
         $vegetable = Vegetable::findOrFail($id);
-        $vegetable->update($request->all());
+        $vegetable->update($request->only(['name', 'category', 'price', 'stock']));
 
         return redirect()->route('admin.vegetable-crud')->with('success', 'Vegetable updated successfully!');
     }
 
-    // Delete vegetable
-   public function destroy($id)
-{
-    $vegetable = Vegetable::findOrFail($id);
-    $vegetable->delete();
+    /**
+     * Delete a vegetable and log into history
+     */
+    public function destroy($id)
+    {
+        $vegetable = Vegetable::findOrFail($id);
 
-    return redirect()->route('admin.vegetable-crud')
-                     ->with('success', 'Item deleted successfully!');
-}
+        // Log deletion into history table
+        DeleteHistoryTable::create([
+            'name' => $vegetable->name,
+            'category' => 'Vegetable',
+            'quantity' => $vegetable->stock,
+            'deleted_at' => now(),
+        ]);
 
-public function confirmDelete($id)
-{
-    $vegetable = Vegetable::findOrFail($id);
-    return view('admin.delete-confirmation', [
-        'item' => $vegetable,
-        'type' => 'vegetable',
-        'destroyRoute' => route('admin.vegetable.destroy', $id),
-    ]);
-}
+        $vegetable->delete();
 
+        return redirect()->route('admin.vegetable-crud')
+                         ->with('success', 'Vegetable deleted and logged successfully!');
+    }
+
+    /**
+     * Confirm deletion page
+     */
+    public function confirmDelete($id)
+    {
+        $vegetable = Vegetable::findOrFail($id);
+        return view('admin.delete-confirmation', [
+            'item' => $vegetable,
+            'type' => 'vegetable',
+            'destroyRoute' => route('admin.vegetable.destroy', $id),
+        ]);
+    }
 }

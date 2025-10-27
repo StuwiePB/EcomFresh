@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class Chicken extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'products'; // chicken table
+    protected $table = 'chicken'; // chicken table
     protected $fillable = ['name','category','price','stock','description','image','status'];
 
     protected $casts = [

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ChickenController;
 use App\Http\Controllers\BeefController;
 use App\Http\Controllers\VegetableController;
 use App\Http\Controllers\AdminAuthController;
@@ -12,11 +12,14 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\AdminSettingsController;
+use App\Http\Controllers\ProductController;
 
 use App\Models\AdminProduct;
+use App\Models\Chicken;
 use App\Models\Product;
 use App\Models\Beef;
 use App\Models\Vegetable;
+use App\Models\DeleteHistoryTable;
 use Livewire\Volt\Volt;
 use Laravel\Fortify\Features;
 
@@ -41,7 +44,7 @@ Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from 
 // --------------------
 // ROOT ROUTE - Show Customer Main Page First (Direct)
 // --------------------
-Route::get('/', [ProductController::class, 'index'])->name('home');
+Route::get('/', [ChickenController::class, 'index'])->name('home');
 
 // --------------------
 // NEW: UNIFIED LOGIN PAGE ROUTE
@@ -93,7 +96,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login'); 
     // Dashboard for total products
    Route::get('/dashboard', function () {
-    $totalProducts = Product::count() + Beef::count() + Vegetable::count();
+    $totalProducts = Chicken::count() + Beef::count() + Vegetable::count();
     
     return view('admin.dashboard', [
         'totalProducts' => $totalProducts,
@@ -103,15 +106,15 @@ Route::prefix('admin')->group(function () {
 // CHICKEN CRUD
 // --------------------
 Route::middleware('auth')->group(function () {
-    Route::get('/chicken-crud', [ProductController::class, 'adminIndex'])->name('admin.chicken-crud');
-    Route::get('/chicken/create', [ProductController::class, 'create'])->name('admin.chicken.create');
-    Route::post('/chicken', [ProductController::class, 'store'])->name('admin.chicken.store');
-    Route::get('/chicken/{id}/edit', [ProductController::class, 'edit'])->name('admin.chicken.edit');
-    Route::put('/chicken/{id}', [ProductController::class, 'update'])->name('admin.chicken.update');
-    
+    Route::get('/chicken-crud', [ChickenController::class, 'adminIndex'])->name('admin.chicken-crud');
+    Route::get('/chicken/create', [ChickenController::class, 'create'])->name('admin.chicken.create');
+    Route::post('/chicken', [ChickenController::class, 'store'])->name('admin.chicken.store');
+    Route::get('/chicken/{id}/edit', [ChickenController::class, 'edit'])->name('admin.chicken.edit');
+    Route::put('/chicken/{id}', [ChickenController::class, 'update'])->name('admin.chicken.update');
+
     // NEW: Delete confirmation page
-    Route::get('/chicken/{id}/delete', [ProductController::class, 'confirmDelete'])->name('admin.chicken.confirmDelete');
-    Route::delete('/chicken/{id}', [ProductController::class, 'destroy'])->name('admin.chicken.destroy');
+    Route::get('/chicken/{id}/delete', [ChickenController::class, 'confirmDelete'])->name('admin.chicken.confirmDelete');
+    Route::delete('/chicken/{id}', [ChickenController::class, 'destroy'])->name('admin.chicken.destroy');
 
 });
 
@@ -169,18 +172,14 @@ Route::get('/dashboard', function () {
 
     // Count total products (all categories)
     $totalProducts =
-        Product::count() +
         Beef::count() +
         Chicken::count() +
         Vegetable::count();
 
     // Fetch low stock items from each category
     $beefLow = Beef::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
-    // Chicken items are stored in the Product model under the 'chicken' category
-    $chickenLow = Product::select('id', 'name', 'stock')
-        ->where('category', 'chicken')
-        ->where('stock', '<=', $threshold)
-        ->get();
+    // Chicken items are stored in the Chicken model
+    $chickenLow = Chicken::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
     $vegeLow = Vegetable::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
 
     // Merge them all together
@@ -251,3 +250,28 @@ Route::middleware(['auth'])->group(function () {
 // WELCOME ROUTE FOR ADMIN BUTTON
 // --------------------
 Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome');
+// --------------------
+// DELETE HISTORY CUSTOM ROUTE
+// --------------------
+Route::get('/admin/delete-history', function () {
+    $deletedItems = DeleteHistoryTable::latest()->get();
+    return view('admin.deletehistory', compact('deletedItems'));
+})->name('admin.deletehistory');
+
+Route::get('/admin/delete-history/fetch', function () {
+    return DeleteHistoryTable::latest()->get();
+})->name('admin.deletehistory.fetch');
+// --------------------
+Route::get('/dashboard', function () {
+    $totalProducts = \App\Models\Chicken::count();
+
+    // ✅ Get latest 3 deleted items
+    $recentDeletes = DeleteHistoryTable::latest()->take(3)->get();
+    $recentDeletes = DeleteHistoryTable::latest()->take(3)->get(); // 👈 add this
+
+
+    return view('admin.dashboard', [
+        'totalProducts' => $totalProducts,
+        'recentDeletes' => $recentDeletes,
+    ]);
+})->middleware('auth')->name('admin.dashboard');
