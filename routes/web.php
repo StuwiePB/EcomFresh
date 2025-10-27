@@ -1,4 +1,4 @@
-<?php
+<?php  
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -34,29 +34,21 @@ Route::post('/logout', function (Request $request) {
 })->name('logout');
 
 // --------------------
-// ROOT ROUTE - Show Login Page First (CHANGED)
+// ROOT ROUTE - Show Customer Main Page First
 // --------------------
-Route::get('/', fn() => view('customer.login'))->name('home'); // CHANGED: from customer.welcome to customer.login
+Route::get('/', [ProductController::class, 'index'])->name('home');
 
 // --------------------
-// ROOT ROUTE - Show Customer Main Page First (CHANGED)
-// --------------------
-// --------------------
-// ROOT ROUTE - Show Customer Main Page First (Direct)
-// --------------------
-Route::get('/', [ChickenController::class, 'index'])->name('home');
-
-// --------------------
-// NEW: UNIFIED LOGIN PAGE ROUTE
+// UNIFIED LOGIN PAGE
 // --------------------
 Route::get('/login', function() {
-    return view('login'); // This will use your new unified login page
+    return view('login');
 })->name('login');
 
 // --------------------
 // CUSTOMER ROUTES
 // --------------------
-Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome'); // ADDED: Welcome page as separate route
+Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome');
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice')->middleware('auth');
 Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
@@ -66,22 +58,20 @@ Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name
 Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
 Route::get('/customer/favorites', function () {return view('customer.favorites');})->name('customer.favorites')->middleware('auth');
 Route::get('/customer/settings', function () {return view('customer.settings');})->name('customer.settings')->middleware('auth');
-// Add this to your customer routes section
 Route::delete('/customer/delete-account', [CustomerAuthController::class, 'deleteAccount'])->name('customer.delete.account')->middleware('auth');
-//--------------------
-// Signup routes
-//--------------------
-Route::get('/signup', function () {
-    return view('customer.signuppage'); // Changed to match your filename
-})->name('signup');
 
+// --------------------
+// SIGNUP ROUTES
+// --------------------
+Route::get('/signup', function () {
+    return view('customer.signuppage');
+})->name('signup');
 Route::post('/signup', [CustomerAuthController::class, 'register'])->name('customer.signup.submit');
 
 // --------------------
-// NEW: CUSTOMER LOGIN FORM ROUTE
+// CUSTOMER LOGIN FORM
 // --------------------
 Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
-
 
 // --------------------
 // ADMIN ROUTES
@@ -93,96 +83,84 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-    Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login'); 
+    Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
+
     // Dashboard for total products
-   Route::get('/dashboard', function () {
-    $totalProducts = Chicken::count() + Beef::count() + Vegetable::count();
-    
-    return view('admin.dashboard', [
-        'totalProducts' => $totalProducts,
-    ]);
-})->middleware('auth')->name('admin.dashboard');
-   // --------------------
-// CHICKEN CRUD
-// --------------------
-Route::middleware('auth')->group(function () {
-    Route::get('/chicken-crud', [ChickenController::class, 'adminIndex'])->name('admin.chicken-crud');
-    Route::get('/chicken/create', [ChickenController::class, 'create'])->name('admin.chicken.create');
-    Route::post('/chicken', [ChickenController::class, 'store'])->name('admin.chicken.store');
-    Route::get('/chicken/{id}/edit', [ChickenController::class, 'edit'])->name('admin.chicken.edit');
-    Route::put('/chicken/{id}', [ChickenController::class, 'update'])->name('admin.chicken.update');
+    Route::get('/dashboard', function () {
+        $totalProducts = Chicken::count() + Beef::count() + Vegetable::count();
+        return view('admin.dashboard', [
+            'totalProducts' => $totalProducts,
+        ]);
+    })->middleware('auth')->name('admin.dashboard');
 
-    // NEW: Delete confirmation page
-    Route::get('/chicken/{id}/delete', [ChickenController::class, 'confirmDelete'])->name('admin.chicken.confirmDelete');
-    Route::delete('/chicken/{id}', [ChickenController::class, 'destroy'])->name('admin.chicken.destroy');
+    // --------------------
+    // CHICKEN CRUD
+    // --------------------
+    Route::middleware('auth')->group(function () {
+        Route::get('/chicken-crud', [ChickenController::class, 'adminIndex'])->name('admin.chicken-crud');
+        Route::get('/chicken/create', [ChickenController::class, 'create'])->name('admin.chicken.create');
+        Route::post('/chicken', [ChickenController::class, 'store'])->name('admin.chicken.store');
+        Route::get('/chicken/{id}/edit', [ChickenController::class, 'edit'])->name('admin.chicken.edit');
+        Route::put('/chicken/{id}', [ChickenController::class, 'update'])->name('admin.chicken.update');
+        Route::get('/chicken/{id}/delete', [ChickenController::class, 'confirmDelete'])->name('admin.chicken.confirmDelete');
+        Route::delete('/chicken/{id}', [ChickenController::class, 'destroy'])->name('admin.chicken.destroy');
+    });
 
-});
+    // --------------------
+    // BEEF CRUD
+    // --------------------
+    Route::middleware('auth')->group(function () {
+        Route::get('/beef-crud', [BeefController::class, 'index'])->name('admin.beef-crud');
+        Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
+        Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
+        Route::get('/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');
+        Route::put('/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
+        Route::get('/beef/{id}/delete', [BeefController::class, 'confirmDelete'])->name('admin.beef.confirmDelete');
+        Route::delete('/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
+    });
 
-// --------------------
-// BEEF CRUD
-// --------------------
-Route::middleware('auth')->group(function () {
-    Route::get('/beef-crud', [BeefController::class, 'index'])->name('admin.beef-crud');
-    Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
-    Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
-    Route::get('/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');
-    Route::put('/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
+    // --------------------
+    // VEGETABLE CRUD
+    // --------------------
+    Route::middleware('auth')->group(function () {
+        Route::get('/vegetable-crud', [VegetableController::class, 'index'])->name('admin.vegetable-crud');
+        Route::get('/vegetable/create', [VegetableController::class, 'create'])->name('admin.vegetable.create');
+        Route::post('/vegetable', [VegetableController::class, 'store'])->name('admin.vegetable.store');
+        Route::get('/vegetable/{id}/edit', [VegetableController::class, 'edit'])->name('admin.vegetable.edit');
+        Route::put('/vegetable/{id}', [VegetableController::class, 'update'])->name('admin.vegetable.update');
+        Route::get('/vegetable/{id}/delete', [VegetableController::class, 'confirmDelete'])->name('admin.vegetable.confirmDelete');
+        Route::delete('/vegetable/{id}', [VegetableController::class, 'destroy'])->name('admin.vegetable.destroy');
+    });
 
-    // NEW: Delete confirmation page
-    Route::get('/beef/{id}/delete', [BeefController::class, 'confirmDelete'])->name('admin.beef.confirmDelete');
-    Route::delete('/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
-});
-
-// --------------------
-// VEGETABLE CRUD
-// --------------------
-Route::middleware('auth')->group(function () {
-    Route::get('/vegetable-crud', [VegetableController::class, 'index'])->name('admin.vegetable-crud');
-    Route::get('/vegetable/create', [VegetableController::class, 'create'])->name('admin.vegetable.create');
-    Route::post('/vegetable', [VegetableController::class, 'store'])->name('admin.vegetable.store');
-    Route::get('/vegetable/{id}/edit', [VegetableController::class, 'edit'])->name('admin.vegetable.edit');
-    Route::put('/vegetable/{id}', [VegetableController::class, 'update'])->name('admin.vegetable.update');
-
-    // NEW: Delete confirmation page
-    Route::get('/vegetable/{id}/delete', [VegetableController::class, 'confirmDelete'])->name('admin.vegetable.confirmDelete');
-    Route::delete('/vegetable/{id}', [VegetableController::class, 'destroy'])->name('admin.vegetable.destroy');
-});
-
-
-    // Store info
+    // --------------------
+    // STORE INFO + DELETE HISTORY
+    // --------------------
     Route::middleware('auth')->group(function () {
         Route::get('/storeinfo', fn() => view('admin.storeinfo'))->name('admin.storeinfo');
         Route::post('/storeinfo', [AdminAuthController::class, 'updateStoreInfo'])->name('admin.storeinfo.update');
-
-        // Delete history
         Route::get('/deletehistory', function () {
             $deletedItems = AdminProduct::onlyTrashed()->get();
             return view('admin.deletehistory', compact('deletedItems'));
         })->name('admin.deletehistory');
     });
 });
+
 // --------------------
 // SELLER DASHBOARD
 // --------------------
 Route::get('/dashboard', function () {
+    $threshold = 5;
+    $displayLimit = 10;
 
-    // Define what counts as low stock
-    $threshold = 5; // Anything <= 5 is low stock
-    $displayLimit = 10; // Limit number of names shown
-
-    // Count total products (all categories)
     $totalProducts =
         Beef::count() +
         Chicken::count() +
         Vegetable::count();
 
-    // Fetch low stock items from each category
     $beefLow = Beef::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
-    // Chicken items are stored in the Chicken model
     $chickenLow = Chicken::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
     $vegeLow = Vegetable::select('id', 'name', 'stock')->where('stock', '<=', $threshold)->get();
 
-    // Merge them all together
     $lowStockItems = collect()
         ->merge($beefLow)
         ->merge($chickenLow)
@@ -190,10 +168,8 @@ Route::get('/dashboard', function () {
         ->sortBy('stock')
         ->take($displayLimit);
 
-    // Count total low-stock items
     $totalLowStock = $lowStockItems->count();
 
-    // Send to Blade
     return view('admin.dashboard', [
         'totalProducts'  => $totalProducts,
         'totalLowStock'  => $totalLowStock,
@@ -202,8 +178,9 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware('auth')->name('admin.dashboard');
 
-
-// ADMIN DROPDOWN PROFILE
+// --------------------
+// ADMIN PROFILE + SETTINGS
+// --------------------
 Route::middleware('auth')->group(function () {
     Route::get('/admin/profile', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
     Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
@@ -214,22 +191,11 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::put('settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
 });
 
-
-// --------------------
-// GLOBAL LOGOUT
-// --------------------
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-    return redirect('/login');
-})->name('logout');
 // --------------------
 // VOLT SETTINGS
 // --------------------
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
-
     Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
     Volt::route('settings/password', 'settings.password')->name('password.edit');
     Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
@@ -250,6 +216,7 @@ Route::middleware(['auth'])->group(function () {
 // WELCOME ROUTE FOR ADMIN BUTTON
 // --------------------
 Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome');
+
 // --------------------
 // DELETE HISTORY CUSTOM ROUTE
 // --------------------
@@ -261,14 +228,13 @@ Route::get('/admin/delete-history', function () {
 Route::get('/admin/delete-history/fetch', function () {
     return DeleteHistoryTable::latest()->get();
 })->name('admin.deletehistory.fetch');
+
+// --------------------
+// FINAL DASHBOARD ROUTE WITH RECENT DELETES
 // --------------------
 Route::get('/dashboard', function () {
-    $totalProducts = \App\Models\Chicken::count();
-
-    // ✅ Get latest 3 deleted items
+    $totalProducts = Chicken::count();
     $recentDeletes = DeleteHistoryTable::latest()->take(3)->get();
-    $recentDeletes = DeleteHistoryTable::latest()->take(3)->get(); // 👈 add this
-
 
     return view('admin.dashboard', [
         'totalProducts' => $totalProducts,
