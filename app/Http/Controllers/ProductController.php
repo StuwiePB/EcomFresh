@@ -238,10 +238,27 @@ class ProductController extends Controller
      * Delete item
      */
     public function destroy($id)
-    {
-        $product = Product::findOrFail($id);
-        $product->delete();
+{
+    $product = Product::findOrFail($id);
+    $product->delete();
 
-        return redirect()->back()->with('success', 'Item deleted successfully!');
-    }
+    // Redirect to chicken list after deletion
+    return redirect()->route('admin.chicken-crud')
+                     ->with('success', 'Item deleted successfully!');
+}
+
+public function confirmDelete($id)
+{
+    $chicken = Product::findOrFail($id);
+
+    // Force the correct route using route() helper and 'admin' prefix
+    $destroyRoute = route('admin.chicken.destroy', ['id' => $chicken->id]);
+
+    return view('admin.delete-confirmation', [
+        'item' => $chicken,
+        'destroyRoute' => $destroyRoute,
+    ]);
+}
+
+
 }

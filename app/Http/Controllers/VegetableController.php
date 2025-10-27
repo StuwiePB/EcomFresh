@@ -76,11 +76,23 @@ class VegetableController extends Controller
     }
 
     // Delete vegetable
-    public function destroy($id)
-    {
-        $vegetable = Vegetable::findOrFail($id);
-        $vegetable->delete();
+   public function destroy($id)
+{
+    $vegetable = Vegetable::findOrFail($id);
+    $vegetable->delete();
 
-        return redirect()->back()->with('success', 'Vegetable deleted successfully!');
-    }
+    return redirect()->route('admin.vegetable-crud')
+                     ->with('success', 'Item deleted successfully!');
+}
+
+public function confirmDelete($id)
+{
+    $vegetable = Vegetable::findOrFail($id);
+    return view('admin.delete-confirmation', [
+        'item' => $vegetable,
+        'type' => 'vegetable',
+        'destroyRoute' => route('admin.vegetable.destroy', $id),
+    ]);
+}
+
 }

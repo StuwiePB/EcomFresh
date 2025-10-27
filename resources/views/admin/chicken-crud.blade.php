@@ -10,7 +10,7 @@
 
   <!-- Header -->
   <header class="bg-blue-700 text-white flex items-center px-4 py-3">
-     <a href="{{ route('admin.dashboard') }}" class="mr-3">
+    <a href="{{ route('admin.dashboard') }}" class="mr-3">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" 
            viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -20,29 +20,27 @@
     <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold">ECOM FRESH</h1>
   </header>
 
-  <!-- Item list container -->
+  <!-- Main content -->
   <main class="flex-1 p-4 flex flex-col items-center">
 
     <!-- Success message -->
     @if (session('success'))
-      <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center w-full max-w-md md:max-w-2xl lg:max-w-3xl">
+      <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center w-full max-w-3xl">
         {{ session('success') }}
       </div>
     @endif
 
-    <div class="w-full max-w-md md:max-w-2xl lg:max-w-3xl">
-      
+    <div class="w-full max-w-3xl">
       <!-- Page header with controls -->
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold">Chicken List</h2>
 
         <div class="flex gap-2">
-          <select id="itemType" class="border rounded px-3 py-2" onchange="navigateToPage()">
-  <option value="{{ route('admin.chicken-crud') }}" {{ request()->is('admin/chicken-crud') ? 'selected' : '' }}>Chicken</option>
-  <option value="{{ route('admin.beef-crud') }}" {{ request()->is('admin/beef-crud') ? 'selected' : '' }}>Beef</option>
-  <option value="{{ route('admin.vegetable-crud') }}" {{ request()->is('admin/vegetable-crud') ? 'selected' : '' }}>Vegetable</option>
-</select>
-
+          <select id="itemType" class="border rounded px-3 py-2">
+            <option value="{{ route('admin.chicken-crud') }}" {{ request()->is('admin/chicken-crud') ? 'selected' : '' }}>Chicken</option>
+            <option value="{{ route('admin.beef-crud') }}" {{ request()->is('admin/beef-crud') ? 'selected' : '' }}>Beef</option>
+            <option value="{{ route('admin.vegetable-crud') }}" {{ request()->is('admin/vegetable-crud') ? 'selected' : '' }}>Vegetable</option>
+          </select>
 
           <a id="newButton" href="{{ route('admin.chicken.create') }}" 
              class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">
@@ -74,17 +72,13 @@
               </svg>
             </a>
 
-            <form action="{{ route('admin.chicken.destroy', $chicken->id) }}" method="POST" onsubmit="return confirmDelete(event)">
-              @csrf
-              @method('DELETE')
-              <button type="submit" class="bg-red-100 p-2 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600"
-                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8" />
-                </svg>
-              </button>
-            </form>
+            <a href="{{ route('admin.chicken.confirmDelete', $chicken->id) }}" class="bg-red-100 p-2 rounded-lg flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8" />
+              </svg>
+            </a>
           </div>
         </div>
         @endforeach
@@ -102,26 +96,18 @@
     </svg>
   </a>
 
-  
   <script>
-  function navigateToPage() {
     const dropdown = document.getElementById('itemType');
-    const selectedURL = dropdown.value;
-    if(selectedURL) {
+    const newButton = document.getElementById('newButton');
+
+    dropdown.addEventListener('change', function() {
+      const selectedURL = dropdown.value;
+      if(selectedURL.includes('chicken')) newButton.href = "{{ route('admin.chicken.create') }}";
+      else if(selectedURL.includes('beef')) newButton.href = "{{ route('admin.beef.create') }}";
+      else if(selectedURL.includes('vegetable')) newButton.href = "{{ route('admin.vegetable.create') }}";
+
       window.location.href = selectedURL;
-    }
-  }
-
-  const newButton = document.getElementById('newButton');
-  const dropdown = document.getElementById('itemType');
-
-  dropdown.addEventListener('change', function() {
-    const selectedURL = dropdown.value;
-    if(selectedURL.includes('chicken')) newButton.href = "{{ route('admin.chicken.create') }}";
-    else if(selectedURL.includes('beef')) newButton.href = "{{ route('admin.beef.create') }}";
-    else if(selectedURL.includes('vegetable')) newButton.href = "{{ route('admin.vegetable.create') }}";
-  });
-</script>
-
+    });
+  </script>
 </body>
 </html>

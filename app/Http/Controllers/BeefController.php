@@ -95,10 +95,22 @@ public function update(Request $request, $id)
      * Delete beef
      */
     public function destroy($id)
-    {
-        $beef = Beef::findOrFail($id);
-        $beef->delete();
+{
+    $beef = Beef::findOrFail($id);
+    $beef->delete();
 
-        return redirect()->back()->with('success', 'Beef deleted successfully!');
-    }
+    return redirect()->route('admin.beef-crud')
+                     ->with('success', 'Item deleted successfully!');
+}
+
+public function confirmDelete($id)
+{
+    $beef = Beef::findOrFail($id);
+    return view('admin.delete-confirmation', [
+        'item' => $beef,
+        'type' => 'beef',
+        'destroyRoute' => route('admin.beef.destroy', $id),
+    ]);
+}
+
 }

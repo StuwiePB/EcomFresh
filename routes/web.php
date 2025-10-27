@@ -99,40 +99,52 @@ Route::prefix('admin')->group(function () {
         'totalProducts' => $totalProducts,
     ]);
 })->middleware('auth')->name('admin.dashboard');
-    // --------------------
-    // CHICKEN CRUD
-    // --------------------
-   Route::middleware('auth')->group(function () {
+   // --------------------
+// CHICKEN CRUD
+// --------------------
+Route::middleware('auth')->group(function () {
     Route::get('/chicken-crud', [ProductController::class, 'adminIndex'])->name('admin.chicken-crud');
     Route::get('/chicken/create', [ProductController::class, 'create'])->name('admin.chicken.create');
     Route::post('/chicken', [ProductController::class, 'store'])->name('admin.chicken.store');
     Route::get('/chicken/{id}/edit', [ProductController::class, 'edit'])->name('admin.chicken.edit');
     Route::put('/chicken/{id}', [ProductController::class, 'update'])->name('admin.chicken.update');
+    
+    // NEW: Delete confirmation page
+    Route::get('/chicken/{id}/delete', [ProductController::class, 'confirmDelete'])->name('admin.chicken.confirmDelete');
     Route::delete('/chicken/{id}', [ProductController::class, 'destroy'])->name('admin.chicken.destroy');
-});
-    // --------------------
-    // BEEF CRUD
-    // --------------------
-    Route::middleware('auth')->group(function () {
-        Route::get('/beef-crud', [BeefController::class, 'index'])->name('admin.beef-crud');
-        Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
-        Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
-        Route::get('/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');
-        Route::put('/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
-        Route::delete('/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
-    });
 
-    // --------------------
-    // VEGETABLE CRUD
-    // --------------------
-    Route::middleware('auth')->group(function () {
-        Route::get('/vegetable-crud', [VegetableController::class, 'index'])->name('admin.vegetable-crud');
-        Route::get('/vegetable/create', [VegetableController::class, 'create'])->name('admin.vegetable.create');
-        Route::post('/vegetable', [VegetableController::class, 'store'])->name('admin.vegetable.store');
-        Route::get('/vegetable/{id}/edit', [VegetableController::class, 'edit'])->name('admin.vegetable.edit');
-        Route::put('/vegetable/{id}', [VegetableController::class, 'update'])->name('admin.vegetable.update');
-        Route::delete('/vegetable/{id}', [VegetableController::class, 'destroy'])->name('admin.vegetable.destroy');
-    });
+});
+
+// --------------------
+// BEEF CRUD
+// --------------------
+Route::middleware('auth')->group(function () {
+    Route::get('/beef-crud', [BeefController::class, 'index'])->name('admin.beef-crud');
+    Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
+    Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
+    Route::get('/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');
+    Route::put('/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
+
+    // NEW: Delete confirmation page
+    Route::get('/beef/{id}/delete', [BeefController::class, 'confirmDelete'])->name('admin.beef.confirmDelete');
+    Route::delete('/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
+});
+
+// --------------------
+// VEGETABLE CRUD
+// --------------------
+Route::middleware('auth')->group(function () {
+    Route::get('/vegetable-crud', [VegetableController::class, 'index'])->name('admin.vegetable-crud');
+    Route::get('/vegetable/create', [VegetableController::class, 'create'])->name('admin.vegetable.create');
+    Route::post('/vegetable', [VegetableController::class, 'store'])->name('admin.vegetable.store');
+    Route::get('/vegetable/{id}/edit', [VegetableController::class, 'edit'])->name('admin.vegetable.edit');
+    Route::put('/vegetable/{id}', [VegetableController::class, 'update'])->name('admin.vegetable.update');
+
+    // NEW: Delete confirmation page
+    Route::get('/vegetable/{id}/delete', [VegetableController::class, 'confirmDelete'])->name('admin.vegetable.confirmDelete');
+    Route::delete('/vegetable/{id}', [VegetableController::class, 'destroy'])->name('admin.vegetable.destroy');
+});
+
 
     // Store info
     Route::middleware('auth')->group(function () {

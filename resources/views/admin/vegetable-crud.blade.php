@@ -20,30 +20,28 @@
     <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold">ECOM FRESH</h1>
   </header>
 
+  <!-- Main content -->
   <main class="flex-1 p-4 flex flex-col items-center">
 
     <!-- Success message -->
     @if (session('success'))
-      <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center w-full max-w-md md:max-w-2xl lg:max-w-3xl">
+      <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center w-full max-w-3xl">
         {{ session('success') }}
       </div>
     @endif
 
-    <div class="w-full max-w-md md:max-w-2xl lg:max-w-3xl">
-
-      <!-- Page header + controls -->
+    <div class="w-full max-w-3xl">
+      <!-- Page header with controls -->
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold">Vegetable List</h2>
 
         <div class="flex gap-2">
-          <!-- Dropdown for item type -->
-          <select id="itemType" class="border rounded px-3 py-2" onchange="navigateToPage()">
+          <select id="itemType" class="border rounded px-3 py-2">
             <option value="{{ route('admin.chicken-crud') }}" {{ request()->is('admin/chicken-crud') ? 'selected' : '' }}>Chicken</option>
             <option value="{{ route('admin.beef-crud') }}" {{ request()->is('admin/beef-crud') ? 'selected' : '' }}>Beef</option>
             <option value="{{ route('admin.vegetable-crud') }}" {{ request()->is('admin/vegetable-crud') ? 'selected' : '' }}>Vegetable</option>
           </select>
 
-          <!-- New button -->
           <a id="newButton" href="{{ route('admin.vegetable.create') }}" 
              class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">
             New
@@ -54,39 +52,36 @@
       <!-- Items grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @foreach($vegetables as $vegetable)
-        <div class="bg-white rounded-xl shadow p-4 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="text-4xl">🥦</div>
-            <div class="flex flex-col space-y-1">
-              <h3 class="font-bold text-lg">{{ $vegetable->name }}</h3>
-              <p class="text-sm text-gray-500">Category: {{ $vegetable->category ?? 'Vegetable' }}</p>
-              <p class="text-sm font-semibold">${{ number_format($vegetable->price, 2) }}</p>
-              <p class="text-sm">Stock: {{ $vegetable->stock }}</p>
+          <div class="bg-white rounded-xl shadow p-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="text-4xl">🥦</div>
+              <div class="flex flex-col space-y-1">
+                <h3 class="font-bold text-lg">{{ $vegetable->name }}</h3>
+                <p class="text-sm font-semibold">${{ number_format($vegetable->price, 2) }}</p>
+                <p class="text-sm">Stock: {{ $vegetable->stock }}</p>
+              </div>
             </div>
-          </div>
 
-          <div class="flex gap-2">
-            <a href="{{ route('admin.vegetable.edit', $vegetable->id) }}" class="bg-blue-100 p-2 rounded-lg flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" 
-                   fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z" />
-              </svg>
-            </a>
+            <div class="flex gap-2">
+              <a href="{{ route('admin.vegetable.edit', $vegetable->id) }}" 
+                 class="bg-blue-100 p-2 rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" 
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z" />
+                </svg>
+              </a>
 
-            <form action="{{ route('admin.vegetable.destroy', $vegetable->id) }}" method="POST" onsubmit="return confirmDelete(event)">
-              @csrf
-              @method('DELETE')
-              <button type="submit" class="bg-red-100 p-2 rounded-lg">
+              <a href="{{ route('admin.vegetable.confirmDelete', $vegetable->id) }}" 
+                 class="bg-red-100 p-2 rounded-lg flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600"
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8" />
                 </svg>
-              </button>
-            </form>
+              </a>
+            </div>
           </div>
-        </div>
         @endforeach
       </div>
     </div>
@@ -103,27 +98,16 @@
   </a>
 
   <script>
-    function confirmDelete(event) {
-      event.preventDefault();
-      if(confirm('Are you sure you want to delete this item?')) {
-        event.target.submit();
-      }
-    }
-
-    function navigateToPage() {
-      const dropdown = document.getElementById("itemType");
-      window.location.href = dropdown.value;
-    }
-
-    // Dynamic New button
-    const newButton = document.getElementById('newButton');
     const dropdown = document.getElementById('itemType');
+    const newButton = document.getElementById('newButton');
 
     dropdown.addEventListener('change', function() {
-      const type = dropdown.options[dropdown.selectedIndex].text.toLowerCase();
-      if(type === 'chicken') newButton.href = "{{ route('admin.chicken.create') }}";
-      else if(type === 'beef') newButton.href = "{{ route('admin.beef.create') }}";
-      else if(type === 'vegetable') newButton.href = "{{ route('admin.vegetable.create') }}";
+      const selectedURL = dropdown.value;
+      if(selectedURL.includes('chicken')) newButton.href = "{{ route('admin.chicken.create') }}";
+      else if(selectedURL.includes('beef')) newButton.href = "{{ route('admin.beef.create') }}";
+      else if(selectedURL.includes('vegetable')) newButton.href = "{{ route('admin.vegetable.create') }}";
+
+      window.location.href = selectedURL;
     });
   </script>
 
