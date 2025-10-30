@@ -136,7 +136,7 @@ class PriceController extends Controller
     public function huahoPriceHistory()
     {
         $data = [
-            'location' => 'Gadong, Brunei',
+            'location' => 'Tanjong Bunut, Brunei',
             'title' => 'Hua Ho - Price History',
             'products' => $this->getHuahoProducts()
         ];
@@ -148,7 +148,7 @@ class PriceController extends Controller
     public function soonleePriceHistory()
     {
         $data = [
-            'location' => 'Gadong, Brunei',
+            'location' => 'Sengkurong, Brunei',
             'title' => 'Soon Lee - Price History',
             'products' => $this->getSoonLeeProducts()
         ];
@@ -231,16 +231,16 @@ class PriceController extends Controller
             [
                 'name' => 'Chicken Breast - Soon Lee',
                 'description' => 'Fresh • Quality Guaranteed',
-                'currentPrice' => 3.50,
+                'currentPrice' => 3.65,
                 'priceHistory' => [
-                    'current' => 3.50,
+                    'current' => 3.65,
                     'lastMonth' => 3.55,
                     'twoMonthsAgo' => 3.60,
-                    'threeMonthsAgo' => 3.65
+                    'threeMonthsAgo' => 3.50
                 ],
-                'priceChange' => -0.05,
-                'percentageChange' => -1.41,
-                'trend' => 'decrease'
+                'priceChange' => +0.10,
+                'percentageChange' => +1.41,
+                'trend' => 'increase'
             ]
         ];
     }
