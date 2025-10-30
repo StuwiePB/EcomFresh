@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Price History - EcomFresh</title>
+    <title>{{ $title }} - EcomFresh</title>
     
     <!-- Poppins Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,39 +60,40 @@
 </head>
 <body class="min-h-screen">
     <!-- Header -->
-   <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
-    <div class="container mx-auto px-4 py-4">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <!-- Logo and Title Section -->
-            <div class="flex items-center justify-center md:justify-start space-x-4">
-                <div class="w-12 h-12 md:w-16 md:h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
-                    <i class="fas fa-leaf text-white text-xl md:text-2xl"></i>
+    <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <!-- Logo and Title Section -->
+                <div class="flex items-center justify-center md:justify-start space-x-4">
+                    <div class="w-12 h-12 md:w-16 md:h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
+                        <i class="fas fa-leaf text-white text-xl md:text-2xl"></i>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
+                        <p class="text-blue-600 font-medium text-sm md:text-base">{{ $title }}</p>
+                    </div>
                 </div>
-                <div class="text-center md:text-left">
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
-                    <p class="text-blue-600 font-medium text-sm md:text-base">Price History & Trends</p>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex flex-col sm:flex-row items-center gap-2 justify-center">
+                    <a href="/customer" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Categories
+                    </a>
+                    <a href="/todaysprice" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
+                        <i class="fas fa-tag mr-2"></i>Today's Prices
+                    </a>
                 </div>
-            </div>
-            
-            <!-- Navigation Buttons -->
-            <div class="flex flex-col sm:flex-row items-center gap-2 justify-center">
-                <a href="/customer" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
-                    <i class="fas fa-arrow-left mr-2"></i>Back to Categories
-                </a>
-                <a href="/todaysprice" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
-                    <i class="fas fa-tag mr-2"></i>Today's Prices
-                </a>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
         <!-- Page Title -->
         <div class="text-center mb-8">
-            <h2 class="text-4xl font-extrabold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 800;">Price History</h2>
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 800;">{{ $title }}</h2>
             <p class="text-xl text-gray-600">Tracks average price trends over the last 3 months</p>
+            <p class="text-lg text-gray-700 mt-2">{{ $location }}</p>
         </div>
 
         <!-- Products Price History -->

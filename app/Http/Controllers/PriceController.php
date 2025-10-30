@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PriceController extends Controller
 {
@@ -98,57 +99,183 @@ class PriceController extends Controller
         return view('customer.todays-price', $data);
     }
 
-    // NEW METHOD FOR PRICE HISTORY
-        public function priceHistory()
+    //new method for price history with database
+          public function priceHistory($type = null, $id = null)
     {
+        if ($type === 'category' && $id === 'beef') {
+            return $this->beefPriceHistory();
+        } elseif ($type === 'store' && $id === 'huaho') {
+            return $this->huahoPriceHistory();
+        } elseif ($type === 'store' && $id === 'soonlee') {
+            return $this->soonleePriceHistory();
+        }
+
+        // Default: all products
         $data = [
             'location' => 'Gadong, Brunei',
-            'products' => [
-                [
-                    'name' => 'Chicken Breast',
-                    'description' => 'Fresh • Quality Guaranteed',
-                    'currentPrice' => 3.60,
-                    'priceHistory' => [
-                        'current' => 3.60,
-                        'lastMonth' => 3.70,
-                        'twoMonthsAgo' => 3.65,
-                        'threeMonthsAgo' => 3.80
-                    ],
-                    'priceChange' => -0.10,
-                    'percentageChange' => -2.7,
-                    'trend' => 'decrease'
-                ],
-                [
-                    'name' => 'Ribeye Steak',
-                    'description' => 'Fresh • Quality Guaranteed',
-                    'currentPrice' => 18.30,
-                    'priceHistory' => [
-                        'current' => 18.30,
-                        'lastMonth' => 17.90,
-                        'twoMonthsAgo' => 17.50,
-                        'threeMonthsAgo' => 17.20
-                    ],
-                    'priceChange' => 0.40,
-                    'percentageChange' => 2.23,
-                    'trend' => 'increase'
-                ],
-                [
-                    'name' => 'Beansprouts',
-                    'description' => 'Fresh • Quality Guaranteed',
-                    'currentPrice' => 1.80,
-                    'priceHistory' => [
-                        'current' => 1.80,
-                        'lastMonth' => 1.50,
-                        'twoMonthsAgo' => 1.45,
-                        'threeMonthsAgo' => 1.45
-                    ],
-                    'priceChange' => 0.30,
-                    'percentageChange' => 20.0,
-                    'trend' => 'increase'
-                ]
-            ]
+            'title' => 'Price History - All Products',
+            'products' => $this->getAllProducts()
         ];
 
         return view('customer.pricehistory', $data);
+    }
+
+    // Beef prices
+    public function beefPriceHistory()
+    {
+        $data = [
+            'location' => 'Gadong, Brunei',
+            'title' => 'Beef Price History',
+            'products' => $this->getBeefProducts()
+        ];
+
+        return view('customer.pricehistory', $data);
+    }
+
+    // Hua Ho prices
+    public function huahoPriceHistory()
+    {
+        $data = [
+            'location' => 'Gadong, Brunei',
+            'title' => 'Hua Ho - Price History',
+            'products' => $this->getHuahoProducts()
+        ];
+
+        return view('customer.pricehistory', $data);
+    }
+
+    // Soon Lee prices
+    public function soonleePriceHistory()
+    {
+        $data = [
+            'location' => 'Gadong, Brunei',
+            'title' => 'Soon Lee - Price History',
+            'products' => $this->getSoonLeeProducts()
+        ];
+
+        return view('customer.pricehistory', $data);
+    }
+
+    // Product data methods
+    private function getBeefProducts()
+    {
+        return [
+            [
+                'name' => 'Beef Ribeye Steak',
+                'description' => 'Premium Quality • Fresh',
+                'currentPrice' => 18.50,
+                'priceHistory' => [
+                    'current' => 18.50,
+                    'lastMonth' => 18.20,
+                    'twoMonthsAgo' => 17.80,
+                    'threeMonthsAgo' => 17.50
+                ],
+                'priceChange' => 0.30,
+                'percentageChange' => 1.65,
+                'trend' => 'increase'
+            ],
+            [
+                'name' => 'Beef Sirloin',
+                'description' => 'Premium Quality • Fresh',
+                'currentPrice' => 16.80,
+                'priceHistory' => [
+                    'current' => 16.80,
+                    'lastMonth' => 17.20,
+                    'twoMonthsAgo' => 16.90,
+                    'threeMonthsAgo' => 16.50
+                ],
+                'priceChange' => -0.40,
+                'percentageChange' => -2.33,
+                'trend' => 'decrease'
+            ]
+        ];
+    }
+
+    private function getHuahoProducts()
+    {
+        return [
+            [
+                'name' => 'Chicken Breast - Hua Ho',
+                'description' => 'Fresh • Quality Guaranteed',
+                'currentPrice' => 3.60,
+                'priceHistory' => [
+                    'current' => 3.60,
+                    'lastMonth' => 3.70,
+                    'twoMonthsAgo' => 3.65,
+                    'threeMonthsAgo' => 3.80
+                ],
+                'priceChange' => -0.10,
+                'percentageChange' => -2.7,
+                'trend' => 'decrease'
+            ],
+            [
+                'name' => 'Apples - Hua Ho',
+                'description' => 'Fresh • Imported',
+                'currentPrice' => 4.20,
+                'priceHistory' => [
+                    'current' => 4.20,
+                    'lastMonth' => 4.00,
+                    'twoMonthsAgo' => 3.90,
+                    'threeMonthsAgo' => 3.80
+                ],
+                'priceChange' => 0.20,
+                'percentageChange' => 5.0,
+                'trend' => 'increase'
+            ]
+        ];
+    }
+
+    private function getSoonLeeProducts()
+    {
+        return [
+            [
+                'name' => 'Chicken Breast - Soon Lee',
+                'description' => 'Fresh • Quality Guaranteed',
+                'currentPrice' => 3.50,
+                'priceHistory' => [
+                    'current' => 3.50,
+                    'lastMonth' => 3.55,
+                    'twoMonthsAgo' => 3.60,
+                    'threeMonthsAgo' => 3.65
+                ],
+                'priceChange' => -0.05,
+                'percentageChange' => -1.41,
+                'trend' => 'decrease'
+            ]
+        ];
+    }
+
+    private function getAllProducts()
+    {
+        return [
+            [
+                'name' => 'Chicken Breast',
+                'description' => 'Fresh • Quality Guaranteed',
+                'currentPrice' => 3.60,
+                'priceHistory' => [
+                    'current' => 3.60,
+                    'lastMonth' => 3.70,
+                    'twoMonthsAgo' => 3.65,
+                    'threeMonthsAgo' => 3.80
+                ],
+                'priceChange' => -0.10,
+                'percentageChange' => -2.7,
+                'trend' => 'decrease'
+            ],
+            [
+                'name' => 'Ribeye Steak',
+                'description' => 'Fresh • Quality Guaranteed',
+                'currentPrice' => 18.30,
+                'priceHistory' => [
+                    'current' => 18.30,
+                    'lastMonth' => 17.90,
+                    'twoMonthsAgo' => 17.50,
+                    'threeMonthsAgo' => 17.20
+                ],
+                'priceChange' => 0.40,
+                'percentageChange' => 2.23,
+                'trend' => 'increase'
+            ]
+        ];
     }
 }
