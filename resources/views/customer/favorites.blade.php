@@ -324,9 +324,7 @@
                                                     <div class="discount-badge text-white text-xs font-bold px-2 py-1 rounded-full mt-2 discount-percentage">
                                                         <i class="fas fa-bolt mr-1"></i>SAVE ${discountPercentage}%
                                                     </div>
-                                                    <div class="savings-amount">
-                                                        Save BND ${savingsAmount}
-                                                    </div>
+                                                    
                                                 ` : ''}
                                                 
                                                 <div class="text-gray-600 text-sm mt-1">per kg</div>
