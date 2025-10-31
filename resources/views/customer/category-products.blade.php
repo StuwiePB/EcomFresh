@@ -112,44 +112,130 @@
             font-size: 0.875rem !important; /* text-sm */
         }
     }
+    
+    /* Discount styling */
+.discount-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+}
+
+.discount-badge-sm {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.save-5 { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+.save-10 { background: linear-gradient(135deg, #ff6b6b, #c44569); }
+.save-15 { background: linear-gradient(135deg, #ff6b6b, #a55eea); }
+.save-20 { background: linear-gradient(135deg, #ff6b6b, #eb3b5a); }
+.save-25 { background: linear-gradient(135deg, #ff6b6b, #fc5c65); }
+
+.original-price {
+    text-decoration: line-through;
+    color: #718096 !important;
+    font-size: 0.875rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.current-price {
+    color: #059669;
+    font-weight: 800;
+    text-shadow: 0 1px 2px rgba(5, 150, 105, 0.1);
+}
+
+.has-discount {
+    position: relative;
+    background: linear-gradient(135deg, #f0fff4, #ffffff);
+    border-left: 4px solid #48bb78;
+}
+
+.discount-ribbon {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 0.25rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+    z-index: 10;
+}
+
+.price-container {
+    position: relative;
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.has-discount .price-container {
+    background: linear-gradient(135deg, #f0fff4, #e6fffa);
+    border-color: #68d391;
+}
+
+.discount-percentage {
+    font-weight: 800;
+    font-size: 0.9em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.savings-amount {
+    font-size: 0.75rem;
+    color: #059669;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
 </style>
 
-<header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
-    <div class="container mx-auto px-4 py-4">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <!-- Logo and Title Section -->
-            <div class="flex items-center justify-center md:justify-start space-x-4">
-                <div class="w-12 h-12 md:w-16 md:h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
-                    <i class="fas fa-leaf text-white text-xl md:text-2xl"></i>
+<body class="min-h-screen">
+    <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <!-- Logo and Title Section -->
+                <div class="flex items-center justify-center md:justify-start space-x-4">
+                    <div class="w-12 h-12 md:w-16 md:h-16 logo-placeholder rounded-lg flex items-center justify-center shadow-md">
+                        <i class="fas fa-leaf text-white text-xl md:text-2xl"></i>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800">E-COM FRESH</h1>
+                        <p class="text-blue-600 font-medium text-sm md:text-base">Compare Prices & Find the Best Deals</p>
+                    </div>
                 </div>
-                <div class="text-center md:text-left">
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
-                    <p class="text-blue-600 font-medium text-sm md:text-base">Compare Prices & Find the Best Deals</p>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex flex-col sm:flex-row items-center gap-2 justify-center">
+                    <a href="/customer/favorites" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
+                        <i class="fas fa-star mr-2"></i>My Favorites
+                    </a>
+                    <a href="/customer" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Categories
+                    </a>
                 </div>
-            </div>
-            
-            <!-- Navigation Buttons -->
-            <div class="flex flex-col sm:flex-row items-center gap-2 justify-center">
-                <a href="/customer/favorites" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
-                    <i class="fas fa-star mr-2"></i>My Favorites
-                </a>
-                <a href="/customer" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
-                    <i class="fas fa-arrow-left mr-2"></i>Back to Categories
-                </a>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
         <!-- Page Title -->
         <div class="text-center mb-8">
-            <h2 class="text-4xl font-extrabold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 800;">{{ $categoryData['name'] }}</h2>
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-4">{{ $categoryData['name'] }}</h2>
             <p class="text-xl text-gray-600">{{ $categoryData['description'] }}</p>
+            
+            <!-- Discounts Available Badge -->
+            @if($hasDiscounts ?? false)
+            <div class="inline-flex items-center bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold mt-4">
+                <i class="fas fa-fire mr-2"></i>
+                Hot Discounts Available Today!
+            </div>
+            @endif
         </div>
-
-      
 
         <!-- Products Comparison -->
         <div class="space-y-6">
@@ -182,29 +268,55 @@
                     </div>
                     
                     <div class="flex-1">
-                        <h3 class="text-xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 700;">
+                        <h3 class="text-xl font-bold text-gray-800">
                             {{ $product['name'] }}
                         </h3>
                         <p class="text-gray-600 text-sm">Fresh • Quality Guaranteed</p>
                     </div>
+                    
+                    <!-- Show discount badge if any store has discount -->
+                    @php
+                        $hasProductDiscount = false;
+                        foreach($product['stores'] as $store) {
+                            if(isset($store['originalPrice']) && $store['originalPrice'] > $store['price']) {
+                                $hasProductDiscount = true;
+                                break;
+                            }
+                        }
+                    @endphp
+                    
+                    @if($hasProductDiscount)
+                    <div class="mr-4 discount-badge text-white text-xs font-bold px-3 py-1 rounded-full">
+                        <i class="fas fa-tag mr-1"></i>ON SALE
+                    </div>
+                    @endif
+                    
                     <button class="favorite-btn text-gray-400 hover:text-yellow-500 transition duration-300 {{ $product['stores'][0]['is_favorite'] ? 'active text-yellow-500' : '' }}">
                         <i class="fas fa-star text-xl"></i>
                     </button>
                 </div>
                 
                 <!-- Stores Comparison -->
-<div class="p-6">
-    <div class="grid grid-cols-1 md:grid-cols-{{ count($product['stores']) }} gap-4">
-        @foreach($product['stores'] as $store)
-        @php
-            $isBestPrice = $store['price'] === min(array_column($product['stores'], 'price'));
-        @endphp
-        <div class="store-card bg-white border border-gray-200 rounded-lg p-4 {{ $isBestPrice ? 'best-price border-2 border-green-500' : '' }}">
-            @if($isBestPrice)
-            <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
-                <i class="fas fa-trophy mr-1"></i>Best Price
-            </div>
-            @endif
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-{{ count($product['stores']) }} gap-4">
+                        @foreach($product['stores'] as $store)
+                        @php
+                            $isBestPrice = $store['price'] === min(array_column($product['stores'], 'price'));
+                            $hasDiscount = isset($store['originalPrice']) && $store['originalPrice'] > $store['price'];
+                            $discountPercentage = $hasDiscount ? round((($store['originalPrice'] - $store['price']) / $store['originalPrice']) * 100) : 0;
+                        @endphp
+                        <div class="store-card bg-white border border-gray-200 rounded-lg p-4 {{ $isBestPrice ? 'best-price border-2 border-green-500' : '' }} {{ $hasDiscount ? 'has-discount' : '' }}">
+                            @if($isBestPrice)
+                            <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
+                                <i class="fas fa-trophy mr-1"></i>Best Price
+                            </div>
+                            @endif
+                            
+                            @if($hasDiscount && !$isBestPrice)
+                            <div class="discount-badge text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
+                                <i class="fas fa-bolt mr-1"></i>{{ $discountPercentage }}% OFF
+                            </div>
+                            @endif
                             
                             <!-- Store Header with Logo -->
                             <div class="flex items-center justify-between mb-3">
@@ -223,23 +335,36 @@
                                 </div>
                             </div>
                             
-                            <!-- Price Highlight -->
-                            <div class="text-center mb-4 p-3 bg-gray-50 rounded-lg border border-gray-00">
-                                <div class="text-2xl font-extrabold text-green-600">
-                                    BND {{ number_format($store['price'], 2) }}
-                                </div>
-                                <div class="text-gray-600 text-sm">per kg</div>
-                            </div>
+                           <!-- ENHANCED Price Highlight with Better Discount Styling -->
+<div class="price-container text-center mb-4">
+    @if($hasDiscount)
+    <div class="original-price text-sm mb-1">
+        Was BND {{ number_format($store['originalPrice'], 2) }}
+    </div>
+    @endif
+    
+    <div class="text-2xl font-extrabold current-price">
+        BND {{ number_format($store['price'], 2) }}
+    </div>
+    
+    @if($hasDiscount)
+    @php
+        $savingsAmount = $store['originalPrice'] - $store['price'];
+    @endphp
+    <div class="discount-badge text-white text-xs font-bold px-2 py-1 rounded-full mt-2 discount-percentage">
+        <i class="fas fa-bolt mr-1"></i>SAVE {{ $discountPercentage }}%
+    </div>
+   
+    @endif
+    
+    <div class="text-gray-600 text-sm mt-1">per kg</div>
+</div>
                             
                             <!-- Store Details -->
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between items-center">
-                                   <span class="text-gray-600">📦 In Stock:</span>
-        <span class="font-semibold text-green-600">Available</span>
-                                </div>
-                                
-                                <div class="flex justify-between items-center">
-                                   
+                                    <span class="text-gray-600">📦 In Stock:</span>
+                                    <span class="font-semibold text-green-600">Available</span>
                                 </div>
                                 
                                 <div class="flex justify-between items-center">
@@ -250,32 +375,9 @@
                             
                             <!-- Action Buttons -->
                             <div class="mt-4 space-y-2">
-                               
                                 <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
-                                    <i class=></i>Store Details
+                                    <i class="fas fa-store mr-2"></i>Store Details
                                 </button>
-                                <!-- TODAY'S PRICES CARD -->
-<a href="/todaysprice" class="block category-card bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-blue-50 hover:no-underline">
-    <div class="flex items-center p-6">
-        <!-- Category Image -->
-        <div class="w-24 h-24 rounded-lg overflow-hidden mr-6 border border-blue-200 flex-shrink-0">
-            <div class="w-full h-full bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
-                <i class="fas fa-tag text-green-500 text-2xl"></i>
-            </div>
-        </div>
-        
-        <!-- Category Info -->
-        <div class="flex-1">
-            <h3 class="text-xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 700;">Today's Prices</h3>
-            <p class="text-gray-600 mt-1 font-medium">Price drops and promotion offers</p>
-        </div>
-        
-        <!-- Arrow Indicator -->
-        <div class="text-blue-600">
-            <i class="fas fa-chevron-right text-lg"></i>
-        </div>
-    </div>
-</a>
                             </div>
                         </div>
                         @endforeach
