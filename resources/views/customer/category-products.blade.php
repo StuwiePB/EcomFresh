@@ -376,7 +376,7 @@
                             <!-- Action Buttons -->
                             <div class="mt-4 space-y-2">
                                 <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
-                                    <i class="fas fa-store mr-2"></i>Store Details
+                                    <i class="fas fa-store mr-2"></i>Price History
                                 </button>
                             </div>
                         </div>
@@ -435,65 +435,70 @@
 
         // Extract COMPLETE product data from the card
         function getCompleteProductData(productCard, category, productName) {
-            const stores = [];
-            const storeElements = productCard.querySelectorAll('.store-card');
-            
-            storeElements.forEach(storeElement => {
-                const storeName = storeElement.querySelector('h4').textContent.trim();
-                const priceElement = storeElement.querySelector('.text-2xl');
-                const price = priceElement ? parseFloat(priceElement.textContent.replace('BND', '').trim()) : 0;
-                
-                // Get all store details
-                const details = storeElement.querySelectorAll('.space-y-2 div');
-                let distance = 'N/A';
-                let travelTime = 'N/A'; 
-                let storeHours = '8AM-9PM'; // default
-                
-                details.forEach(detail => {
-                    const text = detail.textContent;
-                    if (text.includes('Distance:')) {
-                        distance = detail.querySelector('span:last-child').textContent;
-                    } else if (text.includes('Travel Time:')) {
-                        travelTime = detail.querySelector('span:last-child').textContent;
-                    } else if (text.includes('Store Hours:')) {
-                        storeHours = detail.querySelector('span:last-child').textContent;
-                    }
-                });
+    const stores = [];
+    const storeElements = productCard.querySelectorAll('.store-card');
+    
+    storeElements.forEach(storeElement => {
+        const storeName = storeElement.querySelector('h4').textContent.trim();
+        
+        // UPDATED: Use current-price class instead of text-2xl
+        const priceElement = storeElement.querySelector('.current-price');
+        const price = priceElement ? parseFloat(priceElement.textContent.replace('BND', '').trim()) : 0;
+        
+        // NEW: Check for original price
+        const originalPriceElement = storeElement.querySelector('.original-price');
+        const originalPrice = originalPriceElement ? 
+            parseFloat(originalPriceElement.textContent.replace('Was BND', '').trim()) : 
+            null;
 
-                // Get rating
-                const ratingElement = storeElement.querySelector('.fa-star').parentElement;
-                const rating = ratingElement ? parseFloat(ratingElement.textContent.trim()) : 4.0;
+        // Get all store details
+        const details = storeElement.querySelectorAll('.space-y-2 div');
+        let distance = 'N/A';
+        let travelTime = 'N/A'; 
+        let storeHours = '8AM-9PM';
 
-                // Get product image
-                const productImage = productCard.querySelector('.product-image')?.src || 
-                                   '{{ asset($categoryData["image"] ?? "images/categories/default.jpg") }}';
+        details.forEach(detail => {
+            const text = detail.textContent;
+            if (text.includes('Distance:')) {
+                distance = detail.querySelector('span:last-child').textContent;
+            } else if (text.includes('Travel Time:')) {
+                travelTime = detail.querySelector('span:last-child').textContent;
+            } else if (text.includes('Store Hours:')) {
+                storeHours = detail.querySelector('span:last-child').textContent;
+            }
+        });
 
-                stores.push({
-                    store_name: storeName,
-                    price: price,
-                    distance: distance,
-                    travel_time: travelTime,
-                    store_hours: storeHours,
-                    rating: rating,
-                    is_favorite: true
-                });
-            });
+        // Get rating
+        const ratingElement = storeElement.querySelector('.fa-star').parentElement;
+        const rating = ratingElement ? parseFloat(ratingElement.textContent.trim()) : 4.0;
 
-            // Get the actual product image
-            const productImageElement = productCard.querySelector('.product-image');
-            const productImage = productImageElement ? 
-                productImageElement.src.replace(window.location.origin, '') : 
-                '{{ $categoryData["image"] }}';
+        stores.push({
+            store_name: storeName,
+            price: price,
+            originalPrice: originalPrice, // NEW: Include originalPrice
+            distance: distance,
+            travel_time: travelTime,
+            store_hours: storeHours,
+            rating: rating,
+            is_favorite: true
+        });
+    });
 
-            return {
-                name: productName,
-                category: category,
-                description: '{{ $categoryData["description"] }}',
-                image: productImage,
-                stores: stores,
-                favorited_at: new Date().toISOString()
-            };
-        }
+    // Get the actual product image
+    const productImageElement = productCard.querySelector('.product-image');
+    const productImage = productImageElement ? 
+        productImageElement.src.replace(window.location.origin, '') : 
+        '{{ $categoryData["image"] }}';
+
+    return {
+        name: productName,
+        category: category,
+        description: '{{ $categoryData["description"] }}',
+        image: productImage,
+        stores: stores,
+        favorited_at: new Date().toISOString()
+    };
+}
 
         // Add product to favorites in localStorage
         function addToFavorites(productData) {

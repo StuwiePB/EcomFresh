@@ -42,25 +42,107 @@
         .store-card:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
-            .best-price {
-    position: relative;
-    border: 2px solid #10B981 !important;
-    background: linear-gradient(135deg, #f0fdf4, #dcfce7) !important;
-}
-
-.best-price::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg, #10B981, #34D399);
-    border-radius: 0.5rem;
-    z-index: -1;
-}
+        }
+        
+        /* DISCOUNT STYLING - Same as category-products */
+        .discount-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+        }
+        
+        .discount-badge-sm {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .save-5 { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .save-10 { background: linear-gradient(135deg, #ff6b6b, #c44569); }
+        .save-15 { background: linear-gradient(135deg, #ff6b6b, #a55eea); }
+        .save-20 { background: linear-gradient(135deg, #ff6b6b, #eb3b5a); }
+        .save-25 { background: linear-gradient(135deg, #ff6b6b, #fc5c65); }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #718096 !important;
+            font-size: 0.875rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        
+        .current-price {
+            color: #059669;
+            font-weight: 800;
+            text-shadow: 0 1px 2px rgba(5, 150, 105, 0.1);
+        }
+        
+        .has-discount {
+            position: relative;
+            background: linear-gradient(135deg, #f0fff4, #ffffff);
+            border-left: 4px solid #48bb78;
+        }
+        
+        .discount-ribbon {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.25rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+            z-index: 10;
+        }
+        
+        .price-container {
+            position: relative;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .has-discount .price-container {
+            background: linear-gradient(135deg, #f0fff4, #e6fffa);
+            border-color: #68d391;
+        }
+        
+        .discount-percentage {
+            font-weight: 800;
+            font-size: 0.9em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .savings-amount {
+            font-size: 0.75rem;
+            color: #059669;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+        
+        .best-price {
+            position: relative;
+            border: 2px solid #10B981 !important;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7) !important;
+        }
+        
+        .best-price::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #10B981, #34D399);
+            border-radius: 0.5rem;
+            z-index: -1;
         }
     </style>
+</head>
+<body>
 <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
     <div class="container mx-auto px-4 py-4">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -70,7 +152,7 @@
                     <i class="fas fa-leaf text-white text-xl md:text-2xl"></i>
                 </div>
                 <div class="text-center md:text-left">
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 800;">E-COM FRESH</h1>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800">E-COM FRESH</h1>
                     <p class="text-blue-600 font-medium text-sm md:text-base">My Favorite Products</p>
                 </div>
             </div>
@@ -90,7 +172,7 @@
 
     <main class="container mx-auto px-4 py-8">
         <div class="text-center mb-8">
-            <h2 class="text-4xl font-extrabold text-gray-800 mb-4" style="font-family: 'Poppins', sans-serif; font-weight: 800;">⭐ My Favorites</h2>
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-4">⭐ My Favorites</h2>
             <p class="text-xl text-gray-600">All your favorite products with complete information</p>
         </div>
 
@@ -160,8 +242,12 @@
                     ${products.map(product => {
                         // Find the best price for this product
                         const bestPrice = Math.min(...product.stores.map(store => store.price));
+                        
+                        // Check if product has any discounts
+                        const hasProductDiscount = product.stores.some(store => store.originalPrice && store.originalPrice > store.price);
+                        
                         return `
-                        <div class="product-card bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <div class="product-card bg-white rounded-lg border border-gray-200 overflow-hidden ${hasProductDiscount ? 'has-discount' : ''}">
                             <!-- Product Header -->
                             <div class="flex items-center bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
                                 <div class="flex items-center space-x-4 flex-1">
@@ -176,6 +262,14 @@
                                         <p class="text-gray-600 text-sm">${product.description}</p>
                                     </div>
                                 </div>
+                                
+                                <!-- Discount Badge for Product -->
+                                ${hasProductDiscount ? `
+                                    <div class="discount-badge text-white text-xs font-bold px-3 py-1 rounded-full mr-4">
+                                        <i class="fas fa-tag mr-1"></i>ON SALE
+                                    </div>
+                                ` : ''}
+                                
                                 <button onclick="removeFavorite('${product.name.replace(/'/g, "\\'")}', '${category}')" 
                                         class="favorite-btn active text-yellow-500 hover:text-yellow-600 transition duration-300 ml-4">
                                     <i class="fas fa-star text-2xl"></i>
@@ -188,11 +282,21 @@
                                 <div class="grid grid-cols-1 md:grid-cols-${Math.min(product.stores.length, 3)} gap-4">
                                     ${product.stores.map(store => {
                                         const isBestPrice = store.price === bestPrice;
+                                        const hasDiscount = store.originalPrice && store.originalPrice > store.price;
+                                        const discountPercentage = hasDiscount ? Math.round(((store.originalPrice - store.price) / store.originalPrice) * 100) : 0;
+                                        const savingsAmount = hasDiscount ? (store.originalPrice - store.price).toFixed(2) : 0;
+                                        
                                         return `
-                                        <div class="store-card bg-gray-50 border border-gray-300 rounded-lg p-4 ${isBestPrice ? 'best-price border-2 border-green-500' : ''}">
+                                        <div class="store-card bg-gray-50 border border-gray-300 rounded-lg p-4 ${isBestPrice ? 'best-price' : ''} ${hasDiscount ? 'has-discount' : ''}">
                                             ${isBestPrice ? `
                                                 <div class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
                                                     <i class="fas fa-trophy mr-1"></i>Best Price
+                                                </div>
+                                            ` : ''}
+                                            
+                                            ${hasDiscount && !isBestPrice ? `
+                                                <div class="discount-badge text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
+                                                    <i class="fas fa-bolt mr-1"></i>${discountPercentage}% OFF
                                                 </div>
                                             ` : ''}
                                             
@@ -200,27 +304,39 @@
                                                 <h6 class="font-bold text-gray-800 text-lg">${store.store_name}</h6>
                                                 <div class="flex items-center text-sm text-gray-600">
                                                     <i class="fas fa-star text-yellow-500 mr-1"></i>
-                                                  ${store.rating}
+                                                    ${store.rating}
                                                 </div>
                                             </div>
                                             
-                                            <!-- Price Highlight -->
-                                            <div class="text-center mb-3 p-3 bg-white rounded border ${isBestPrice ? 'border-green-200 bg-green-50' : 'border-gray-200'}">
-                                                <div class="text-2xl font-extrabold ${isBestPrice ? 'text-green-700' : 'text-green-600'}">
+                                            <!-- ENHANCED Price Highlight with Discount Support -->
+                                            <div class="price-container text-center mb-3">
+                                                ${hasDiscount ? `
+                                                    <div class="original-price text-sm mb-1">
+                                                        Was BND ${store.originalPrice.toFixed(2)}
+                                                    </div>
+                                                ` : ''}
+                                                
+                                                <div class="text-2xl font-extrabold current-price">
                                                     BND ${store.price.toFixed(2)}
                                                 </div>
-                                                <div class="text-gray-600 text-sm">per kg</div>
+                                                
+                                                ${hasDiscount ? `
+                                                    <div class="discount-badge text-white text-xs font-bold px-2 py-1 rounded-full mt-2 discount-percentage">
+                                                        <i class="fas fa-bolt mr-1"></i>SAVE ${discountPercentage}%
+                                                    </div>
+                                                    <div class="savings-amount">
+                                                        Save BND ${savingsAmount}
+                                                    </div>
+                                                ` : ''}
+                                                
+                                                <div class="text-gray-600 text-sm mt-1">per kg</div>
                                             </div>
                                             
                                             <!-- Store Details -->
                                             <div class="space-y-2 text-sm">
                                                 <div class="flex justify-between items-center">
                                                     <span class="text-gray-600">📦 In Stock:</span>
-        <span class="font-semibold text-green-600">Available</span>
-                                                </div>
-                                                
-                                                <div class="flex justify-between items-center">
-                                                   
+                                                    <span class="font-semibold text-green-600">Available</span>
                                                 </div>
                                                 
                                                 <div class="flex justify-between items-center">
@@ -231,9 +347,8 @@
                                             
                                             <!-- Action Buttons -->
                                             <div class="mt-4 space-y-2">
-                                                
                                                 <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
-                                                    <i ></i>Store Details
+                                                    <i class="fas fa-store mr-2"></i>Store Details
                                                 </button>
                                             </div>
                                         </div>
