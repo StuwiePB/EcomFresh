@@ -13,6 +13,7 @@ use App\Http\Controllers\PriceController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\FavoriteController;
 
 use App\Models\AdminProduct;
 use App\Models\Chicken;
@@ -62,6 +63,19 @@ Route::get('/customer/category/{category}', [ProductController::class, 'category
 Route::get('/customer/favorites', function () {return view('customer.favorites');})->name('customer.favorites')->middleware('auth');
 Route::get('/customer/settings', function () {return view('customer.settings');})->name('customer.settings')->middleware('auth');
 Route::delete('/customer/delete-account', [CustomerAuthController::class, 'deleteAccount'])->name('customer.delete.account')->middleware('auth');
+
+// Update these existing CUSTOMER routes to use database
+Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
+Route::get('/customer/category/{category}', [ProductController::class, 'categoryProducts'])->name('customer.category');
+
+// Favorites routes
+Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+Route::post('/favorites/{product}', [FavoriteController::class, 'store'])->name('favorites.store');
+Route::delete('/favorites/{product}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+
+// Favorites route (still using localStorage for now)
+Route::get('/customer/favorites', [FavoriteController::class, 'index'])->name('customer.favorites');
+Route::get('/favorites/user-status', [FavoriteController::class, 'userStatus'])->name('favorites.user-status');
 
 // --------------------
 // SIGNUP ROUTES
