@@ -395,34 +395,35 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Favourite Toggle -->
-<!-- JavaScript for Enhanced Favorite System with Complete Data Storage -->
+    <!-- JavaScript for Hybrid Favorite System (Database + LocalStorage Fallback) -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize favorites from localStorage
+        // Initialize favorites
         initializeFavorites();
 
-        // Favorite button functionality with sorting and storage
+        // Favorite button functionality
         document.querySelectorAll('.favorite-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const productCard = this.closest('.product-card');
                 const productName = productCard.querySelector('h3').textContent.trim();
                 const category = '{{ $categoryData["name"] }}';
+                const productId = this.getAttribute('data-product-id');
                 const isCurrentlyFavorite = this.classList.contains('active');
                 
-                // Toggle visual state
+                // Toggle visual state immediately for better UX
                 this.classList.toggle('active');
                 this.classList.toggle('text-yellow-500');
                 this.classList.toggle('text-gray-400');
                 
-                // Get complete product data
+                // Get complete product data for localStorage fallback
                 const productData = getCompleteProductData(productCard, category, productName);
                 
-                // Update storage
-                if (!isCurrentlyFavorite) {
-                    addToFavorites(productData);
+                // Try database first, fallback to localStorage
+                if (productId) {
+                    toggleDatabaseFavorite(productId, !isCurrentlyFavorite, productData, productName, productCard);
                 } else {
-                    removeFromFavorites(productName, category);
+                    // Fallback to localStorage only
+                    toggleLocalStorageFavorite(!isCurrentlyFavorite, productData, productName, category);
                 }
                 
                 // Re-sort products in this category
@@ -433,72 +434,123 @@
             });
         });
 
-        // Extract COMPLETE product data from the card
-        function getCompleteProductData(productCard, category, productName) {
-    const stores = [];
-    const storeElements = productCard.querySelectorAll('.store-card');
-    
-    storeElements.forEach(storeElement => {
-        const storeName = storeElement.querySelector('h4').textContent.trim();
-        
-        // UPDATED: Use current-price class instead of text-2xl
-        const priceElement = storeElement.querySelector('.current-price');
-        const price = priceElement ? parseFloat(priceElement.textContent.replace('BND', '').trim()) : 0;
-        
-        // NEW: Check for original price
-        const originalPriceElement = storeElement.querySelector('.original-price');
-        const originalPrice = originalPriceElement ? 
-            parseFloat(originalPriceElement.textContent.replace('Was BND', '').trim()) : 
-            null;
+        // Toggle favorite in database
+        async function toggleDatabaseFavorite(productId, shouldAdd, productData, productName, productCard) {
+            try {
+                const response = await fetch('/favorites/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        product_id: productId
+                    })
+                });
 
-        // Get all store details
-        const details = storeElement.querySelectorAll('.space-y-2 div');
-        let distance = 'N/A';
-        let travelTime = 'N/A'; 
-        let storeHours = '8AM-9PM';
+                const result = await response.json();
 
-        details.forEach(detail => {
-            const text = detail.textContent;
-            if (text.includes('Distance:')) {
-                distance = detail.querySelector('span:last-child').textContent;
-            } else if (text.includes('Travel Time:')) {
-                travelTime = detail.querySelector('span:last-child').textContent;
-            } else if (text.includes('Store Hours:')) {
-                storeHours = detail.querySelector('span:last-child').textContent;
+                if (response.status === 401) {
+                    // Not authenticated - fallback to localStorage and show login prompt
+                    showNotification('Please login to save favorites permanently', 'yellow');
+                    toggleLocalStorageFavorite(shouldAdd, productData, productName, '{{ $categoryData["name"] }}');
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Error updating favorite');
+                }
+
+                // Success - also update localStorage as backup
+                if (shouldAdd) {
+                    addToFavorites(productData);
+                } else {
+                    removeFromFavorites(productName, '{{ $categoryData["name"] }}');
+                }
+
+            } catch (error) {
+                console.error('Database favorite error:', error);
+                // Fallback to localStorage on error
+                toggleLocalStorageFavorite(shouldAdd, productData, productName, '{{ $categoryData["name"] }}');
+                showNotification('Using offline favorites', 'yellow');
             }
-        });
+        }
 
-        // Get rating
-        const ratingElement = storeElement.querySelector('.fa-star').parentElement;
-        const rating = ratingElement ? parseFloat(ratingElement.textContent.trim()) : 4.0;
+        // Toggle favorite in localStorage (fallback)
+        function toggleLocalStorageFavorite(shouldAdd, productData, productName, category) {
+            if (shouldAdd) {
+                addToFavorites(productData);
+            } else {
+                removeFromFavorites(productName, category);
+            }
+        }
 
-        stores.push({
-            store_name: storeName,
-            price: price,
-            originalPrice: originalPrice, // NEW: Include originalPrice
-            distance: distance,
-            travel_time: travelTime,
-            store_hours: storeHours,
-            rating: rating,
-            is_favorite: true
-        });
-    });
+        // KEEP ALL YOUR EXISTING FUNCTIONS - they work perfectly!
+        function getCompleteProductData(productCard, category, productName) {
+            const stores = [];
+            const storeElements = productCard.querySelectorAll('.store-card');
+            
+            storeElements.forEach(storeElement => {
+                const storeName = storeElement.querySelector('h4').textContent.trim();
+                
+                // UPDATED: Use current-price class instead of text-2xl
+                const priceElement = storeElement.querySelector('.current-price');
+                const price = priceElement ? parseFloat(priceElement.textContent.replace('BND', '').trim()) : 0;
+                
+                // NEW: Check for original price
+                const originalPriceElement = storeElement.querySelector('.original-price');
+                const originalPrice = originalPriceElement ? 
+                    parseFloat(originalPriceElement.textContent.replace('Was BND', '').trim()) : 
+                    null;
 
-    // Get the actual product image
-    const productImageElement = productCard.querySelector('.product-image');
-    const productImage = productImageElement ? 
-        productImageElement.src.replace(window.location.origin, '') : 
-        '{{ $categoryData["image"] }}';
+                // Get all store details
+                const details = storeElement.querySelectorAll('.space-y-2 div');
+                let distance = 'N/A';
+                let travelTime = 'N/A'; 
+                let storeHours = '8AM-9PM';
 
-    return {
-        name: productName,
-        category: category,
-        description: '{{ $categoryData["description"] }}',
-        image: productImage,
-        stores: stores,
-        favorited_at: new Date().toISOString()
-    };
-}
+                details.forEach(detail => {
+                    const text = detail.textContent;
+                    if (text.includes('Distance:')) {
+                        distance = detail.querySelector('span:last-child').textContent;
+                    } else if (text.includes('Travel Time:')) {
+                        travelTime = detail.querySelector('span:last-child').textContent;
+                    } else if (text.includes('Store Hours:')) {
+                        storeHours = detail.querySelector('span:last-child').textContent;
+                    }
+                });
+
+                // Get rating
+                const ratingElement = storeElement.querySelector('.fa-star').parentElement;
+                const rating = ratingElement ? parseFloat(ratingElement.textContent.trim()) : 4.0;
+
+                stores.push({
+                    store_name: storeName,
+                    price: price,
+                    originalPrice: originalPrice,
+                    distance: distance,
+                    travel_time: travelTime,
+                    store_hours: storeHours,
+                    rating: rating,
+                    is_favorite: true
+                });
+            });
+
+            // Get the actual product image
+            const productImageElement = productCard.querySelector('.product-image');
+            const productImage = productImageElement ? 
+                productImageElement.src.replace(window.location.origin, '') : 
+                '{{ $categoryData["image"] }}';
+
+            return {
+                name: productName,
+                category: category,
+                description: '{{ $categoryData["description"] }}',
+                image: productImage,
+                stores: stores,
+                favorited_at: new Date().toISOString()
+            };
+        }
 
         // Add product to favorites in localStorage
         function addToFavorites(productData) {
@@ -536,6 +588,35 @@
 
         // Initialize favorite buttons based on stored data
         function initializeFavorites() {
+            // Try to sync with database first
+            initializeDatabaseFavorites();
+        }
+
+        // Initialize with database favorites if user is logged in
+        async function initializeDatabaseFavorites() {
+            try {
+                const response = await fetch('/favorites/user-status', {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                });
+
+                if (response.ok) {
+                    const userFavorites = await response.json();
+                    // If we have database favorites, use them to initialize the UI
+                    initializeFavoriteButtons(userFavorites);
+                } else {
+                    // Fallback to localStorage
+                    initializeLocalStorageFavorites();
+                }
+            } catch (error) {
+                console.error('Error initializing database favorites:', error);
+                initializeLocalStorageFavorites();
+            }
+        }
+
+        // Initialize with localStorage favorites
+        function initializeLocalStorageFavorites() {
             const favorites = getFavorites();
             const currentCategory = '{{ $categoryData["name"] }}';
             
@@ -547,6 +628,27 @@
                 const isFavorite = favorites.some(fav => 
                     fav.name === productName && fav.category === currentCategory
                 );
+                
+                if (isFavorite) {
+                    favoriteBtn.classList.add('active', 'text-yellow-500');
+                    favoriteBtn.classList.remove('text-gray-400');
+                }
+            });
+            
+            // Initial sort
+            document.querySelectorAll('.product-card').forEach(card => {
+                sortProductsInCategory(card);
+            });
+        }
+
+        // Initialize buttons with database favorites data
+        function initializeFavoriteButtons(userFavorites) {
+            document.querySelectorAll('.product-card').forEach(card => {
+                const productId = card.querySelector('.favorite-btn').getAttribute('data-product-id');
+                const favoriteBtn = card.querySelector('.favorite-btn');
+                
+                // Check if this product is in user's database favorites
+                const isFavorite = userFavorites.some(fav => fav.product_id == productId);
                 
                 if (isFavorite) {
                     favoriteBtn.classList.add('active', 'text-yellow-500');
@@ -595,6 +697,25 @@
             
             setTimeout(() => {
                 notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Helper function for general notifications
+        function showNotification(message, color = 'green') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 left-4 p-4 rounded-lg shadow-lg z-50 transform transition-transform duration-300 bg-${color}-500 text-white`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(-100%)';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }

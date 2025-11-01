@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\CustomerCategory;
+use App\Models\CustomerProduct;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -12,26 +13,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // Fetch categories dynamically if you have a category model/table
-        // For now, using hardcoded list (fixed typos)
-        $categories = [
-            [
-                'name' => 'Chicken',
-                'description' => 'Fresh poultry products at the best prices',
-                'image' => 'images/categories/chicken.jpg'
-            ],
-            [
-                'name' => 'Beef',
-                'description' => 'Quality beef selections across stores',
-                'image' => 'images/categories/beef.jpg'
-            ],
-            [
-                'name' => 'Vegetables',
-                'description' => 'Fresh vegetables from local markets',
-                'image' => 'images/categories/vegetables.jpg'
-            ]
-        ];
-
+        // Get categories with products count
+        $categories = CustomerCategory::where('is_active', true)
+            ->withCount('products')
+            ->get();
+        
         return view('customer.main', compact('categories'));
     }
 
@@ -40,121 +26,43 @@ class ProductController extends Controller
      */
     public function categoryProducts($category)
     {
-        $categoryData = $this->getCategoryData($category);
+        // Get category with products and their stores/prices
+        $categoryData = CustomerCategory::where('slug', $category)
+            ->with(['products' => function($query) {
+                $query->where('is_active', true)
+                      ->with(['stores' => function($q) {
+                          $q->where('is_active', true);
+                      }]);
+            }])
+            ->firstOrFail();
 
-        if (!$categoryData) {
-            return redirect('/customer');
-        }
-
-        return view('customer.category-products', compact('categoryData', 'category'));
-    }
-
-    /**
-     * Hardcoded products data for each category with discount support
-     */
-    private function getCategoryData($categoryName)
-    {
-        $categories = [
-            'chicken' => [
-                'name' => 'Chicken',
-                'description' => 'Fresh poultry products at the best prices',
-                'image' => 'images/categories/chicken.jpg',
-                'products' => [
-                    [
-                        'name' => 'Chicken Breast',
-                        'image' => 'images/products/chicken-breast.jpg',
-                        'stores' => [
-                            ['store_name'=>'Supa Save','price'=>3.60,'originalPrice'=>4.20,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'], // Added discount
-                            ['store_name'=>'Hua Ho','price'=>4.10,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'], // No discount
-                            ['store_name'=>'Soon Lee','price'=>3.30,'originalPrice'=>3.80,'distance'=>'3.2 km','rating'=>4.0,'is_favorite'=>false,'store_hours'=>'9AM-8PM'] // Added discount
-                        ]
-                    ],
-                    [
-                        'name' => 'Whole Chicken',
-                        'image' => 'images/products/whole-chicken.jpg',
-                        'stores' => [
-                            ['store_name'=>'Supa Save','price'=>5.50,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'], // No discount
-                            ['store_name'=>'Hua Ho','price'=>6.30,'originalPrice'=>7.50,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'] // Added discount
-                        ]
-                    ],
-                    [
-                        'name' => 'Chicken Thigh',
-                        'image' => 'images/products/chicken-thigh.jpg',
-                        'stores' => [
-                            ['store_name'=>'Hua Ho','price'=>4.25,'originalPrice'=>5.00,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'], // Added discount
-                            ['store_name'=>'Supa Save','price'=>4.10,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'], // No discount
-                            ['store_name'=>'Soon Lee','price'=>3.95,'distance'=>'3.2 km','rating'=>4.0,'is_favorite'=>false,'store_hours'=>'9AM-8PM'] // No discount
-                        ]
-                    ]
-                ]
-            ],
-            'beef' => [
-                'name' => 'Beef',
-                'description' => 'Quality beef selections across stores',
-                'image' => 'images/categories/beef.jpg',
-                'products' => [
-                    [
-                        'name' => 'Chuck Steak',
-                        'image' => 'images/products/chuck-steak.jpg',
-                        'stores' => [
-                            ['store_name'=>'Hua Ho','price'=>13.50,'originalPrice'=>15.00,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'], // Added discount
-                            ['store_name'=>'Supa Save','price'=>12.00,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'], // No discount
-                            ['store_name'=>'Soon Lee','price'=>11.80,'originalPrice'=>13.20,'distance'=>'3.2 km','rating'=>4.0,'is_favorite'=>false,'store_hours'=>'9AM-8PM'] // Added discount
-                        ]
-                    ],
-                    [
-                        'name' => 'Ribeye Steak',
-                        'image' => 'images/products/ribeye-steak.jpg',
-                        'stores' => [
-                            ['store_name'=>'Hua Ho','price'=>18.75,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'], // No discount
-                            ['store_name'=>'Supa Save','price'=>17.90,'originalPrice'=>20.50,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'] // Added discount
-                        ]
-                    ],
-                    [
-                        'name' => 'Striploin Steak',
-                        'image' => 'images/products/striploin-steak.jpg',
-                        'stores' => [
-                            ['store_name'=>'Supa Save','price'=>16.50,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'], // No discount
-                            ['store_name'=>'Hua Ho','price'=>17.20,'originalPrice'=>19.00,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'] // Added discount
-                        ]
-                    ]
-                ]
-            ],
-            'vegetables' => [
-                'name' => 'Vegetables',
-                'description' => 'Fresh vegetables from local markets',
-                'image' => 'images/categories/vegetables.jpg',
-                'products' => [
-                    [
-                        'name' => 'Carrots',
-                        'image' => 'images/products/carrots.jpg',
-                        'stores' => [
-                            ['store_name'=>'Supa Save','price'=>2.50,'originalPrice'=>3.00,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'], // Added discount
-                            ['store_name'=>'Hua Ho','price'=>3.10,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'], // No discount
-                            ['store_name'=>'Soon Lee','price'=>2.30,'distance'=>'3.2 km','rating'=>4.0,'is_favorite'=>false,'store_hours'=>'9AM-8PM'] // No discount
-                        ]
-                    ],
-                    [
-                        'name' => 'Cabbages',
-                        'image' => 'images/products/cabbages.jpg',
-                        'stores' => [
-                            ['store_name'=>'Hua Ho','price'=>2.80,'originalPrice'=>3.50,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'], // Added discount
-                            ['store_name'=>'Supa Save','price'=>2.60,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'] // No discount
-                        ]
-                    ],
-                    [
-                        'name' => 'Bean Sprouts',
-                        'image' => 'images/products/beansprouts.jpg',
-                        'stores' => [
-                            ['store_name'=>'Soon Lee','price'=>1.50,'distance'=>'3.2 km','rating'=>4.0,'is_favorite'=>false,'store_hours'=>'9AM-8PM'], // No discount
-                            ['store_name'=>'Supa Save','price'=>1.80,'originalPrice'=>2.20,'distance'=>'2.1 km','rating'=>4.2,'is_favorite'=>false,'store_hours'=>'8AM-9PM'], // Added discount
-                            ['store_name'=>'Hua Ho','price'=>2.00,'distance'=>'1.8 km','rating'=>4.4,'is_favorite'=>false,'store_hours'=>'7:30AM-10PM'] // No discount
-                        ]
-                    ]
-                ]
-            ]
+        // Transform data for your existing blade template
+        $formattedCategoryData = [
+            'name' => $categoryData->name,
+            'description' => $categoryData->description,
+            'image' => $categoryData->image,
+            'products' => $categoryData->products->map(function($product) {
+                return [
+                    'name' => $product->name,
+                    'image' => $product->image,
+                    'description' => $product->description,
+                    'stores' => $product->stores->map(function($store) {
+                        return [
+                            'store_name' => $store->name,
+                            'price' => $store->pivot->current_price,
+                            'originalPrice' => $store->pivot->original_price,
+                            'rating' => $store->rating,
+                            'store_hours' => $store->store_hours,
+                            'is_favorite' => false
+                        ];
+                    })->toArray()
+                ];
+            })->toArray()
         ];
 
-        return $categories[strtolower($categoryName)] ?? null;
+        return view('customer.category-products', [
+            'categoryData' => $formattedCategoryData,
+            'category' => $category
+        ]);
     }
 }
