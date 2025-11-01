@@ -3,216 +3,221 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcomFresh</title>
-    
-    <!-- Poppins Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            min-height: 100vh;
-        }
+        <title>EcomFresh</title>
         
-        .category-card {
-            transition: all 0.3s ease;
-        }
+        <!-- Poppins Font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
         
-        .category-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         
-        .logo-placeholder {
-            background: linear-gradient(135deg, #1e90ff, #00bfff);
-        }
-        
-        .category-image {
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .category-card:hover .category-image {
-            transform: scale(1.05);
-        }
-
-        /* Popup Styles */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .popup-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .popup-content {
-            background: white;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        
-        .popup-overlay.active .popup-content {
-            transform: scale(1);
-        }
-        
-        .profile-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            color: #374151;
-            text-decoration: none;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            font-family: inherit;
-        }
-        
-        .profile-link:hover {
-            background-color: #f3f4f6;
-            color: #1e40af;
-        }
-        
-        .hidden {
-            display: none;
-        }
-
-        .profile-avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .settings-section {
-            margin-bottom: 24px;
-        }
-
-        .settings-section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-
-        .settings-label {
-            flex: 1;
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .settings-value {
-            color: #6b7280;
-            margin-right: 12px;
-        }
-
-        .settings-action {
-            color: #3b82f6;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-
-        .settings-action:hover {
-            color: #1d4ed8;
-        }
-        
-        /* Mobile Optimizations */
-        @media (max-width: 768px) {
-            .container {
-                padding-left: 1rem;
-                padding-right: 1rem;
+        <!-- Custom CSS -->
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                min-height: 100vh;
             }
             
-            .header-flex {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+            .category-card {
+                transition: all 0.3s ease;
             }
             
-            .mobile-stack {
-                flex-direction: column;
-                width: 100%;
+            .category-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             }
             
-            .mobile-stack a,
-            .mobile-stack button {
-                width: 100%;
-                text-align: center;
+            .logo-placeholder {
+                background: linear-gradient(135deg, #1e90ff, #00bfff);
             }
             
-            .mobile-text {
-                font-size: 1.5rem !important;
-            }
-            
-            .mobile-subtext {
-                font-size: 0.875rem !important;
+            .category-image {
+                object-fit: cover;
+                transition: transform 0.3s ease;
             }
 
-            .header-buttons {
-                flex-direction: row;
+            .category-card:hover .category-image {
+                transform: scale(1.05);
+            }
+
+            /* Popup Styles */
+            .popup-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
                 justify-content: center;
-                gap: 1rem;
-                width: 100%;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
             }
-        }
-    </style>
-</head>
+            
+            .popup-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .popup-content {
+                background: white;
+                border-radius: 16px;
+                width: 90%;
+                max-width: 500px;
+                max-height: 90vh;
+                overflow-y: auto;
+                transform: scale(0.9);
+                transition: transform 0.3s ease;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            }
+            
+            .popup-overlay.active .popup-content {
+                transform: scale(1);
+            }
+            
+            .profile-link {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                color: #374151;
+                text-decoration: none;
+                border: none;
+                background: none;
+                width: 100%;
+                text-align: left;
+                cursor: pointer;
+                font-family: inherit;
+            }
+            
+            .profile-link:hover {
+                background-color: #f3f4f6;
+                color: #1e40af;
+            }
+            
+            .hidden {
+                display: none;
+            }
+
+            .profile-avatar {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 3px solid white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-avatar:hover {
+                transform: scale(1.05);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .settings-section {
+                margin-bottom: 24px;
+            }
+
+            .settings-section-title {
+                font-size: 18px;
+                font-weight: 700;
+                color: #1f2937;
+                margin-bottom: 16px;
+                padding-bottom: 8px;
+                border-bottom: 2px solid #e5e7eb;
+            }
+
+            .settings-item {
+                display: flex;
+                align-items: center;
+                justify-content: between;
+                padding: 12px 0;
+                border-bottom: 1px solid #f3f4f6;
+            }
+
+            .settings-item:last-child {
+                border-bottom: none;
+            }
+
+            .settings-label {
+                flex: 1;
+                font-weight: 500;
+                color: #374151;
+            }
+
+            .settings-value {
+                color: #6b7280;
+                margin-right: 12px;
+            }
+
+            .settings-action {
+                color: #3b82f6;
+                font-weight: 500;
+                cursor: pointer;
+                transition: color 0.2s ease;
+            }
+
+            .settings-action:hover {
+                color: #1d4ed8;
+            }
+            
+            /* Mobile Optimizations */
+            @media (max-width: 768px) {
+                .container {
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+                
+                .header-flex {
+                    flex-direction: column;
+                    gap: 1rem;
+                    text-align: center;
+                }
+                
+                .mobile-stack {
+                    flex-direction: column;
+                    width: 100%;
+                }
+                
+                .mobile-stack a,
+                .mobile-stack button {
+                    width: 100%;
+                    text-align: center;
+                }
+                
+                .mobile-text {
+                    font-size: 1.5rem !important;
+                }
+                
+                .mobile-subtext {
+                    font-size: 0.875rem !important;
+                }
+
+                .header-buttons {
+                    flex-direction: row;
+                    justify-content: center;
+                    gap: 1rem;
+                    width: 100%;
+                }
+            }
+
+            /* Price Trends specific styles - Blended with popup background */
+            .price-trends-icon {
+                background: #f8fafc;
+                border: 2px solid #e2e8f0;
+            }
+            
+            .price-trends-icon .fas {
+                color: #3b82f6;
+            }
+        </style>
+    </head>
 <body class="min-h-screen">
     <!-- Header -->
     <header class="bg-white/80 backdrop-blur-md shadow-lg border-b border-blue-100">
@@ -329,21 +334,14 @@
                 <div class="mb-4">
                     <h3 class="text-lg font-bold text-gray-800 mb-3">Quick Links</h3>
                     <div class="space-y-2">
-                        <!-- Today's Prices Link -->
-                        <a href="/todaysprice" class="profile-link">
-                            <i class="fas fa-chart-line text-blue-500 mr-3"></i>
-                            <div>
-                                <div class="font-medium">Today's Prices</div>
-                                <div class="text-sm text-gray-500">View current market prices</div>
-                            </div>
-                        </a>
-                        
-                        <!-- Price History Link -->
+                        <!-- Price Trends Link (Merged Today's Prices + Price History) -->
                         <a href="/pricehistory" class="profile-link">
-                            <i class="fas fa-history text-green-500 mr-3"></i>
+                            <div class="w-10 h-10 price-trends-icon rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
                             <div>
-                                <div class="font-medium">Price History</div>
-                                <div class="text-sm text-gray-500">Track price trends over time</div>
+                                <div class="font-medium">Price Trends</div>
+                                <div class="text-sm text-gray-500">View current prices & historical trends</div>
                             </div>
                         </a>
                     </div>
@@ -454,21 +452,24 @@
                     </div>
                 </div>
 
-                <!--<!-- Danger Zone Section -->
-<div class="settings-section">
-    <h3 class="settings-section-title" style="color: #dc2626;">Danger Zone</h3>
-    <div class="space-y-3">
-        <div class="settings-item">
-            <div class="settings-label">Delete Account</div>
-            <div class="settings-value">Permanently remove your account</div>
-            <button class="settings-action text-red-600 hover:text-red-800 font-medium" 
-                    onclick="showDeleteConfirmation()" 
-                    style="color: #dc2626;">
-                Delete
-            </button>
+                <!-- Danger Zone Section -->
+                <div class="settings-section">
+                    <h3 class="settings-section-title" style="color: #dc2626;">Danger Zone</h3>
+                    <div class="space-y-3">
+                        <div class="settings-item">
+                            <div class="settings-label">Delete Account</div>
+                            <div class="settings-value">Permanently remove your account</div>
+                            <button class="settings-action text-red-600 hover:text-red-800 font-medium" 
+                                    onclick="showDeleteConfirmation()" 
+                                    style="color: #dc2626;">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Hidden Logout Form -->
     <form id="logout-form" action="{{ route('customer.logout') }}" method="POST" class="hidden">
