@@ -59,6 +59,20 @@
                 @error('stock') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
+            <!-- After the stock field -->
+<div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2">Store Prices</label>
+    @foreach($stores as $store)
+    <div class="flex items-center mb-2">
+        <label class="w-1/3 text-gray-600">{{ $store->name }} Price (BND)</label>
+        <input type="number" step="0.01" min="0" 
+               name="prices[{{ $store->id }}]" 
+               value="{{ old('prices.' . $store->id, $item->stores->firstWhere('id', $store->id)->pivot->current_price ?? '0') }}"
+               class="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               required>
+    </div>
+    @endforeach
+</div>
             <!-- Submit Button -->
             <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition font-semibold text-lg">
                 Save Item
