@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Chicken;
 use App\Models\DeleteHistoryTable;
+use Illuminate\Support\Facades\DB;
 
 class ChickenController extends Controller
 {
@@ -27,7 +28,7 @@ class ChickenController extends Controller
 
             Chicken::create([
                 'name' => 'Whole Chicken',
-                'category' => 'Meat',
+                'category' => 'Meat', 
                 'price' => 5.50,
                 'stock' => 30,
                 'status' => 'active',
@@ -48,7 +49,7 @@ class ChickenController extends Controller
     }
 
     /**
-     * Store new chicken
+     * Store new chicken - NOW SYNC TO PRODUCTS TABLE
      */
     public function store(Request $request)
     {
@@ -59,10 +60,14 @@ class ChickenController extends Controller
             'stock' => 'required|integer|min:0',
         ]);
 
-        Chicken::create($request->all());
+        // 1. Save to admin chicken table
+        $chicken = Chicken::create($request->all());
+
+        // 2. Sync to products table for customers
+        $this->syncToProductsTable($request);
 
         return redirect()->route('admin.chicken-crud')
-                         ->with('success', 'Chicken added successfully!');
+                         ->with('success', 'Chicken added successfully! Now visible to customers!');
     }
 
     /**
@@ -79,7 +84,7 @@ class ChickenController extends Controller
     }
 
     /**
-     * Update chicken
+     * Update chicken - NOW SYNC TO PRODUCTS TABLE
      */
     public function update(Request $request, $id)
     {
@@ -91,7 +96,12 @@ class ChickenController extends Controller
         ]);
 
         $chicken = Chicken::findOrFail($id);
+        $originalName = $chicken->name;
+        
         $chicken->update($request->only(['name','category','price','stock']));
+
+        // Sync to products table
+        $this->syncToProductsTable($request, $originalName);
 
         return redirect()->route('admin.chicken-crud')->with('success', 'Chicken updated successfully!');
     }
@@ -111,6 +121,12 @@ class ChickenController extends Controller
             'deleted_at' => now(),
         ]);
 
+        // Also remove from products table (soft delete)
+        DB::table('products')
+            ->where('name', $chicken->name)
+            ->where('category', 'Chicken')
+            ->update(['deleted_at' => now()]);
+
         $chicken->delete();
 
         return redirect()->route('admin.chicken-crud')
@@ -129,5 +145,36 @@ class ChickenController extends Controller
             'item' => $chicken,
             'destroyRoute' => $destroyRoute,
         ]);
+    }
+
+    /**
+     * Sync chicken product to products table
+     */
+    private function syncToProductsTable(Request $request, $originalName = null)
+    {
+        $productData = [
+            'name' => $request->name,
+            'category' => 'Chicken', // Fixed category for customer side
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'description' => $request->name . ' - Fresh chicken product',
+            'image' => null, // You can add image logic later
+            'is_discounted' => false,
+            'discount_price' => null,
+            'status' => 'active',
+            'updated_at' => now(),
+        ];
+
+        if ($originalName) {
+            // Update existing product
+            DB::table('products')
+                ->where('name', $originalName)
+                ->where('category', 'Chicken')
+                ->update($productData);
+        } else {
+            // Insert new product
+            $productData['created_at'] = now();
+            DB::table('products')->insert($productData);
+        }
     }
 }

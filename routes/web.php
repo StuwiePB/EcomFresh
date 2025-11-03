@@ -258,3 +258,29 @@ Route::get('/dashboard', function () {
         'recentDeletes' => $recentDeletes,
     ]);
 })->middleware('auth')->name('admin.dashboard');
+// --------------------
+// PRODUCT ROUTES WITH AUTH MIDDLEWARE
+// --------------------
+Route::middleware(['auth'])->group(function () {
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+});
+// --------------------
+// ADMIN PRODUCT ROUTES WITH STORE PARAMETER
+// --------------------
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('admin/{store}')->group(function () {
+        Route::get('/', function ($store) {
+            return redirect("/admin/$store/dashboard");
+        });
+
+        Route::get('/dashboard', [ProductController::class, 'adminIndex'])
+            ->name('admin.dashboard');
+
+        Route::get('/products', [ProductController::class, 'adminIndex'])
+            ->name('admin.products');
+
+        Route::post('/products', [ProductController::class, 'store'])
+            ->name('admin.products.store');
+    });
+});
