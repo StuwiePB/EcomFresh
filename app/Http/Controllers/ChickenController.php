@@ -2,132 +2,217 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Chicken;
+use App\Models\CustomerProduct;
+use App\Models\CustomerCategory;
+use App\Models\CustomerStore;
+use App\Models\CustomerProductPrice;
 use App\Models\DeleteHistoryTable;
+use App\Models\CustomerFavorite;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class ChickenController extends Controller
 {
     /**
-     * Show admin chickens index page
+     * Display all chicken products (Admin)
      */
-    public function adminIndex()
-    {
-        $chickens = Chicken::all();
-
-        // If no chickens exist, create sample data
-        if ($chickens->count() === 0) {
-            Chicken::create([
-                'name' => 'Chicken Breast',
-                'category' => 'Meat',
-                'price' => 3.50,
-                'stock' => 30,
-                'status' => 'active',
-            ]);
-
-            Chicken::create([
-                'name' => 'Whole Chicken',
-                'category' => 'Meat',
-                'price' => 5.50,
-                'stock' => 30,
-                'status' => 'active',
-            ]);
-
-            $chickens = Chicken::all();
-        }
-
-        return view('admin.chicken-crud', compact('chickens'));
+    public function index()
+{
+    $chickenCategory = CustomerCategory::where('name', 'Chicken')->first();
+    
+    if (!$chickenCategory) {
+        return redirect()->route('admin.dashboard')
+                       ->with('error', 'Chicken category not found. Please run seeder.');
     }
 
+   $chickenProducts = CustomerProduct::with(['category', 'stores'])
+    ->where('category_id', $chickenCategory->id)
+    ->get();
+
+    return view('admin.chicken-crud', compact('chickenProducts'));
+}
     /**
-     * Show Add Item form
+     * Show Add Chicken form
      */
     public function create()
     {
-        return view('admin.adminaddnewitem');
-    }
-
-    /**
-     * Store new chicken
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'category' => 'required|string|max:100',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+        $stores = CustomerStore::where('is_active', true)->get();
+        
+        return view('admin.adminaddnewitem', [
+            'item' => null,
+            'stores' => $stores,
+            'storeRoute' => 'admin.chicken.store',
+            'backRoute' => 'admin.chicken-crud'
         ]);
-
-        Chicken::create($request->all());
-
-        return redirect()->route('admin.chicken-crud')
-                         ->with('success', 'Chicken added successfully!');
     }
 
     /**
-     * Show edit form
+     * Store a new chicken product with store-specific prices
+     */
+   public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'stock' => 'required|integer|min:0',
+        'prices' => 'required|array',
+        'prices.*' => 'required|numeric|min:0'
+    ]);
+
+    $chickenCategory = CustomerCategory::where('name', 'Chicken')->firstOrFail();
+
+    // Generate unique slug
+    $baseSlug = \Illuminate\Support\Str::slug($request->name);
+    $slug = $baseSlug;
+    $counter = 1;
+
+    // Check if slug exists and make it unique
+    while (CustomerProduct::where('slug', $slug)->exists()) {
+        $slug = $baseSlug . '-' . $counter;
+        $counter++;
+    }
+
+    // Create the product
+    $product = CustomerProduct::create([
+        'category_id' => $chickenCategory->id,
+        'name' => $request->name,
+        'slug' => $slug,
+        'description' => $request->description,
+        'stock' => $request->stock,
+        'image' => 'images/products/chicken-default.jpg', // Default image
+        'status' => 'active'
+    ]);
+
+    // Create prices for each store
+    foreach ($request->prices as $storeId => $price) {
+        CustomerProductPrice::create([
+            'product_id' => $product->id,
+            'store_id' => $storeId,
+            'current_price' => $price,
+            'in_stock' => $request->stock > 0,
+            'stock' => $request->stock
+        ]);
+    }
+
+    return redirect()->route('admin.chicken-crud')
+                     ->with('success', 'Chicken product added successfully!');
+}
+    /**
+     * Show Edit form
      */
     public function edit($id)
     {
-        $item = Chicken::findOrFail($id);
+        $item = CustomerProduct::with('stores')->findOrFail($id);
+        $stores = CustomerStore::where('is_active', true)->get();
+        
         return view('admin.edititem', [
             'item' => $item,
+            'stores' => $stores,
             'updateRoute' => 'admin.chicken.update',
-            'backRoute' => 'admin.chicken-crud',
+            'backRoute' => 'admin.chicken-crud'
         ]);
     }
 
     /**
-     * Update chicken
+     * Update a chicken product
      */
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
             'stock' => 'required|integer|min:0',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric|min:0'
         ]);
 
-        $chicken = Chicken::findOrFail($id);
-        $chicken->update($request->only(['name','category','price','stock']));
+        $product = CustomerProduct::findOrFail($id);
+        
+        // Update product
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'stock' => $request->stock,
+            'status' => $request->stock > 0 ? 'active' : 'out_of_stock'
+        ]);
 
-        return redirect()->route('admin.chicken-crud')->with('success', 'Chicken updated successfully!');
+        // Update prices for each store
+        foreach ($request->prices as $storeId => $price) {
+            CustomerProductPrice::updateOrCreate(
+                [
+                    'product_id' => $product->id,
+                    'store_id' => $storeId
+                ],
+                [
+                    'current_price' => $price,
+                    'in_stock' => $request->stock > 0,
+                    'stock' => $request->stock
+                ]
+            );
+        }
+
+        return redirect()->route('admin.chicken-crud')
+                         ->with('success', 'Chicken product updated successfully!');
     }
 
     /**
-     * Delete chicken and log to history
+     * Delete a chicken product and log into history
      */
     public function destroy($id)
     {
-        $chicken = Chicken::findOrFail($id);
+        $product = CustomerProduct::findOrFail($id);
 
-        // Log into delete history table
-        DeleteHistoryTable::create([
-            'name' => $chicken->name,
-            'category' => 'Chicken',
-            'quantity' => $chicken->stock,
-            'deleted_at' => now(),
-        ]);
+        // Wrap deletion in a transaction to ensure related rows are removed first
+        DB::transaction(function () use ($product) {
+            // Log deletion into history table
+            DeleteHistoryTable::create([
+                'name' => $product->name,
+                'category' => 'Chicken',
+                'quantity' => $product->stock,
+                'deleted_at' => now(),
+            ]);
 
-        $chicken->delete();
+            // Delete related price records (foreign key constraint requires this)
+            \App\Models\CustomerProductPrice::where('product_id', $product->id)->delete();
+
+            // Delete any favorites referencing this product
+            CustomerFavorite::where('product_id', $product->id)->delete();
+
+            // Finally delete the product
+            $product->delete();
+        });
 
         return redirect()->route('admin.chicken-crud')
-                         ->with('success', 'Chicken deleted and logged successfully!');
+                         ->with('success', 'Chicken product deleted and logged successfully!');
     }
 
     /**
-     * Confirm delete page
+     * Confirm deletion page
      */
     public function confirmDelete($id)
     {
-        $chicken = Chicken::findOrFail($id);
-        $destroyRoute = route('admin.chicken.destroy', ['id' => $chicken->id]);
-
+        $product = CustomerProduct::findOrFail($id);
         return view('admin.delete-confirmation', [
-            'item' => $chicken,
-            'destroyRoute' => $destroyRoute,
+            'item' => $product,
+            'type' => 'chicken',
+            'destroyRoute' => route('admin.chicken.destroy', $id),
         ]);
+    }
+    
+    /**
+     * Admin index for chicken (if different from customer view)
+     */
+    public function adminIndex()
+    {
+        $chickenCategory = CustomerCategory::where('name', 'Chicken')->first();
+        
+        if (!$chickenCategory) {
+            return redirect()->route('admin.dashboard')
+                           ->with('error', 'Chicken category not found.');
+        }
+
+        $chickenProducts = CustomerProduct::where('category_id', $chickenCategory->id)->get();
+
+        return view('admin.chicken-crud', compact('chickenProducts'));
     }
 }

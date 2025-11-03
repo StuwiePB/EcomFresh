@@ -291,14 +291,14 @@
                     </div>
                     @endif
                     
-                    <button class="favorite-btn text-gray-400 hover:text-yellow-500 transition duration-300 {{ $product['stores'][0]['is_favorite'] ? 'active text-yellow-500' : '' }}">
+                    <button class="favorite-btn text-gray-400 hover:text-yellow-500 transition duration-300 {{ (!empty($product['stores']) && $product['stores'][0]['is_favorite']) ? 'active text-yellow-500' : '' }}">
                         <i class="fas fa-star text-xl"></i>
                     </button>
                 </div>
                 
                 <!-- Stores Comparison -->
                 <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-{{ count($product['stores']) }} gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-{{ !empty($product['stores']) ? count($product['stores']) : 1 }} gap-4">
                         @foreach($product['stores'] as $store)
                         @php
                             $isBestPrice = $store['price'] === min(array_column($product['stores'], 'price'));

@@ -42,20 +42,35 @@ class ProductController extends Controller
             'description' => $categoryData->description,
             'image' => $categoryData->image,
             'products' => $categoryData->products->map(function($product) {
+                // Make sure stores array is never empty
+                $storesData = $product->stores->map(function($store) {
+                    return [
+                        'store_name' => $store->name,
+                        'price' => $store->pivot->current_price,
+                        'originalPrice' => $store->pivot->original_price,
+                        'rating' => $store->rating,
+                        'store_hours' => $store->store_hours,
+                        'is_favorite' => false
+                    ];
+                })->toArray();
+
+                // If no stores, create a placeholder
+                if (empty($storesData)) {
+                    $storesData = [[
+                        'store_name' => 'No stores available',
+                        'price' => 0,
+                        'originalPrice' => null,
+                        'rating' => 0,
+                        'store_hours' => 'N/A',
+                        'is_favorite' => false
+                    ]];
+                }
+
                 return [
                     'name' => $product->name,
                     'image' => $product->image,
                     'description' => $product->description,
-                    'stores' => $product->stores->map(function($store) {
-                        return [
-                            'store_name' => $store->name,
-                            'price' => $store->pivot->current_price,
-                            'originalPrice' => $store->pivot->original_price,
-                            'rating' => $store->rating,
-                            'store_hours' => $store->store_hours,
-                            'is_favorite' => false
-                        ];
-                    })->toArray()
+                    'stores' => $storesData
                 ];
             })->toArray()
         ];
