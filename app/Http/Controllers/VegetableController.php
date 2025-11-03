@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Vegetable;
 use App\Models\CustomerStore;
+use App\Models\CustomerProduct;
+use App\Models\CustomerCategory;
+use App\Models\CustomerProductPrice;
+use App\Models\CustomerFavorite;
 use App\Models\DeleteHistoryTable;
-use Illuminate\Support\Facades\DB;
 
 class VegetableController extends Controller
 {
@@ -23,28 +29,15 @@ class VegetableController extends Controller
      */
     public function adminIndex()
     {
-        $vegetables = Vegetable::all();
+        // Use customer-facing category/products like other controllers
+        $vegCategory = CustomerCategory::whereIn('name', ['Vegetable','Vegetables'])->first();
 
-        // If no vegetables exist, create sample data
-        if ($vegetables->count() === 0) {
-            Vegetable::create([
-                'name' => 'Carrots',
-                'category' => 'Vegetables',
-                'price' => 2.50,
-                'stock' => 40,
-                'status' => 'active',
-            ]);
-
-            Vegetable::create([
-                'name' => 'Broccoli',
-                'category' => 'Vegetables', 
-                'price' => 3.00,
-                'stock' => 35,
-                'status' => 'active',
-            ]);
-
-            $vegetables = Vegetable::all();
+        if (! $vegCategory) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Vegetable category not found.');
         }
+
+        $vegetables = CustomerProduct::with(['stores'])->where('category_id', $vegCategory->id)->get();
 
         return view('admin.vegetable-crud', compact('vegetables'));
     }
@@ -71,19 +64,45 @@ class VegetableController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:100',
-            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
             'stock' => 'required|integer|min:0',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric|min:0',
         ]);
 
-        // 1. Save to admin vegetable table
-        $vegetable = Vegetable::create($request->all());
+        $vegCategory = CustomerCategory::whereIn('name', ['Vegetable','Vegetables'])->firstOrFail();
 
-        // 2. Sync to products table for customers
-        $this->syncToProductsTable($request);
+        $baseSlug = Str::slug($request->name);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (CustomerProduct::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+
+        $product = CustomerProduct::create([
+            'category_id' => $vegCategory->id,
+            'name' => $request->name,
+            'slug' => $slug,
+            'description' => $request->description,
+            'stock' => $request->stock,
+            'image' => 'images/products/vegetable-default.jpg',
+            'status' => 'active',
+        ]);
+
+        foreach ($request->prices as $storeId => $price) {
+            CustomerProductPrice::create([
+                'product_id' => $product->id,
+                'store_id' => $storeId,
+                'current_price' => $price,
+                'in_stock' => $request->stock > 0,
+                'stock' => $request->stock,
+            ]);
+        }
+
+        $this->syncToProductsTableFromProduct($product);
 
         return redirect()->route('admin.vegetable-crud')
-                         ->with('success', 'Vegetable added successfully! Now visible to customers!');
+            ->with('success', 'Vegetable product added successfully!');
     }
 
     /**
@@ -91,7 +110,7 @@ class VegetableController extends Controller
      */
     public function edit($id)
     {
-        $item = Vegetable::findOrFail($id);
+        $item = CustomerProduct::with('stores')->findOrFail($id);
         $stores = CustomerStore::where('is_active', true)->get();
 
         return view('admin.edititem', [
@@ -109,20 +128,32 @@ class VegetableController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
             'stock' => 'required|integer|min:0',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric|min:0',
         ]);
 
-        $vegetable = Vegetable::findOrFail($id);
-        $originalName = $vegetable->name;
-        
-        $vegetable->update($request->only(['name','category','price','stock']));
+        $product = CustomerProduct::findOrFail($id);
 
-        // Sync to products table
-        $this->syncToProductsTable($request, $originalName);
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'stock' => $request->stock,
+            'status' => $request->stock > 0 ? 'active' : 'out_of_stock',
+        ]);
 
-        return redirect()->route('admin.vegetable-crud')->with('success', 'Vegetable updated successfully!');
+        foreach ($request->prices as $storeId => $price) {
+            CustomerProductPrice::updateOrCreate(
+                ['product_id' => $product->id, 'store_id' => $storeId],
+                ['current_price' => $price, 'in_stock' => $request->stock > 0, 'stock' => $request->stock]
+            );
+        }
+
+        $this->syncToProductsTableFromProduct($product);
+
+        return redirect()->route('admin.vegetable-crud')
+            ->with('success', 'Vegetable product updated successfully!');
     }
 
     /**
@@ -130,26 +161,23 @@ class VegetableController extends Controller
      */
     public function destroy($id)
     {
-        $vegetable = Vegetable::findOrFail($id);
+        $product = CustomerProduct::findOrFail($id);
 
-        // Log into delete history table
-        DeleteHistoryTable::create([
-            'name' => $vegetable->name,
-            'category' => 'Vegetables',
-            'quantity' => $vegetable->stock,
-            'deleted_at' => now(),
-        ]);
+        DB::transaction(function () use ($product) {
+            DeleteHistoryTable::create([
+                'name' => $product->name,
+                'category' => 'Vegetable',
+                'quantity' => $product->stock,
+                'deleted_at' => now(),
+            ]);
 
-        // Also remove from products table (soft delete)
-        DB::table('products')
-            ->where('name', $vegetable->name)
-            ->where('category', 'Vegetables')
-            ->update(['deleted_at' => now()]);
-
-        $vegetable->delete();
+            CustomerProductPrice::where('product_id', $product->id)->delete();
+            CustomerFavorite::where('product_id', $product->id)->delete();
+            $product->delete();
+        });
 
         return redirect()->route('admin.vegetable-crud')
-                         ->with('success', 'Vegetable deleted and logged successfully!');
+            ->with('success', 'Vegetable product deleted and logged successfully!');
     }
 
     /**
@@ -157,11 +185,12 @@ class VegetableController extends Controller
      */
     public function confirmDelete($id)
     {
-        $vegetable = Vegetable::findOrFail($id);
-        $destroyRoute = route('admin.vegetable.destroy', ['id' => $vegetable->id]);
+        $product = CustomerProduct::findOrFail($id);
+        $destroyRoute = route('admin.vegetable.destroy', ['id' => $product->id]);
 
         return view('admin.delete-confirmation', [
-            'item' => $vegetable,
+            'item' => $product,
+            'type' => 'vegetable',
             'destroyRoute' => $destroyRoute,
         ]);
     }
@@ -169,31 +198,35 @@ class VegetableController extends Controller
     /**
      * Sync vegetable product to products table
      */
-    private function syncToProductsTable(Request $request, $originalName = null)
+    private function syncToProductsTableFromProduct(CustomerProduct $product)
     {
-        $productData = [
-            'name' => $request->name,
-            'category' => 'Vegetables', // Fixed category for customer side
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'description' => $request->name . ' - Fresh vegetable product',
-            'image' => null,
-            'is_discounted' => false,
-            'discount_price' => null,
-            'status' => 'active',
-            'updated_at' => now(),
-        ];
+        try {
+            $bestPrice = CustomerProductPrice::where('product_id', $product->id)
+                ->orderBy('current_price', 'asc')
+                ->value('current_price');
 
-        if ($originalName) {
-            // Update existing product
-            DB::table('products')
-                ->where('name', $originalName)
-                ->where('category', 'Vegetables')
-                ->update($productData);
-        } else {
-            // Insert new product
-            $productData['created_at'] = now();
-            DB::table('products')->insert($productData);
+            $productData = [
+                'name' => $product->name,
+                'category' => 'Vegetable',
+                'price' => $bestPrice ?? 0,
+                'stock' => $product->stock,
+                'description' => $product->description ?? ($product->name . ' - Fresh vegetable product'),
+                'image' => $product->image,
+                'is_discounted' => false,
+                'discount_price' => null,
+                'status' => $product->status ?? 'active',
+                'updated_at' => now(),
+            ];
+
+            $exists = DB::table('products')->where('name', $product->name)->where('category', 'Vegetable')->exists();
+            if ($exists) {
+                DB::table('products')->where('name', $product->name)->where('category', 'Vegetable')->update($productData);
+            } else {
+                $productData['created_at'] = now();
+                DB::table('products')->insert($productData);
+            }
+        } catch (\Throwable $e) {
+            // non-fatal
         }
     }
 }

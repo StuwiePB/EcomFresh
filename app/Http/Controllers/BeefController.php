@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Beef;
 use App\Models\CustomerStore;
+use App\Models\CustomerProduct;
+use App\Models\CustomerCategory;
+use App\Models\CustomerProductPrice;
+use App\Models\CustomerFavorite;
 use App\Models\DeleteHistoryTable;
-use Illuminate\Support\Facades\DB;
 
 class BeefController extends Controller
 {
@@ -23,28 +29,15 @@ class BeefController extends Controller
      */
     public function adminIndex()
     {
-        $beefs = Beef::all();
+        // Use customer-facing category/products like ChickenController
+        $beefCategory = CustomerCategory::where('name', 'Beef')->first();
 
-        // If no beefs exist, create sample data
-        if ($beefs->count() === 0) {
-            Beef::create([
-                'name' => 'Beef Steak',
-                'category' => 'Meat',
-                'price' => 8.50,
-                'stock' => 20,
-                'status' => 'active',
-            ]);
-
-            Beef::create([
-                'name' => 'Ground Beef',
-                'category' => 'Meat', 
-                'price' => 6.50,
-                'stock' => 25,
-                'status' => 'active',
-            ]);
-
-            $beefs = Beef::all();
+        if (! $beefCategory) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Beef category not found.');
         }
+
+        $beefs = CustomerProduct::with(['stores'])->where('category_id', $beefCategory->id)->get();
 
         return view('admin.beef-crud', compact('beefs'));
     }
@@ -71,19 +64,45 @@ class BeefController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:100',
-            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
             'stock' => 'required|integer|min:0',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric|min:0',
         ]);
 
-        // 1. Save to admin beef table
-        $beef = Beef::create($request->all());
+        $beefCategory = CustomerCategory::where('name', 'Beef')->firstOrFail();
 
-        // 2. Sync to products table for customers
-        $this->syncToProductsTable($request);
+        $baseSlug = Str::slug($request->name);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (CustomerProduct::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+
+        $product = CustomerProduct::create([
+            'category_id' => $beefCategory->id,
+            'name' => $request->name,
+            'slug' => $slug,
+            'description' => $request->description,
+            'stock' => $request->stock,
+            'image' => 'images/products/beef-default.jpg',
+            'status' => 'active',
+        ]);
+
+        foreach ($request->prices as $storeId => $price) {
+            CustomerProductPrice::create([
+                'product_id' => $product->id,
+                'store_id' => $storeId,
+                'current_price' => $price,
+                'in_stock' => $request->stock > 0,
+                'stock' => $request->stock,
+            ]);
+        }
+
+        $this->syncToProductsTableFromProduct($product);
 
         return redirect()->route('admin.beef-crud')
-                         ->with('success', 'Beef added successfully! Now visible to customers!');
+            ->with('success', 'Beef product added successfully!');
     }
 
     /**
@@ -91,7 +110,7 @@ class BeefController extends Controller
      */
     public function edit($id)
     {
-        $item = Beef::findOrFail($id);
+        $item = CustomerProduct::with('stores')->findOrFail($id);
         $stores = CustomerStore::where('is_active', true)->get();
 
         return view('admin.edititem', [
@@ -109,20 +128,32 @@ class BeefController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
             'stock' => 'required|integer|min:0',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric|min:0',
         ]);
 
-        $beef = Beef::findOrFail($id);
-        $originalName = $beef->name;
-        
-        $beef->update($request->only(['name','category','price','stock']));
+        $product = CustomerProduct::findOrFail($id);
 
-        // Sync to products table
-        $this->syncToProductsTable($request, $originalName);
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'stock' => $request->stock,
+            'status' => $request->stock > 0 ? 'active' : 'out_of_stock',
+        ]);
 
-        return redirect()->route('admin.beef-crud')->with('success', 'Beef updated successfully!');
+        foreach ($request->prices as $storeId => $price) {
+            CustomerProductPrice::updateOrCreate(
+                ['product_id' => $product->id, 'store_id' => $storeId],
+                ['current_price' => $price, 'in_stock' => $request->stock > 0, 'stock' => $request->stock]
+            );
+        }
+
+        $this->syncToProductsTableFromProduct($product);
+
+        return redirect()->route('admin.beef-crud')
+            ->with('success', 'Beef product updated successfully!');
     }
 
     /**
@@ -130,26 +161,23 @@ class BeefController extends Controller
      */
     public function destroy($id)
     {
-        $beef = Beef::findOrFail($id);
+        $product = CustomerProduct::findOrFail($id);
 
-        // Log into delete history table
-        DeleteHistoryTable::create([
-            'name' => $beef->name,
-            'category' => 'Beef',
-            'quantity' => $beef->stock,
-            'deleted_at' => now(),
-        ]);
+        DB::transaction(function () use ($product) {
+            DeleteHistoryTable::create([
+                'name' => $product->name,
+                'category' => 'Beef',
+                'quantity' => $product->stock,
+                'deleted_at' => now(),
+            ]);
 
-        // Also remove from products table (soft delete)
-        DB::table('products')
-            ->where('name', $beef->name)
-            ->where('category', 'Beef')
-            ->update(['deleted_at' => now()]);
-
-        $beef->delete();
+            CustomerProductPrice::where('product_id', $product->id)->delete();
+            CustomerFavorite::where('product_id', $product->id)->delete();
+            $product->delete();
+        });
 
         return redirect()->route('admin.beef-crud')
-                         ->with('success', 'Beef deleted and logged successfully!');
+            ->with('success', 'Beef product deleted and logged successfully!');
     }
 
     /**
@@ -157,11 +185,12 @@ class BeefController extends Controller
      */
     public function confirmDelete($id)
     {
-        $beef = Beef::findOrFail($id);
-        $destroyRoute = route('admin.beef.destroy', ['id' => $beef->id]);
+        $product = CustomerProduct::findOrFail($id);
+        $destroyRoute = route('admin.beef.destroy', ['id' => $product->id]);
 
         return view('admin.delete-confirmation', [
-            'item' => $beef,
+            'item' => $product,
+            'type' => 'beef',
             'destroyRoute' => $destroyRoute,
         ]);
     }
@@ -169,31 +198,35 @@ class BeefController extends Controller
     /**
      * Sync beef product to products table
      */
-    private function syncToProductsTable(Request $request, $originalName = null)
+    private function syncToProductsTableFromProduct(CustomerProduct $product)
     {
-        $productData = [
-            'name' => $request->name,
-            'category' => 'Beef', // Fixed category for customer side
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'description' => $request->name . ' - Fresh beef product',
-            'image' => null,
-            'is_discounted' => false,
-            'discount_price' => null,
-            'status' => 'active',
-            'updated_at' => now(),
-        ];
+        try {
+            $bestPrice = CustomerProductPrice::where('product_id', $product->id)
+                ->orderBy('current_price', 'asc')
+                ->value('current_price');
 
-        if ($originalName) {
-            // Update existing product
-            DB::table('products')
-                ->where('name', $originalName)
-                ->where('category', 'Beef')
-                ->update($productData);
-        } else {
-            // Insert new product
-            $productData['created_at'] = now();
-            DB::table('products')->insert($productData);
+            $productData = [
+                'name' => $product->name,
+                'category' => 'Beef',
+                'price' => $bestPrice ?? 0,
+                'stock' => $product->stock,
+                'description' => $product->description ?? ($product->name . ' - Fresh beef product'),
+                'image' => $product->image,
+                'is_discounted' => false,
+                'discount_price' => null,
+                'status' => $product->status ?? 'active',
+                'updated_at' => now(),
+            ];
+
+            $exists = DB::table('products')->where('name', $product->name)->where('category', 'Beef')->exists();
+            if ($exists) {
+                DB::table('products')->where('name', $product->name)->where('category', 'Beef')->update($productData);
+            } else {
+                $productData['created_at'] = now();
+                DB::table('products')->insert($productData);
+            }
+        } catch (\Throwable $e) {
+            // non-fatal
         }
     }
 }

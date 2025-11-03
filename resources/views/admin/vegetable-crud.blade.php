@@ -57,14 +57,48 @@
               <div class="text-4xl">🥦</div>
               <div class="flex flex-col space-y-1">
                 <h3 class="font-bold text-lg">{{ $vegetable->name }}</h3>
-                <p class="text-sm font-semibold">${{ number_format($vegetable->price, 2) }}</p>
-                <p class="text-sm">Stock: {{ $vegetable->stock }}</p>
-              </div>
+                <p class="text-sm text-gray-500">Category: {{ $vegetable->category->name ?? 'Vegetable' }}</p>
+        @php
+          $stores = $vegetable->stores ?? collect();
+          $bestPrice = $stores->pluck('pivot.current_price')->filter()->min() ?? null;
+        @endphp
+
+        <div class="flex flex-col space-y-1">
+          <div class="flex flex-wrap gap-2">
+            @forelse($stores as $store)
+              @php
+                $price = $store->pivot->current_price ?? 0;
+                $original = $store->pivot->original_price ?? null;
+                $hasDiscount = $original && $original > $price;
+                $discountPercentage = $hasDiscount ? round((($original - $price) / $original) * 100) : 0;
+              @endphp
+
+              <span class="relative group inline-block">
+                <span class="px-2 py-1 rounded text-sm {{ $price == $bestPrice ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-700' }}">
+                  {{ $store->store_name ?? $store->name ?? 'Store' }}: BND {{ number_format($price, 2) }}
+                  @if($hasDiscount)
+                    <span class="ml-2 text-xs text-red-600 font-bold">-{{ $discountPercentage }}%</span>
+                  @endif
+                </span>
+
+                @if($hasDiscount)
+                  <div class="absolute left-1/2 transform -translate-x-1/2 mt-2 w-max bg-white border border-gray-200 rounded shadow-lg text-xs text-gray-700 px-3 py-2 hidden group-hover:block z-50">
+                    Was BND {{ number_format($original, 2) }} — Save {{ $discountPercentage }}%
+                  </div>
+                @endif
+              </span>
+            @empty
+              <span class="px-2 py-1 rounded bg-gray-100 text-gray-700 text-sm">No store prices</span>
+            @endforelse
+          </div>
+
+          <p class="text-sm">Stock: {{ $vegetable->stock }}</p>
+        </div>
+            </div>
             </div>
 
             <div class="flex gap-2">
-              <a href="{{ route('admin.vegetable.edit', $vegetable->id) }}" 
-                 class="bg-blue-100 p-2 rounded-lg flex items-center justify-center">
+              <a href="{{ route('admin.vegetable.edit', $vegetable->id) }}" class="bg-blue-100 p-2 rounded-lg flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" 
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -72,8 +106,7 @@
                 </svg>
               </a>
 
-              <a href="{{ route('admin.vegetable.confirmDelete', $vegetable->id) }}" 
-                 class="bg-red-100 p-2 rounded-lg flex items-center justify-center">
+              <a href="{{ route('admin.vegetable.confirmDelete', $vegetable->id) }}" class="bg-red-100 p-2 rounded-lg flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600"
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
