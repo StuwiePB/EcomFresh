@@ -63,11 +63,25 @@
 <div class="mb-4">
     <label class="block text-gray-700 text-sm font-bold mb-2">Store Prices</label>
     @foreach($stores as $store)
+    @php
+        // Determine the current price for this store. Support both CustomerProduct (with stores relation)
+        // and legacy admin models (Beef/Vegetable) that provide a single price on the model.
+        $inputName = 'prices.' . $store->id;
+        $defaultPrice = '0';
+        if (!empty($item) && isset($item->stores)) {
+            $found = $item->stores->firstWhere('id', $store->id);
+            $defaultPrice = $found && isset($found->pivot) ? ($found->pivot->current_price ?? '0') : '0';
+        } else {
+            // fallback to legacy model price field if present
+            $defaultPrice = $item->price ?? '0';
+        }
+        $value = old($inputName, $defaultPrice);
+    @endphp
     <div class="flex items-center mb-2">
         <label class="w-1/3 text-gray-600">{{ $store->name }} Price (BND)</label>
         <input type="number" step="0.01" min="0" 
                name="prices[{{ $store->id }}]" 
-               value="{{ old('prices.' . $store->id, $item->stores->firstWhere('id', $store->id)->pivot->current_price ?? '0') }}"
+               value="{{ $value }}"
                class="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                required>
     </div>

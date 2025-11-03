@@ -95,16 +95,45 @@ class ProductController extends Controller
                         'name'        => $product->name,
                         'image'       => $product->image ?? '/images/default-product.jpg',
                         'description' => $product->description ?? $product->name . ' - Fresh product',
-                        'stores'      => $product->stores->map(function ($store) {
-                            return [
-                                'store_name'    => $store->store_name ?? $store->name ?? 'Store',
-                                'price'         => $store->pivot->current_price ?? ($store->pivot->price ?? 0),
-                                'originalPrice' => $store->pivot->original_price ?? null,
-                                'rating'        => $store->rating ?? 4.5,
-                                'store_hours'   => $store->store_hours ?? '9 AM - 9 PM',
-                                'is_favorite'   => false,
-                            ];
-                        })->toArray(),
+                        'stores'      => (function () use ($product) {
+                            // Ensure we always compare only Supa Save and Soon Lee
+                            $wanted = ['supa save', 'soon lee'];
+
+                            // Build lookup from existing pivot stores
+                            $lookup = [];
+                            foreach ($product->stores as $store) {
+                                $name = strtolower(trim(($store->store_name ?? $store->name ?? '')));
+                                $lookup[$name] = [
+                                    'store_name'    => $store->store_name ?? $store->name ?? 'Store',
+                                    'price'         => $store->pivot->current_price ?? ($store->pivot->price ?? null),
+                                    'originalPrice' => $store->pivot->original_price ?? null,
+                                    'rating'        => $store->rating ?? 4.5,
+                                    'store_hours'   => $store->store_hours ?? '9 AM - 9 PM',
+                                    'is_favorite'   => false,
+                                ];
+                            }
+
+                            // Return array in desired order; if a store is missing, provide placeholder
+                            $result = [];
+                            foreach ($wanted as $w) {
+                                if (isset($lookup[$w])) {
+                                    $result[] = $lookup[$w];
+                                } else {
+                                    // placeholder when store has no price for this product
+                                    $label = ucwords($w);
+                                    $result[] = [
+                                        'store_name'    => $label,
+                                        'price'         => null,
+                                        'originalPrice' => null,
+                                        'rating'        => 4.5,
+                                        'store_hours'   => '9 AM - 9 PM',
+                                        'is_favorite'   => false,
+                                    ];
+                                }
+                            }
+
+                            return $result;
+                        })(),
                     ];
                 })->toArray(),
             ];

@@ -25,15 +25,7 @@ class PriceController extends Controller
                             'travelTime' => 6,
                             'hours' => '8AM–8PM'
                         ],
-                        [
-                            'name' => 'Hua Ho',
-                            'rating' => 4.4,
-                            'distance' => 1.8,
-                            'currentPrice' => 3.90,
-                            'originalPrice' => 4.10,
-                            'travelTime' => 5,
-                            'hours' => '7:30AM–10PM'
-                        ],
+                        // Hua Ho removed — only Supa Save and Soon Lee are shown
                         [
                             'name' => 'Soon Lee',
                             'rating' => 4.0,
@@ -50,7 +42,7 @@ class PriceController extends Controller
                     'description' => 'Fresh • Quality Guaranteed',
                     'stores' => [
                         [
-                            'name' => 'Hua Ho',
+                            'name' => 'Supa Save',
                             'rating' => 4.2,
                             'distance' => 2.1,
                             'currentPrice' => 17.95,
@@ -74,7 +66,7 @@ class PriceController extends Controller
                     'description' => 'Fresh • Quality Guaranteed',
                     'stores' => [
                         [
-                            'name' => 'Hua Ho',
+                            'name' => 'Soon Lee',
                             'rating' => 4.4,
                             'distance' => 1.8,
                             'currentPrice' => 1.80,
@@ -100,25 +92,23 @@ class PriceController extends Controller
     }
 
     //new method for price history with database
-          public function priceHistory($type = null, $id = null)
-    {
-        if ($type === 'category' && $id === 'beef') {
-            return $this->beefPriceHistory();
-        } elseif ($type === 'store' && $id === 'huaho') {
-            return $this->huahoPriceHistory();
-        } elseif ($type === 'store' && $id === 'soonlee') {
-            return $this->soonleePriceHistory();
+        public function priceHistory($type = null, $id = null)
+        {
+            if ($type === 'category' && $id === 'beef') {
+                return $this->beefPriceHistory();
+            } elseif ($type === 'store' && $id === 'soonlee') {
+                return $this->soonleePriceHistory();
+            }
+
+            // Default: all products
+            $data = [
+                'location' => 'Gadong, Brunei',
+                'title' => 'Price History - All Products',
+                'products' => $this->getAllProducts()
+            ];
+
+            return view('customer.pricehistory', $data);
         }
-
-        // Default: all products
-        $data = [
-            'location' => 'Gadong, Brunei',
-            'title' => 'Price History - All Products',
-            'products' => $this->getAllProducts()
-        ];
-
-        return view('customer.pricehistory', $data);
-    }
 
     // Beef prices
     public function beefPriceHistory()
@@ -132,17 +122,7 @@ class PriceController extends Controller
         return view('customer.pricehistory', $data);
     }
 
-    // Hua Ho prices
-    public function huahoPriceHistory()
-    {
-        $data = [
-            'location' => 'Tanjong Bunut, Brunei',
-            'title' => 'Hua Ho - Price History',
-            'products' => $this->getHuahoProducts()
-        ];
 
-        return view('customer.pricehistory', $data);
-    }
 
     // Soon Lee prices
     public function soonleePriceHistory()
@@ -191,39 +171,7 @@ class PriceController extends Controller
         ];
     }
 
-    private function getHuahoProducts()
-    {
-        return [
-            [
-                'name' => 'Chicken Breast - Hua Ho',
-                'description' => 'Fresh • Quality Guaranteed',
-                'currentPrice' => 3.60,
-                'priceHistory' => [
-                    'current' => 3.60,
-                    'lastMonth' => 3.70,
-                    'twoMonthsAgo' => 3.65,
-                    'threeMonthsAgo' => 3.80
-                ],
-                'priceChange' => -0.10,
-                'percentageChange' => -2.7,
-                'trend' => 'decrease'
-            ],
-            [
-                'name' => 'Apples - Hua Ho',
-                'description' => 'Fresh • Imported',
-                'currentPrice' => 4.20,
-                'priceHistory' => [
-                    'current' => 4.20,
-                    'lastMonth' => 4.00,
-                    'twoMonthsAgo' => 3.90,
-                    'threeMonthsAgo' => 3.80
-                ],
-                'priceChange' => 0.20,
-                'percentageChange' => 5.0,
-                'trend' => 'increase'
-            ]
-        ];
-    }
+    // Hua Ho product history removed; this app now supports Soon Lee and Supa Save only.
 
     private function getSoonLeeProducts()
     {

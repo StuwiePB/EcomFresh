@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Beef;
+use App\Models\CustomerStore;
 use App\Models\DeleteHistoryTable;
 use Illuminate\Support\Facades\DB;
 
@@ -53,7 +54,14 @@ class BeefController extends Controller
      */
     public function create()
     {
-        return view('admin.adminaddnewitem');
+        $stores = CustomerStore::where('is_active', true)->get();
+
+        return view('admin.adminaddnewitem', [
+            'item' => null,
+            'stores' => $stores,
+            'storeRoute' => 'admin.beef.store',
+            'backRoute' => 'admin.beef-crud',
+        ]);
     }
 
     /**
@@ -84,8 +92,11 @@ class BeefController extends Controller
     public function edit($id)
     {
         $item = Beef::findOrFail($id);
+        $stores = CustomerStore::where('is_active', true)->get();
+
         return view('admin.edititem', [
             'item' => $item,
+            'stores' => $stores,
             'updateRoute' => 'admin.beef.update',
             'backRoute' => 'admin.beef-crud',
         ]);

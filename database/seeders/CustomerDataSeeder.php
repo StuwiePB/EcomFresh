@@ -50,14 +50,8 @@ class CustomerDataSeeder extends Seeder
         }
 
         // 2. Create Stores (simplified - removed contact_number and address)
+        // Only two stores are supported now
         $stores = [
-            [
-                'name' => 'Hua Ho',
-                'slug' => 'hua-ho',
-                'location' => 'Bander Seri Begawan',
-                'store_hours' => '7:30AM-10PM',
-                'rating' => 4.4
-            ],
             [
                 'name' => 'Supa Save',
                 'slug' => 'supa-save', 
@@ -88,7 +82,6 @@ class CustomerDataSeeder extends Seeder
                     'image' => 'images/products/chicken-breast.jpg',
                     'prices' => [
                         ['store' => 'Supa Save', 'current_price' => 3.60, 'original_price' => 4.20],
-                        ['store' => 'Hua Ho', 'current_price' => 4.10, 'original_price' => null],
                         ['store' => 'Soon Lee', 'current_price' => 3.30, 'original_price' => 4.00]
                     ]
                 ],
@@ -98,8 +91,7 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh whole chicken',
                     'image' => 'images/products/whole-chicken.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 5.50, 'original_price' => null],
-                        ['store' => 'Hua Ho', 'current_price' => 6.30, 'original_price' => 7.00]
+                        ['store' => 'Supa Save', 'current_price' => 5.50, 'original_price' => null]
                     ]
                 ],
                 [
@@ -108,7 +100,6 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh chicken thigh pieces', 
                     'image' => 'images/products/chicken-thigh.jpg',
                     'prices' => [
-                        ['store' => 'Hua Ho', 'current_price' => 4.25, 'original_price' => 5.00],
                         ['store' => 'Supa Save', 'current_price' => 4.10, 'original_price' => 4.50],
                         ['store' => 'Soon Lee', 'current_price' => 3.95, 'original_price' => null]
                     ]
@@ -121,7 +112,6 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Quality chuck steak cuts',
                     'image' => 'images/products/chuck-steak.jpg', 
                     'prices' => [
-                        ['store' => 'Hua Ho', 'current_price' => 13.50, 'original_price' => 15.00],
                         ['store' => 'Supa Save', 'current_price' => 12.00, 'original_price' => 13.50],
                         ['store' => 'Soon Lee', 'current_price' => 11.80, 'original_price' => 14.00]
                     ]
@@ -132,7 +122,6 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Premium ribeye steak',
                     'image' => 'images/products/ribeye-steak.jpg',
                     'prices' => [
-                        ['store' => 'Hua Ho', 'current_price' => 18.75, 'original_price' => null],
                         ['store' => 'Supa Save', 'current_price' => 17.90, 'original_price' => 20.50]
                     ]
                 ],
@@ -143,7 +132,7 @@ class CustomerDataSeeder extends Seeder
                     'image' => 'images/products/striploin-steak.jpg',
                     'prices' => [
                         ['store' => 'Supa Save', 'current_price' => 16.50, 'original_price' => null],
-                        ['store' => 'Hua Ho', 'current_price' => 17.20, 'original_price' => 19.00]
+                        ['store' => 'Soon Lee', 'current_price' => 17.20, 'original_price' => 19.00]
                     ]
                 ]
             ],
@@ -155,7 +144,6 @@ class CustomerDataSeeder extends Seeder
                     'image' => 'images/products/carrots.jpg',
                     'prices' => [
                         ['store' => 'Supa Save', 'current_price' => 2.50, 'original_price' => 3.00],
-                        ['store' => 'Hua Ho', 'current_price' => 3.10, 'original_price' => null],
                         ['store' => 'Soon Lee', 'current_price' => 2.30, 'original_price' => 2.70]
                     ]
                 ],
@@ -165,7 +153,6 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh green cabbages',
                     'image' => 'images/products/cabbages.jpg',
                     'prices' => [
-                        ['store' => 'Hua Ho', 'current_price' => 2.80, 'original_price' => 3.20],
                         ['store' => 'Supa Save', 'current_price' => 2.60, 'original_price' => null]
                     ]
                 ],
@@ -176,8 +163,7 @@ class CustomerDataSeeder extends Seeder
                     'image' => 'images/products/beansprouts.jpg',
                     'prices' => [
                         ['store' => 'Soon Lee', 'current_price' => 1.50, 'original_price' => null],
-                        ['store' => 'Supa Save', 'current_price' => 1.80, 'original_price' => 2.20],
-                        ['store' => 'Hua Ho', 'current_price' => 2.00, 'original_price' => 2.50]
+                        ['store' => 'Supa Save', 'current_price' => 1.80, 'original_price' => 2.20]
                     ]
                 ]
             ]

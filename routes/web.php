@@ -54,7 +54,6 @@ Route::get('/customer', [ProductController::class, 'index'])->name('customer.mai
 Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice')->middleware('auth');
 Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
 Route::get('/beef-prices', [PriceController::class, 'beefPriceHistory']);
-Route::get('/huaho-prices', [PriceController::class, 'huahoPriceHistory']);
 Route::get('/soonlee-prices', [PriceController::class, 'soonleePriceHistory']);
 Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
