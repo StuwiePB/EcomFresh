@@ -8,15 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->string('store_name')->nullable()->after('id');
-        });
+        // Only add the column if it doesn't already exist (prevents duplicate column errors)
+        if (!Schema::hasColumn('products', 'store_name')) {
+            Schema::table('products', function (Blueprint $table) {
+                $table->string('store_name')->nullable()->after('id');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('store_name');
-        });
+        if (Schema::hasColumn('products', 'store_name')) {
+            Schema::table('products', function (Blueprint $table) {
+                $table->dropColumn('store_name');
+            });
+        }
     }
 };
