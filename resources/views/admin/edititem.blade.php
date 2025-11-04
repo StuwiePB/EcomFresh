@@ -68,9 +68,23 @@
             $defaultPrice = $item->price ?? '0';
         }
         $value = old($inputName, $defaultPrice);
+
+        // Compute a friendly display label mapping older store names to Soon Lee branches
+        $lower = strtolower($store->name ?? '');
+        if (str_contains($lower, 'supa') || str_contains($lower, 'supasave')) {
+            $displayName = 'Soon Lee Bandar Seri Begawan';
+        } elseif (str_contains($lower, 'gadong')) {
+            $displayName = 'Soon Lee Gadong';
+        } elseif (str_contains($lower, 'bandar') || str_contains($lower, 'begawan') || str_contains($lower, 'seri')) {
+            $displayName = 'Soon Lee Bandar Seri Begawan';
+        } elseif (str_contains($lower, 'soon')) {
+            $displayName = 'Soon Lee Gadong';
+        } else {
+            $displayName = $store->name;
+        }
     @endphp
     <div class="flex items-center mb-2">
-        <label class="w-1/3 text-gray-600">{{ $store->name }} Price (BND)</label>
+        <label class="w-1/3 text-gray-600">{{ $displayName }} Price (BND)</label>
         <input type="number" step="0.01" min="0" 
                name="prices[{{ $store->id }}]" 
                value="{{ $value }}"

@@ -18,7 +18,7 @@ class PriceController extends Controller
                     'description' => 'Fresh • Quality Guaranteed',
                     'stores' => [
                         [
-                            'name' => 'Supa Save',
+                            'name' => 'Soon Lee Bandar Seri Begawan',
                             'rating' => 4.2,
                             'distance' => 2.1,
                             'currentPrice' => 3.40,
@@ -28,7 +28,7 @@ class PriceController extends Controller
                         ],
                         // Hua Ho removed — only Supa Save and Soon Lee are shown
                         [
-                            'name' => 'Soon Lee',
+                            'name' => 'Soon Lee Gadong',
                             'rating' => 4.0,
                             'distance' => 3.2,
                             'currentPrice' => 3.00,
@@ -43,7 +43,7 @@ class PriceController extends Controller
                     'description' => 'Fresh • Quality Guaranteed',
                     'stores' => [
                         [
-                            'name' => 'Supa Save',
+                            'name' => 'Soon Lee Bandar Seri Begawan',
                             'rating' => 4.2,
                             'distance' => 2.1,
                             'currentPrice' => 17.95,
@@ -52,7 +52,7 @@ class PriceController extends Controller
                             'hours' => '8AM–9PM'
                         ],
                         [
-                            'name' => 'Soon Lee',
+                            'name' => 'Soon Lee Gadong',
                             'rating' => 4.0,
                             'distance' => 3.2,
                             'currentPrice' => 16.90,
@@ -67,7 +67,7 @@ class PriceController extends Controller
                     'description' => 'Fresh • Quality Guaranteed',
                     'stores' => [
                         [
-                            'name' => 'Soon Lee',
+                            'name' => 'Soon Lee Gadong',
                             'rating' => 4.4,
                             'distance' => 1.8,
                             'currentPrice' => 1.80,
@@ -76,7 +76,7 @@ class PriceController extends Controller
                             'hours' => '7:30AM–10PM'
                         ],
                         [
-                            'name' => 'Supa Save',
+                            'name' => 'Soon Lee Bandar Seri Begawan',
                             'rating' => 4.2,
                             'distance' => 2.1,
                             'currentPrice' => 1.50,
@@ -157,6 +157,30 @@ class PriceController extends Controller
         return view('customer.pricehistory', $data);
     }
 
+    // Soon Lee Gadong (branch) prices - branch-specific view
+    public function soonleeGadongPriceHistory()
+    {
+        $data = [
+            'location' => 'Gadong, Brunei',
+            'title' => 'Soon Lee Gadong - Price Trend',
+            'products' => $this->getSoonLeeProducts()
+        ];
+
+        return view('customer.pricehistory', $data);
+    }
+
+    // Soon Lee Bandar Seri Begawan (branch) prices
+    public function soonleeBandarPriceHistory()
+    {
+        $data = [
+            'location' => 'Bandar Seri Begawan, Brunei',
+            'title' => 'Soon Lee Bandar Seri Begawan - Price Trend',
+            'products' => $this->getSupaSaveProducts()
+        ];
+
+        return view('customer.pricehistory', $data);
+    }
+
     // Supa Save prices (same layout as Soon Lee)
     public function supasavePriceHistory()
     {
@@ -208,9 +232,17 @@ class PriceController extends Controller
         switch ($storeSlug) {
             case 'soonlee':
             case 'soon-leee':
+            case 'soonlee-gadong':
                 $storeProducts = $this->getSoonLeeProducts();
-                $storeName = 'Soon Lee';
-                $location = 'Sengkurong, Brunei';
+                $storeName = 'Soon Lee Gadong';
+                $location = 'Gadong, Brunei';
+                break;
+            case 'soonlee-bandar':
+            case 'soon-lee-bandar-seri-begawan':
+                // we reuse the SupaSave product list shape for the second Soon Lee branch
+                $storeProducts = $this->getSupaSaveProducts();
+                $storeName = 'Soon Lee Bandar Seri Begawan';
+                $location = 'Bandar Seri Begawan, Brunei';
                 break;
             case 'supasave':
             case 'supa-save':

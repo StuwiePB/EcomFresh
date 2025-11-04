@@ -19,6 +19,13 @@ class AdminAuthController extends Controller
             'password' => 'required'
         ]);
 
+        // Only allow the designated Soon Lee admin email to log in via admin panel
+        if (($credentials['email'] ?? null) !== 'soonlee@ecomfresh.com') {
+            return back()->withErrors([
+                'email' => 'Unauthorized to access admin panel.',
+            ])->onlyInput('email');
+        }
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->route('admin.dashboard');

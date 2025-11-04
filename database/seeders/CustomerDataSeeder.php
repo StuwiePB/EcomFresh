@@ -52,17 +52,18 @@ class CustomerDataSeeder extends Seeder
         // 2. Create Stores (simplified - removed contact_number and address)
         // Only two stores are supported now
         $stores = [
+            // We now seed two Soon Lee branches (Gadong and Bandar Seri Begawan)
             [
-                'name' => 'Supa Save',
-                'slug' => 'supa-save', 
-                'location' => 'Bander Seri Begawan',
+                'name' => 'Soon Lee Bandar Seri Begawan',
+                'slug' => 'soon-lee-bandar-seri-begawan', 
+                'location' => 'Bandar Seri Begawan',
                 'store_hours' => '8AM-9PM',
                 'rating' => 4.2
             ],
             [
-                'name' => 'Soon Lee',
-                'slug' => 'soon-lee',
-                'location' => 'Bander Seri Begawan', 
+                'name' => 'Soon Lee Gadong',
+                'slug' => 'soon-lee-gadong',
+                'location' => 'Gadong', 
                 'store_hours' => '9AM-8PM',
                 'rating' => 4.0
             ]
@@ -81,8 +82,8 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh chicken breast fillets',
                     'image' => 'images/products/chicken-breast.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 3.60, 'original_price' => 4.20],
-                        ['store' => 'Soon Lee', 'current_price' => 3.30, 'original_price' => 4.00]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 3.60, 'original_price' => 4.20],
+                        ['store' => 'Soon Lee Gadong', 'current_price' => 3.30, 'original_price' => 4.00]
                     ]
                 ],
                 [
@@ -91,7 +92,7 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh whole chicken',
                     'image' => 'images/products/whole-chicken.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 5.50, 'original_price' => null]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 5.50, 'original_price' => null]
                     ]
                 ],
                 [
@@ -100,8 +101,8 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh chicken thigh pieces', 
                     'image' => 'images/products/chicken-thigh.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 4.10, 'original_price' => 4.50],
-                        ['store' => 'Soon Lee', 'current_price' => 3.95, 'original_price' => null]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 4.10, 'original_price' => 4.50],
+                        ['store' => 'Soon Lee Gadong', 'current_price' => 3.95, 'original_price' => null]
                     ]
                 ]
             ],
@@ -112,8 +113,8 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Quality chuck steak cuts',
                     'image' => 'images/products/chuck-steak.jpg', 
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 12.00, 'original_price' => 13.50],
-                        ['store' => 'Soon Lee', 'current_price' => 11.80, 'original_price' => 14.00]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 12.00, 'original_price' => 13.50],
+                        ['store' => 'Soon Lee Gadong', 'current_price' => 11.80, 'original_price' => 14.00]
                     ]
                 ],
                 [
@@ -122,7 +123,7 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Premium ribeye steak',
                     'image' => 'images/products/ribeye-steak.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 17.90, 'original_price' => 20.50]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 17.90, 'original_price' => 20.50]
                     ]
                 ],
                 [
@@ -131,8 +132,8 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Tender striploin steak',
                     'image' => 'images/products/striploin-steak.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 16.50, 'original_price' => null],
-                        ['store' => 'Soon Lee', 'current_price' => 17.20, 'original_price' => 19.00]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 16.50, 'original_price' => null],
+                        ['store' => 'Soon Lee Gadong', 'current_price' => 17.20, 'original_price' => 19.00]
                     ]
                 ]
             ],
@@ -143,8 +144,8 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh organic carrots',
                     'image' => 'images/products/carrots.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 2.50, 'original_price' => 3.00],
-                        ['store' => 'Soon Lee', 'current_price' => 2.30, 'original_price' => 2.70]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 2.50, 'original_price' => 3.00],
+                        ['store' => 'Soon Lee Gadong', 'current_price' => 2.30, 'original_price' => 2.70]
                     ]
                 ],
                 [
@@ -153,7 +154,7 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh green cabbages',
                     'image' => 'images/products/cabbages.jpg',
                     'prices' => [
-                        ['store' => 'Supa Save', 'current_price' => 2.60, 'original_price' => null]
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 2.60, 'original_price' => null]
                     ]
                 ],
                 [
@@ -162,8 +163,8 @@ class CustomerDataSeeder extends Seeder
                     'description' => 'Fresh bean sprouts',
                     'image' => 'images/products/beansprouts.jpg',
                     'prices' => [
-                        ['store' => 'Soon Lee', 'current_price' => 1.50, 'original_price' => null],
-                        ['store' => 'Supa Save', 'current_price' => 1.80, 'original_price' => 2.20]
+                        ['store' => 'Soon Lee Gadong', 'current_price' => 1.50, 'original_price' => null],
+                        ['store' => 'Soon Lee Bandar Seri Begawan', 'current_price' => 1.80, 'original_price' => 2.20]
                     ]
                 ]
             ]

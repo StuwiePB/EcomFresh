@@ -96,8 +96,8 @@ class ProductController extends Controller
                         'image'       => $product->image ?? '/images/default-product.jpg',
                         'description' => $product->description ?? $product->name . ' - Fresh product',
                         'stores'      => (function () use ($product) {
-                            // Ensure we always compare only Supa Save and Soon Lee
-                            $wanted = ['supa save', 'soon lee'];
+                            // Ensure we always compare only the two Soon Lee branches
+                            $wanted = ['soon lee bandar seri begawan', 'soon lee gadong'];
 
                             // Build lookup from existing pivot stores
                             $lookup = [];

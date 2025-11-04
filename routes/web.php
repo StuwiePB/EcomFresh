@@ -42,9 +42,6 @@ Route::get('/', [ProductController::class, 'index'])->name('home');
 // --------------------
 // UNIFIED LOGIN PAGE
 // --------------------
-Route::get('/login', function() {
-    return view('login');
-})->name('login');
 
 // --------------------
 // CUSTOMER ROUTES
@@ -57,6 +54,9 @@ Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
 Route::get('/beef-prices', [PriceController::class, 'beefPriceHistory']);
 Route::get('/vegetables-prices', [PriceController::class, 'vegetablesPriceHistory']);
 Route::get('/soonlee-prices', [PriceController::class, 'soonleePriceHistory']);
+// New Soon Lee branch-specific routes
+Route::get('/soonlee-gadong-prices', [PriceController::class, 'soonleeGadongPriceHistory']);
+Route::get('/soonlee-bandar-prices', [PriceController::class, 'soonleeBandarPriceHistory']);
 Route::get('/supasave-prices', [PriceController::class, 'supasavePriceHistory']);
 Route::get('/{store}-prices/{category}', [PriceController::class, 'storeCategoryPriceHistory']);
 // Admin endpoint to create or update product price history (simple JSON API)
@@ -104,21 +104,26 @@ Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-    Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login');
 
     // Dashboard for total products
     Route::get('/dashboard', function () {
+        // Only allow the Soon Lee admin email to view admin pages
+        if (!auth()->check() || auth()->user()->email !== 'soonlee@ecomfresh.com') {
+            auth()->logout();
+            return redirect()->route('admin.login')->with('error', 'Unauthorized');
+        }
+
         $totalProducts = Chicken::count() + Beef::count() + Vegetable::count();
         return view('admin.dashboard', [
             'totalProducts' => $totalProducts,
         ]);
-    })->middleware('auth')->name('admin.dashboard');
+    })->middleware(['auth', \App\Http\Middleware\OnlySoonLeeAdmin::class])->name('admin.dashboard');
 
     // --------------------
     // CHICKEN CRUD
     // --------------------
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', \App\Http\Middleware\OnlySoonLeeAdmin::class])->group(function () {
         Route::get('/chicken-crud', [ChickenController::class, 'adminIndex'])->name('admin.chicken-crud');
         Route::get('/chicken/create', [ChickenController::class, 'create'])->name('admin.chicken.create');
         Route::post('/chicken', [ChickenController::class, 'store'])->name('admin.chicken.store');
@@ -131,7 +136,7 @@ Route::prefix('admin')->group(function () {
     // --------------------
     // BEEF CRUD
     // --------------------
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', \App\Http\Middleware\OnlySoonLeeAdmin::class])->group(function () {
         Route::get('/beef-crud', [BeefController::class, 'index'])->name('admin.beef-crud');
         Route::get('/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
         Route::post('/beef', [BeefController::class, 'store'])->name('admin.beef.store');
@@ -144,7 +149,7 @@ Route::prefix('admin')->group(function () {
     // --------------------
     // VEGETABLE CRUD
     // --------------------
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', \App\Http\Middleware\OnlySoonLeeAdmin::class])->group(function () {
         Route::get('/vegetable-crud', [VegetableController::class, 'index'])->name('admin.vegetable-crud');
         Route::get('/vegetable/create', [VegetableController::class, 'create'])->name('admin.vegetable.create');
         Route::post('/vegetable', [VegetableController::class, 'store'])->name('admin.vegetable.store');
@@ -157,7 +162,7 @@ Route::prefix('admin')->group(function () {
     // --------------------
     // STORE INFO + DELETE HISTORY
     // --------------------
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', \App\Http\Middleware\OnlySoonLeeAdmin::class])->group(function () {
         Route::get('/storeinfo', fn() => view('admin.storeinfo'))->name('admin.storeinfo');
         Route::post('/storeinfo', [AdminAuthController::class, 'updateStoreInfo'])->name('admin.storeinfo.update');
         Route::get('/deletehistory', function () {
@@ -245,16 +250,21 @@ Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome');
 Route::get('/admin/delete-history', function () {
     $deletedItems = DeleteHistoryTable::latest()->get();
     return view('admin.deletehistory', compact('deletedItems'));
-})->name('admin.deletehistory');
+})->middleware(['auth', \App\Http\Middleware\OnlySoonLeeAdmin::class])->name('admin.deletehistory');
 
 Route::get('/admin/delete-history/fetch', function () {
     return DeleteHistoryTable::latest()->get();
-})->name('admin.deletehistory.fetch');
+})->middleware(['auth', \App\Http\Middleware\OnlySoonLeeAdmin::class])->name('admin.deletehistory.fetch');
 
 // --------------------
 // FINAL DASHBOARD ROUTE WITH RECENT DELETES
 // --------------------
 Route::get('/dashboard', function () {
+    if (!auth()->check() || auth()->user()->email !== 'soonlee@ecomfresh.com') {
+        auth()->logout();
+        return redirect()->route('admin.login')->with('error', 'Unauthorized');
+    }
+
     $totalProducts = Chicken::count();
     $recentDeletes = DeleteHistoryTable::latest()->take(3)->get();
 
@@ -270,6 +280,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 });
+// --------------------
+// ADMIN PRODUCT ROUTES WITH STORE PARAMETER
+// --------------------
 // --------------------
 // ADMIN PRODUCT ROUTES WITH STORE PARAMETER
 // --------------------

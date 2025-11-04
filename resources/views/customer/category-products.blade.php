@@ -376,13 +376,14 @@
                             <!-- Action Buttons -->
                             <div class="mt-4 space-y-2">
                                 @php
-                                    // Determine the target store slug for price trends and include category slug
-                                    $storeSlug = 'soonlee';
-                                    $lowerStore = strtolower(str_replace(' ', '', $store['store_name'] ?? ''));
-                                    if (str_contains($lowerStore, 'supa') || str_contains($lowerStore, 'supasave')) {
-                                        $storeSlug = 'supasave';
-                                    } elseif (str_contains($lowerStore, 'soon')) {
-                                        $storeSlug = 'soonlee';
+                                    // Determine target store slug for price trends (map Soon Lee branches)
+                                    $storeSlug = 'soonlee-gadong';
+                                    $lowerStore = strtolower($store['store_name'] ?? '');
+                                    // look for branch keywords
+                                    if (str_contains($lowerStore, 'gadong')) {
+                                        $storeSlug = 'soonlee-gadong';
+                                    } elseif (str_contains($lowerStore, 'bandar') || str_contains($lowerStore, 'seri') || str_contains($lowerStore, 'begawan')) {
+                                        $storeSlug = 'soonlee-bandar';
                                     }
                                     $categorySlug = strtolower(str_replace(' ', '', $categoryData['name'] ?? 'all'));
                                     $trendUrl = url("/" . $storeSlug . "-prices/" . $categorySlug);

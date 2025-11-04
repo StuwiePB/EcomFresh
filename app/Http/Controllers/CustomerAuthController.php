@@ -188,11 +188,23 @@ class CustomerAuthController extends Controller
      */
     public function authenticated(Request $request, $user)
     {
-        // Check if there's an intended URL (from middleware auth redirect)
+        // If there's an intended URL (from middleware auth redirect), ensure it's safe for this user.
         if ($request->session()->has('url.intended')) {
+            $intended = $request->session()->get('url.intended');
+
+            // Extract path from intended URL (it may be an absolute URL)
+            $path = parse_url($intended, PHP_URL_PATH) ?: '';
+
+            // If intended path targets admin pages but the user is NOT the Soon Lee admin,
+            // forget the intended URL and redirect to customer main instead.
+            if (str_starts_with($path, '/admin') && ($user->email ?? '') !== 'soonlee@ecomfresh.com') {
+                $request->session()->forget('url.intended');
+                return redirect()->route('customer.main');
+            }
+
             return redirect()->intended();
         }
-        
+
         return redirect()->route('customer.main');
     }
 

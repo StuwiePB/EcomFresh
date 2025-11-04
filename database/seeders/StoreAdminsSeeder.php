@@ -14,31 +14,20 @@ class StoreAdminsSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [
-            [
-                'name' => 'SoonLee Admin',
-                'email' => 'soonlee@ecomfresh.com',
-                'password' => Hash::make('password123'),
-                'role' => 'admin',
-                'store_name' => 'SoonLee',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'SupaSave Admin',
-                'email' => 'supasave@ecomfresh.com',
-                'password' => Hash::make('password123'),
-                'role' => 'admin',
-                'store_name' => 'SupaSave',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]
+        $user = [
+            'name' => 'Soon Lee Admin',
+            'email' => 'soonlee@ecomfresh.com',
+            'password' => Hash::make('password123'),
+            'role' => 'admin',
+            'store_name' => 'Soon Lee',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ];
 
-        DB::table('users')->insert($users);
+        // Insert single Soon Lee admin user (idempotency not handled here; runers can wipe or handle duplicates)
+        DB::table('users')->insert($user);
 
-        $this->command->info('Successfully created SoonLee and SupaSave admin users!');
-        $this->command->info('SoonLee Login: soonlee@ecomfresh.com / password123');
-        $this->command->info('SupaSave Login: supasave@ecomfresh.com / password123');
+        $this->command->info('Successfully created Soon Lee admin user!');
+        $this->command->info('Soon Lee Login: soonlee@ecomfresh.com / password123');
     }
 }

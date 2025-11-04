@@ -39,16 +39,31 @@
       <!-- Store-specific pricing -->
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2">Store Prices</label>
-        @foreach($stores as $store)
-        <div class="flex items-center mb-2">
-          <label class="w-1/3 text-gray-600">{{ $store->name }} Price (BND)</label>
-          <input type="number" step="0.01" min="0"
-                 name="prices[{{ $store->id }}]"
-                 value="{{ old('prices.' . $store->id, '0') }}"
-                 class="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 required>
-        </div>
-        @endforeach
+    @foreach($stores as $store)
+    @php
+      $lower = strtolower($store->name ?? '');
+      if (str_contains($lower, 'supa') || str_contains($lower, 'supasave')) {
+        $displayName = 'Soon Lee Bandar Seri Begawan';
+      } elseif (str_contains($lower, 'gadong')) {
+        $displayName = 'Soon Lee Gadong';
+      } elseif (str_contains($lower, 'bandar') || str_contains($lower, 'begawan') || str_contains($lower, 'seri')) {
+        $displayName = 'Soon Lee Bandar Seri Begawan';
+      } elseif (str_contains($lower, 'soon')) {
+        // default Soon Lee fallback
+        $displayName = 'Soon Lee Gadong';
+      } else {
+        $displayName = $store->name;
+      }
+    @endphp
+    <div class="flex items-center mb-2">
+      <label class="w-1/3 text-gray-600">{{ $displayName }} Price (BND)</label>
+      <input type="number" step="0.01" min="0"
+         name="prices[{{ $store->id }}]"
+         value="{{ old('prices.' . $store->id, '0') }}"
+         class="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+         required>
+    </div>
+    @endforeach
       </div>
 
       <button type="submit"
