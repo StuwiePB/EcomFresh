@@ -43,14 +43,6 @@
                 @error('category') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <!-- Price -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Price (BND)</label>
-                <input type="number" step="0.01" name="price" value="{{ old('price', $item->price) }}"
-                    class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                @error('price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
-
             <!-- Stock -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
@@ -60,10 +52,10 @@
             </div>
 
             <!-- After the stock field -->
-<div class="mb-4">
-    <label class="block text-gray-700 text-sm font-bold mb-2">Store Prices</label>
-    @foreach($stores as $store)
-    @php
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Store Prices</label>
+                 @foreach($stores as $store)
+                  @php
         // Determine the current price for this store. Support both CustomerProduct (with stores relation)
         // and legacy admin models (Beef/Vegetable) that provide a single price on the model.
         $inputName = 'prices.' . $store->id;

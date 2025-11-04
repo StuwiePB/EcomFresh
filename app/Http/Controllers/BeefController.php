@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
-use App\Models\Beef;
 use App\Models\CustomerStore;
 use App\Models\CustomerProduct;
 use App\Models\CustomerCategory;
@@ -16,35 +14,23 @@ use App\Models\DeleteHistoryTable;
 
 class BeefController extends Controller
 {
-    /**
-     * Show admin beefs index page - for web routes
-     */
-    public function index()
-    {
-        return $this->adminIndex();
-    }
+    public function index() { return $this->adminIndex(); }
 
-    /**
-     * Show admin beefs index page
-     */
     public function adminIndex()
     {
-        // Use customer-facing category/products like ChickenController
         $beefCategory = CustomerCategory::where('name', 'Beef')->first();
-
-        if (! $beefCategory) {
+        if (!$beefCategory) {
             return redirect()->route('admin.dashboard')
-                ->with('error', 'Beef category not found.');
+                             ->with('error', 'Beef category not found.');
         }
 
-        $beefs = CustomerProduct::with(['stores'])->where('category_id', $beefCategory->id)->get();
+        $beefs = CustomerProduct::with('stores')
+                    ->where('category_id', $beefCategory->id)
+                    ->get();
 
         return view('admin.beef-crud', compact('beefs'));
     }
 
-    /**
-     * Show Add Item form
-     */
     public function create()
     {
         $stores = CustomerStore::where('is_active', true)->get();
@@ -57,9 +43,6 @@ class BeefController extends Controller
         ]);
     }
 
-    /**
-     * Store new beef - NOW SYNC TO PRODUCTS TABLE
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -72,12 +55,7 @@ class BeefController extends Controller
 
         $beefCategory = CustomerCategory::where('name', 'Beef')->firstOrFail();
 
-        $baseSlug = Str::slug($request->name);
-        $slug = $baseSlug;
-        $counter = 1;
-        while (CustomerProduct::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter++;
-        }
+        $slug = $this->generateUniqueSlug($request->name);
 
         $product = CustomerProduct::create([
             'category_id' => $beefCategory->id,
@@ -102,12 +80,9 @@ class BeefController extends Controller
         $this->syncToProductsTableFromProduct($product);
 
         return redirect()->route('admin.beef-crud')
-            ->with('success', 'Beef product added successfully!');
+                         ->with('success', 'Beef product added successfully!');
     }
 
-    /**
-     * Show edit form
-     */
     public function edit($id)
     {
         $item = CustomerProduct::with('stores')->findOrFail($id);
@@ -121,9 +96,6 @@ class BeefController extends Controller
         ]);
     }
 
-    /**
-     * Update beef - NOW SYNC TO PRODUCTS TABLE
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -153,12 +125,9 @@ class BeefController extends Controller
         $this->syncToProductsTableFromProduct($product);
 
         return redirect()->route('admin.beef-crud')
-            ->with('success', 'Beef product updated successfully!');
+                         ->with('success', 'Beef product updated successfully!');
     }
 
-    /**
-     * Delete beef and log to history
-     */
     public function destroy($id)
     {
         $product = CustomerProduct::findOrFail($id);
@@ -177,16 +146,13 @@ class BeefController extends Controller
         });
 
         return redirect()->route('admin.beef-crud')
-            ->with('success', 'Beef product deleted and logged successfully!');
+                         ->with('success', 'Beef product deleted and logged successfully!');
     }
 
-    /**
-     * Confirm delete page
-     */
     public function confirmDelete($id)
     {
         $product = CustomerProduct::findOrFail($id);
-        $destroyRoute = route('admin.beef.destroy', ['id' => $product->id]);
+        $destroyRoute = route('admin.beef.destroy', $product->id);
 
         return view('admin.delete-confirmation', [
             'item' => $product,
@@ -195,9 +161,6 @@ class BeefController extends Controller
         ]);
     }
 
-    /**
-     * Sync beef product to products table
-     */
     private function syncToProductsTableFromProduct(CustomerProduct $product)
     {
         try {
@@ -228,5 +191,16 @@ class BeefController extends Controller
         } catch (\Throwable $e) {
             // non-fatal
         }
+    }
+
+    private function generateUniqueSlug($name)
+    {
+        $baseSlug = Str::slug($name);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (CustomerProduct::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+        return $slug;
     }
 }
