@@ -120,6 +120,7 @@ Route::prefix('admin')->group(function () {
         Route::put('/chicken/{id}', [ChickenController::class, 'update'])->name('admin.chicken.update');
         Route::get('/chicken/{id}/delete', [ChickenController::class, 'confirmDelete'])->name('admin.chicken.confirmDelete');
         Route::delete('/chicken/{id}', [ChickenController::class, 'destroy'])->name('admin.chicken.destroy');
+        
     });
 
     // --------------------
@@ -281,5 +282,20 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/products', [ProductController::class, 'store'])
             ->name('admin.products.store');
-    });
 });
+});
+// --------------------})
+
+// Beef Management Routes
+Route::get('/admin/beef', [BeefController::class, 'adminIndex'])->name('admin.beef-crud');
+Route::get('/admin/beef/create', [BeefController::class, 'create'])->name('admin.beef.create');
+Route::post('/admin/beef', [BeefController::class, 'store'])->name('admin.beef.store');
+Route::get('/admin/beef/{id}/edit', [BeefController::class, 'edit'])->name('admin.beef.edit');
+Route::put('/admin/beef/{id}', [BeefController::class, 'update'])->name('admin.beef.update');
+Route::get('/admin/beef/{id}/delete', [BeefController::class, 'confirmDelete'])->name('admin.beef.confirm-delete');
+Route::delete('/admin/beef/{id}', [BeefController::class, 'destroy'])->name('admin.beef.destroy');
+
+// Make sure these other routes exist too:
+Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/admin/chicken-crud', [ChickenController::class, 'adminIndex'])->name('admin.chicken-crud');
+Route::get('/admin/vegetable-crud', [VegetableController::class, 'adminIndex'])->name('admin.vegetable-crud');

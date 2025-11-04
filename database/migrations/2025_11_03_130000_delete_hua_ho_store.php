@@ -18,20 +18,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // find the Hua Ho store id if it exists
-        $store = DB::table('customer_stores')->where('name', 'Hua Ho')->first();
+        // ✅ Ensure the customer_stores table exists before querying
+        if (Schema::hasTable('customer_stores')) {
+            $store = DB::table('customer_stores')->where('name', 'Hua Ho')->first();
 
-        if ($store) {
-            // delete related prices
-            DB::table('customer_product_prices')->where('store_id', $store->id)->delete();
+            if ($store) {
+                // delete related prices if the table exists
+                if (Schema::hasTable('customer_product_prices')) {
+                    DB::table('customer_product_prices')->where('store_id', $store->id)->delete();
+                }
 
-            // delete the store row
-            DB::table('customer_stores')->where('id', $store->id)->delete();
+                // delete the store row
+                DB::table('customer_stores')->where('id', $store->id)->delete();
+            }
         }
 
-        // Also clear any legacy products that may have store_name set to Hua Ho
-        if (Schema::hasTable('products')) {
-            DB::table('products')->where('store_name', 'Hua Ho')->update(['store_name' => null]);
+        // ✅ Only clear products if the table *and* column exist
+        if (Schema::hasTable('products') && Schema::hasColumn('products', 'store_name')) {
+            DB::table('products')
+                ->where('store_name', 'Hua Ho')
+                ->update(['store_name' => null]);
         }
     }
 
@@ -42,16 +48,18 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (! DB::table('customer_stores')->where('name', 'Hua Ho')->exists()) {
-            DB::table('customer_stores')->insert([
-                'name' => 'Hua Ho',
-                'slug' => 'hua-ho',
-                'location' => 'Bander Seri Begawan',
-                'store_hours' => '7:30AM-10PM',
-                'rating' => 4.4,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        if (Schema::hasTable('customer_stores')) {
+            if (! DB::table('customer_stores')->where('name', 'Hua Ho')->exists()) {
+                DB::table('customer_stores')->insert([
+                    'name' => 'Hua Ho',
+                    'slug' => 'hua-ho',
+                    'location' => 'Bandar Seri Begawan', // ✅ fixed spelling
+                    'store_hours' => '7:30AM-10PM',
+                    'rating' => 4.4,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 };

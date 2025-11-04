@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Only add the column if it doesn't already exist (prevents duplicate column errors)
+        // ✅ Only add if the column doesn’t already exist
         if (!Schema::hasColumn('products', 'store_name')) {
             Schema::table('products', function (Blueprint $table) {
                 $table->string('store_name')->nullable()->after('id');
@@ -18,6 +18,7 @@ return new class extends Migration
 
     public function down(): void
     {
+        // ✅ Drop column safely on rollback
         if (Schema::hasColumn('products', 'store_name')) {
             Schema::table('products', function (Blueprint $table) {
                 $table->dropColumn('store_name');
