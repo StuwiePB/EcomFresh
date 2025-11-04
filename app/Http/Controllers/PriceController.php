@@ -134,47 +134,13 @@ class PriceController extends Controller
     // Beef prices
     public function beefPriceHistory()
     {
-        // Show beef category stores page
         $data = [
-            'category' => 'beef',
-            'stores' => [
-                [
-                    'name' => 'Soon Lee',
-                    'slug' => 'soonlee',
-                    'location' => 'Sengkurong, Brunei'
-                ],
-                [
-                    'name' => 'SupaSave',
-                    'slug' => 'supasave',
-                    'location' => 'Gadong, Brunei'
-                ]
-            ]
+            'location' => 'Muara, Brunei',
+            'title' => 'Beef Price History',
+            'products' => $this->getBeefProducts()
         ];
 
-        return view('customer.category-stores', $data);
-    }
-
-    // Vegetables prices
-    public function vegetablesPriceHistory()
-    {
-        // Show vegetables category stores page
-        $data = [
-            'category' => 'vegetables',
-            'stores' => [
-                [
-                    'name' => 'Soon Lee',
-                    'slug' => 'soonlee',
-                    'location' => 'Sengkurong, Brunei'
-                ],
-                [
-                    'name' => 'SupaSave',
-                    'slug' => 'supasave',
-                    'location' => 'Gadong, Brunei'
-                ]
-            ]
-        ];
-
-        return view('customer.category-stores', $data);
+        return view('customer.pricehistory', $data);
     }
 
 
@@ -182,29 +148,25 @@ class PriceController extends Controller
     // Soon Lee prices
     public function soonleePriceHistory()
     {
-        // Show store categories page; users can click a category to view its price trends
         $data = [
-            'storeSlug' => 'soonlee',
-            'storeName' => 'Soon Lee',
             'location' => 'Sengkurong, Brunei',
-            'categories' => ['chicken', 'beef', 'vegetables']
+            'title' => 'Soon Lee - Price Trend',
+            'products' => $this->getSoonLeeProducts()
         ];
 
-        return view('customer.store-categories', $data);
+        return view('customer.pricehistory', $data);
     }
 
     // Supa Save prices (same layout as Soon Lee)
     public function supasavePriceHistory()
     {
-        // Show store categories page; users can click a category to view its price trends
         $data = [
-            'storeSlug' => 'supasave',
-            'storeName' => 'SupaSave',
-            'location' => 'Gadong, Brunei',
-            'categories' => ['chicken', 'beef', 'vegetables']
+            'location' => 'Muara, Brunei',
+            'title' => 'SupaSave - Price Trend',
+            'products' => $this->getSupaSaveProducts()
         ];
 
-        return view('customer.store-categories', $data);
+        return view('customer.pricehistory', $data);
     }
 
     /**
@@ -479,10 +441,9 @@ class PriceController extends Controller
     private function getSoonLeeProducts()
     {
         return [
-            // Chicken - two items
             [
                 'name' => 'Chicken Breast - Soon Lee',
-                'description' => 'Fresh • Premium Cut',
+                'description' => 'Fresh • Quality Guaranteed',
                 'category' => 'chicken',
                 'currentPrice' => 3.65,
                 'priceHistory' => [
@@ -491,87 +452,8 @@ class PriceController extends Controller
                     'twoMonthsAgo' => 3.60,
                     'threeMonthsAgo' => 3.50
                 ],
-                'priceChange' => 0.10,
-                'percentageChange' => 1.41,
-                'trend' => 'increase'
-            ],
-            [
-                'name' => 'Whole Chicken - Soon Lee',
-                'description' => 'Fresh • Farm Raised',
-                'category' => 'chicken',
-                'currentPrice' => 7.90,
-                'priceHistory' => [
-                    'current' => 7.90,
-                    'lastMonth' => 7.85,
-                    'twoMonthsAgo' => 7.95,
-                    'threeMonthsAgo' => 7.80
-                ],
-                'priceChange' => 0.05,
-                'percentageChange' => 0.64,
-                'trend' => 'increase'
-            ],
-
-            // Beef - two items
-            [
-                'name' => 'Ribeye Steak - Soon Lee',
-                'description' => 'Premium Cut • Marbled',
-                'category' => 'beef',
-                'currentPrice' => 16.90,
-                'priceHistory' => [
-                    'current' => 16.90,
-                    'lastMonth' => 17.90,
-                    'twoMonthsAgo' => 17.50,
-                    'threeMonthsAgo' => 17.20
-                ],
-                'priceChange' => -1.00,
-                'percentageChange' => -5.59,
-                'trend' => 'decrease'
-            ],
-            [
-                'name' => 'Strip Loin Steak - Soon Lee',
-                'description' => 'Premium Cut • Lean',
-                'category' => 'beef',
-                'currentPrice' => 15.90,
-                'priceHistory' => [
-                    'current' => 15.90,
-                    'lastMonth' => 16.20,
-                    'twoMonthsAgo' => 16.50,
-                    'threeMonthsAgo' => 16.80
-                ],
-                'priceChange' => -0.30,
-                'percentageChange' => -1.85,
-                'trend' => 'decrease'
-            ],
-
-            // Vegetables - two items
-            [
-                'name' => 'Fresh Carrots - Soon Lee',
-                'description' => 'Local • Per 500g',
-                'category' => 'vegetables',
-                'currentPrice' => 2.20,
-                'priceHistory' => [
-                    'current' => 2.20,
-                    'lastMonth' => 2.15,
-                    'twoMonthsAgo' => 2.10,
-                    'threeMonthsAgo' => 2.05
-                ],
-                'priceChange' => 0.05,
-                'percentageChange' => 2.33,
-                'trend' => 'increase'
-            ],
-            [
-                'name' => 'Fresh Cabbage - Soon Lee',
-                'description' => 'Local • Per Head',
-                'category' => 'vegetables',
-                'currentPrice' => 2.50,
-                'priceHistory' => [
-                    'current' => 2.50,
-                    'lastMonth' => 2.45,
-                    'twoMonthsAgo' => 2.40,
-                    'threeMonthsAgo' => 2.35
-                ],
-                'priceChange' => 0.05,
-                'percentageChange' => 2.04,
+                'priceChange' => +0.10,
+                'percentageChange' => +1.41,
                 'trend' => 'increase'
             ]
         ];
