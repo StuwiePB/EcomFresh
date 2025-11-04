@@ -342,13 +342,6 @@
                                                     <span class="font-semibold text-gray-700">${store.store_hours}</span>
                                                 </div>
                                             </div>
-                                            
-                                            <!-- Action Buttons -->
-                                            <div class="mt-4 space-y-2">
-                                                <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
-                                                    <i class="fas fa-store mr-2"></i>Store Details
-                                                </button>
-                                            </div>
                                         </div>
                                         `;
                                     }).join('')}
