@@ -330,22 +330,6 @@
                     </div>
                 </div>
                 
-                <!-- Quick Links -->
-                <div class="mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 mb-3">Quick Links</h3>
-                    <div class="space-y-2">
-                        <!-- Price Trends Link (Merged Today's Prices + Price History) -->
-                        <a href="/pricehistory" class="profile-link">
-                            <div class="w-10 h-10 price-trends-icon rounded-lg flex items-center justify-center mr-3">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div>
-                                <div class="font-medium">General Price Trends</div>
-                                <div class="text-sm text-gray-500">View current prices & historical trends</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
                 
                 <!-- Account Actions -->
                 <div class="space-y-2">

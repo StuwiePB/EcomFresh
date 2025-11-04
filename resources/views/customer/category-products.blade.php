@@ -372,27 +372,6 @@
                                     <span class="font-semibold text-gray-700">{{ $store['store_hours'] ?? '8AM-9PM' }}</span>
                                 </div>
                             </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="mt-4 space-y-2">
-                                @php
-                                    // Determine target store slug for price trends (map Soon Lee branches)
-                                    $storeSlug = 'soonlee-gadong';
-                                    $lowerStore = strtolower($store['store_name'] ?? '');
-                                    // look for branch keywords
-                                    if (str_contains($lowerStore, 'gadong')) {
-                                        $storeSlug = 'soonlee-gadong';
-                                    } elseif (str_contains($lowerStore, 'bandar') || str_contains($lowerStore, 'seri') || str_contains($lowerStore, 'begawan')) {
-                                        $storeSlug = 'soonlee-bandar';
-                                    }
-                                    $categorySlug = strtolower(str_replace(' ', '', $categoryData['name'] ?? 'all'));
-                                    $trendUrl = url("/" . $storeSlug . "-prices/" . $categorySlug);
-                                @endphp
-
-                                <a href="{{ $trendUrl }}" class="w-full inline-block text-center bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
-                                    <i class="fas fa-chart-line mr-2"></i>Price Trend
-                                </a>
-                            </div>
                         </div>
                         @endforeach
                     </div>
