@@ -26,4 +26,10 @@ class Product extends Model
             }
         });
     }
+
+    // Relationship to price history records
+    public function priceHistories()
+    {
+        return $this->hasMany(PriceHistory::class);
+    }
 }

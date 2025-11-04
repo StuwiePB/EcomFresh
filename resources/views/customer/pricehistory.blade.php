@@ -106,8 +106,11 @@
                         </div>
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-2xl font-bold text-gray-800" style="font-family: 'Poppins', sans-serif; font-weight: 700;">
-                            {{ $product['name'] }}
+                        <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-3" style="font-family: 'Poppins', sans-serif; font-weight: 700;">
+                            <span>{{ $product['name'] }}</span>
+                            @if(isset($product['category']))
+                                <span class="text-xs font-semibold uppercase px-2 py-1 rounded bg-blue-100 text-blue-800">{{ ucfirst($product['category']) }}</span>
+                            @endif
                         </h3>
                         <p class="text-gray-600">{{ $product['description'] }}</p>
                     </div>
@@ -195,14 +198,15 @@
             </div>
 
             <!-- Hidden data for JavaScript charts -->
-            <div class="hidden" id="chartData{{ $index }}"
-                 data-name="{{ $product['name'] }}"
-                 data-three-months="{{ $product['priceHistory']['threeMonthsAgo'] }}"
-                 data-two-months="{{ $product['priceHistory']['twoMonthsAgo'] }}"
-                 data-last-month="{{ $product['priceHistory']['lastMonth'] }}"
-                 data-current="{{ $product['priceHistory']['current'] }}"
-                 data-trend="{{ $product['trend'] }}">
-            </div>
+          <div class="hidden" id="chartData{{ $index }}"
+              data-name="{{ $product['name'] }}"
+              data-category="{{ $product['category'] ?? '' }}"
+              data-three-months="{{ $product['priceHistory']['threeMonthsAgo'] }}"
+              data-two-months="{{ $product['priceHistory']['twoMonthsAgo'] }}"
+              data-last-month="{{ $product['priceHistory']['lastMonth'] }}"
+              data-current="{{ $product['priceHistory']['current'] }}"
+              data-trend="{{ $product['trend'] }}">
+          </div>
             @endforeach
         </div>
     </main>
@@ -233,6 +237,7 @@
                 if (!chartDataElement) continue;
 
                 const productName = chartDataElement.getAttribute('data-name');
+                const productCategory = chartDataElement.getAttribute('data-category') || '';
                 const threeMonthsAgo = parseFloat(chartDataElement.getAttribute('data-three-months'));
                 const twoMonthsAgo = parseFloat(chartDataElement.getAttribute('data-two-months'));
                 const lastMonth = parseFloat(chartDataElement.getAttribute('data-last-month'));
@@ -255,7 +260,7 @@
                     data: {
                         labels: months,
                         datasets: [{
-                            label: productName + ' Price (BND)',
+                            label: productName + (productCategory ? (' — ' + productCategory) : '') + ' Price (BND)',
                             data: [threeMonthsAgo, twoMonthsAgo, lastMonth, current],
                             borderColor: chartColor,
                             backgroundColor: trend === 'increase' ? 'rgba(239, 68, 68, 0.1)' : 
@@ -271,7 +276,7 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: productName + ' Price Trend',
+                                text: productName + (productCategory ? (' — ' + productCategory) : '') + ' Price Trend',
                                 font: {
                                     size: 16,
                                     family: 'Poppins'

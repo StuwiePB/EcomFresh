@@ -376,7 +376,7 @@
                             <!-- Action Buttons -->
                             <div class="mt-4 space-y-2">
                                 @php
-                                    // Determine the target store slug for price trends
+                                    // Determine the target store slug for price trends and include category slug
                                     $storeSlug = 'soonlee';
                                     $lowerStore = strtolower(str_replace(' ', '', $store['store_name'] ?? ''));
                                     if (str_contains($lowerStore, 'supa') || str_contains($lowerStore, 'supasave')) {
@@ -384,7 +384,8 @@
                                     } elseif (str_contains($lowerStore, 'soon')) {
                                         $storeSlug = 'soonlee';
                                     }
-                                    $trendUrl = url("/" . $storeSlug . "-prices");
+                                    $categorySlug = strtolower(str_replace(' ', '', $categoryData['name'] ?? 'all'));
+                                    $trendUrl = url("/" . $storeSlug . "-prices/" . $categorySlug);
                                 @endphp
 
                                 <a href="{{ $trendUrl }}" class="w-full inline-block text-center bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">

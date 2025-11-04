@@ -56,6 +56,9 @@ Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
 Route::get('/beef-prices', [PriceController::class, 'beefPriceHistory']);
 Route::get('/soonlee-prices', [PriceController::class, 'soonleePriceHistory']);
 Route::get('/supasave-prices', [PriceController::class, 'supasavePriceHistory']);
+Route::get('/{store}-prices/{category}', [PriceController::class, 'storeCategoryPriceHistory']);
+// Admin endpoint to create or update product price history (simple JSON API)
+Route::post('/admin/price-history', [PriceController::class, 'storePriceRecord'])->name('admin.price-history.store');
 Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
