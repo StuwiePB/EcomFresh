@@ -3,37 +3,40 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
+use App\Models\CustomerStore;
 use App\Models\CustomerProduct;
 use App\Models\CustomerCategory;
-use App\Models\CustomerStore;
 use App\Models\CustomerProductPrice;
-use App\Models\DeleteHistoryTable;
 use App\Models\CustomerFavorite;
+use App\Models\DeleteHistoryTable;
 
 class ChickenController extends Controller
 {
     /**
-     * Backwards-compatible admin entry point used by some routes
+     * Show admin chickens index page
      */
-    public function adminIndex()
+    public function index()
     {
-        return $this->index();
+        return $this->adminIndex();
     }
 
-    public function index()
+    public function adminIndex()
     {
         $chickenCategory = CustomerCategory::where('name', 'Chicken')->first();
 
-        if (! $chickenCategory) {
+        if (!$chickenCategory) {
             return redirect()->route('admin.dashboard')
-                ->with('error', 'Chicken category not found.');
+                             ->with('error', 'Chicken category not found.');
         }
 
-        $chickenProducts = CustomerProduct::with(['stores'])->where('category_id', $chickenCategory->id)->get();
+        $chickens = CustomerProduct::with('stores')
+                        ->where('category_id', $chickenCategory->id)
+                        ->get();
 
-        return view('admin.chicken-crud', compact('chickenProducts'));
+        return view('admin.chicken-crud', compact('chickens'));
     }
 
     public function create()
@@ -90,7 +93,7 @@ class ChickenController extends Controller
         $this->syncToProductsTableFromProduct($product);
 
         return redirect()->route('admin.chicken-crud')
-            ->with('success', 'Chicken product added successfully!');
+                         ->with('success', 'Chicken product added successfully!');
     }
 
     public function edit($id)
@@ -135,7 +138,7 @@ class ChickenController extends Controller
         $this->syncToProductsTableFromProduct($product);
 
         return redirect()->route('admin.chicken-crud')
-            ->with('success', 'Chicken product updated successfully!');
+                         ->with('success', 'Chicken product updated successfully!');
     }
 
     public function destroy($id)
@@ -156,25 +159,30 @@ class ChickenController extends Controller
         });
 
         return redirect()->route('admin.chicken-crud')
-            ->with('success', 'Chicken product deleted and logged successfully!');
+                         ->with('success', 'Chicken product deleted and logged successfully!');
     }
 
     public function confirmDelete($id)
     {
         $product = CustomerProduct::findOrFail($id);
+        $destroyRoute = route('admin.chicken.destroy', ['id' => $product->id]);
+
         return view('admin.delete-confirmation', [
             'item' => $product,
             'type' => 'chicken',
-            'destroyRoute' => route('admin.chicken.destroy', $id),
+            'destroyRoute' => $destroyRoute,
         ]);
     }
 
+    /**
+     * Sync chicken product to products table
+     */
     private function syncToProductsTableFromProduct(CustomerProduct $product)
     {
         try {
             $bestPrice = CustomerProductPrice::where('product_id', $product->id)
-                ->orderBy('current_price', 'asc')
-                ->value('current_price');
+                                ->orderBy('current_price', 'asc')
+                                ->value('current_price');
 
             $productData = [
                 'name' => $product->name,
@@ -189,15 +197,30 @@ class ChickenController extends Controller
                 'updated_at' => now(),
             ];
 
-            $exists = DB::table('products')->where('name', $product->name)->where('category', 'Chicken')->exists();
+            $exists = DB::table('products')
+                        ->where('name', $product->name)
+                        ->where('category', 'Chicken')
+                        ->exists();
+
             if ($exists) {
-                DB::table('products')->where('name', $product->name)->where('category', 'Chicken')->update($productData);
+                DB::table('products')->where('name', $product->name)
+                                     ->where('category', 'Chicken')
+                                     ->update($productData);
             } else {
                 $productData['created_at'] = now();
                 DB::table('products')->insert($productData);
             }
         } catch (\Throwable $e) {
-            // Non-fatal
+            // Handle silently
         }
+    }
+
+    public function customerChickenList()
+    {
+        $chickens = CustomerProduct::whereHas('category', fn($q) => $q->where('name', 'Chicken'))
+                        ->where('stock', '>', 0)
+                        ->get();
+
+        return view('customer.chicken-list', compact('chickens'));
     }
 }

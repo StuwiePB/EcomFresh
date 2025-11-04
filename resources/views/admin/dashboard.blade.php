@@ -124,7 +124,7 @@
     </section>
 
 <!-- Delete history (Clickable Box) -->
-<@php
+@php
   // Prevent undefined variable error
   $recentDeletes = $recentDeletes ?? collect();
 @endphp

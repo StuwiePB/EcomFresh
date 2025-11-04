@@ -51,49 +51,26 @@
 
       <!-- Items grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @foreach($chickenProducts as $chicken)
+        @foreach($chickens as $chicken)
         <div class="bg-white rounded-xl shadow p-4 flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="text-4xl">🍗</div>
             <div class="flex flex-col space-y-1">
               <h3 class="font-bold text-lg">{{ $chicken->name }}</h3>
-              <p class="text-sm text-gray-500">Category: {{ $chicken->category->name ?? 'Chicken' }}</p>
-        @php
-          $stores = $chicken->stores ?? collect();
-          $bestPrice = $stores->pluck('pivot.current_price')->filter()->min() ?? null;
-        @endphp
+              <p class="text-sm text-gray-500">
+                Category: {{ $chicken->category->name ?? 'Chicken' }}
+              </p>
 
-        <div class="flex flex-col space-y-1">
-          <div class="flex flex-wrap gap-2">
-            @forelse($stores as $store)
+              <!-- Lowest price from stores -->
               @php
-                $price = $store->pivot->current_price ?? 0;
-                $original = $store->pivot->original_price ?? null;
-                $hasDiscount = $original && $original > $price;
-                $discountPercentage = $hasDiscount ? round((($original - $price) / $original) * 100) : 0;
+                  $lowestPrice = $chicken->stores->min('pivot.current_price') ?? 0;
               @endphp
-
-              <span class="relative group inline-block">
-                <span class="px-2 py-1 rounded text-sm {{ $price == $bestPrice ? 'bg-green-100 text-green-800 font-semibold' : 'bg-gray-100 text-gray-700' }}">
-                  {{ $store->store_name ?? $store->name ?? 'Store' }}: BND {{ number_format($price, 2) }}
-                  @if($hasDiscount)
-                    <span class="ml-2 text-xs text-red-600 font-bold">-{{ $discountPercentage }}%</span>
-                  @endif
+              <div class="flex flex-col space-y-1">
+                <span class="px-2 py-1 rounded bg-green-100 text-green-800 font-semibold">
+                  BND {{ number_format($lowestPrice, 2) }}
                 </span>
-
-                @if($hasDiscount)
-                  <div class="absolute left-1/2 transform -translate-x-1/2 mt-2 w-max bg-white border border-gray-200 rounded shadow-lg text-xs text-gray-700 px-3 py-2 hidden group-hover:block z-50">
-                    Was BND {{ number_format($original, 2) }} — Save {{ $discountPercentage }}%
-                  </div>
-                @endif
-              </span>
-            @empty
-              <span class="px-2 py-1 rounded bg-gray-100 text-gray-700 text-sm">No store prices</span>
-            @endforelse
-          </div>
-
-          <p class="text-sm">Stock: {{ $chicken->stock }}</p>
-        </div>
+                <p class="text-sm">Stock: {{ $chicken->stock }}</p>
+              </div>
             </div>
           </div>
 
