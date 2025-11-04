@@ -102,8 +102,8 @@ class PriceController extends Controller
 
             // Default: all products
             $data = [
-                'location' => 'Gadong, Brunei',
-                'title' => 'Price History - All Products',
+                'location' => 'Muara, Brunei',
+                'title' => 'General Price Trend - All Products',
                 'products' => $this->getAllProducts()
             ];
 
@@ -114,7 +114,7 @@ class PriceController extends Controller
     public function beefPriceHistory()
     {
         $data = [
-            'location' => 'Gadong, Brunei',
+            'location' => 'Muara, Brunei',
             'title' => 'Beef Price History',
             'products' => $this->getBeefProducts()
         ];
@@ -129,7 +129,7 @@ class PriceController extends Controller
     {
         $data = [
             'location' => 'Sengkurong, Brunei',
-            'title' => 'Soon Lee - Price History',
+            'title' => 'Soon Lee - Price Trend',
             'products' => $this->getSoonLeeProducts()
         ];
 
@@ -140,8 +140,8 @@ class PriceController extends Controller
     public function supasavePriceHistory()
     {
         $data = [
-            'location' => 'Gadong, Brunei',
-            'title' => 'SupaSave - Price History',
+            'location' => 'Muara, Brunei',
+            'title' => 'SupaSave - Price Trend',
             'products' => $this->getSupaSaveProducts()
         ];
 
