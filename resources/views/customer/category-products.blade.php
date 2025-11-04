@@ -375,9 +375,21 @@
                             
                             <!-- Action Buttons -->
                             <div class="mt-4 space-y-2">
-                                <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
-                                    <i class="fas fa-store mr-2"></i>Price History
-                                </button>
+                                @php
+                                    // Determine the target store slug for price trends
+                                    $storeSlug = 'soonlee';
+                                    $lowerStore = strtolower(str_replace(' ', '', $store['store_name'] ?? ''));
+                                    if (str_contains($lowerStore, 'supa') || str_contains($lowerStore, 'supasave')) {
+                                        $storeSlug = 'supasave';
+                                    } elseif (str_contains($lowerStore, 'soon')) {
+                                        $storeSlug = 'soonlee';
+                                    }
+                                    $trendUrl = url("/" . $storeSlug . "-prices");
+                                @endphp
+
+                                <a href="{{ $trendUrl }}" class="w-full inline-block text-center bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition duration-300 font-semibold text-sm">
+                                    <i class="fas fa-chart-line mr-2"></i>Price Trend
+                                </a>
                             </div>
                         </div>
                         @endforeach

@@ -55,6 +55,7 @@ Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('today
 Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
 Route::get('/beef-prices', [PriceController::class, 'beefPriceHistory']);
 Route::get('/soonlee-prices', [PriceController::class, 'soonleePriceHistory']);
+Route::get('/supasave-prices', [PriceController::class, 'supasavePriceHistory']);
 Route::get('/login', fn() => view('customer.login'))->name('login');
 Route::post('/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');

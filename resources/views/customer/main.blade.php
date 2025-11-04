@@ -340,7 +340,7 @@
                                 <i class="fas fa-chart-line"></i>
                             </div>
                             <div>
-                                <div class="font-medium">Price Trends</div>
+                                <div class="font-medium">General Price Trends</div>
                                 <div class="text-sm text-gray-500">View current prices & historical trends</div>
                             </div>
                         </a>

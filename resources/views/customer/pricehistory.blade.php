@@ -79,9 +79,7 @@
                     <a href="/customer" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
                         <i class="fas fa-arrow-left mr-2"></i>Back to Categories
                     </a>
-                    <a href="/todaysprice" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300 font-medium text-sm w-full sm:w-auto text-center">
-                        <i class="fas fa-tag mr-2"></i>Today's Prices
-                    </a>
+                    <!-- Removed "Today's Prices" button per request -->
                 </div>
             </div>
         </div>

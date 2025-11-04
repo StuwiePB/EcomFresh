@@ -136,6 +136,18 @@ class PriceController extends Controller
         return view('customer.pricehistory', $data);
     }
 
+    // Supa Save prices (same layout as Soon Lee)
+    public function supasavePriceHistory()
+    {
+        $data = [
+            'location' => 'Gadong, Brunei',
+            'title' => 'SupaSave - Price History',
+            'products' => $this->getSupaSaveProducts()
+        ];
+
+        return view('customer.pricehistory', $data);
+    }
+
     // Product data methods
     private function getBeefProducts()
     {
@@ -189,6 +201,26 @@ class PriceController extends Controller
                 'priceChange' => +0.10,
                 'percentageChange' => +1.41,
                 'trend' => 'increase'
+            ]
+        ];
+    }
+
+    private function getSupaSaveProducts()
+    {
+        return [
+            [
+                'name' => 'Chicken Breast - SupaSave',
+                'description' => 'Fresh • Budget Friendly',
+                'currentPrice' => 3.40,
+                'priceHistory' => [
+                    'current' => 3.40,
+                    'lastMonth' => 3.45,
+                    'twoMonthsAgo' => 3.50,
+                    'threeMonthsAgo' => 3.60
+                ],
+                'priceChange' => -0.05,
+                'percentageChange' => -1.45,
+                'trend' => 'decrease'
             ]
         ];
     }
