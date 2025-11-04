@@ -8,14 +8,18 @@ use Carbon\Carbon;
 
 class PriceHistorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $now = Carbon::now();
 
         // Create stores
+        $soonLeeId = DB::table('stores')->insertGetId([
+            'name' => 'Soon Lee',
+            'location' => 'Sengkurong, Brunei',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
         $supaId = DB::table('stores')->insertGetId([
             'name' => 'SupaSave',
             'location' => 'Gadong, Brunei',
@@ -23,73 +27,46 @@ class PriceHistorySeeder extends Seeder
             'updated_at' => $now,
         ]);
 
-        $soonId = DB::table('stores')->insertGetId([
-            'name' => 'Soon Lee',
-            'location' => 'Sengkurong, Brunei',
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
+        // Insert products for both stores
+        $products = [
+            // Soon Lee Products
+            ['name' => 'Chicken Breast', 'description' => 'Fresh • Premium Cut', 'category' => 'chicken', 'store_id' => $soonLeeId],
+            ['name' => 'Whole Chicken', 'description' => 'Fresh • Farm Raised', 'category' => 'chicken', 'store_id' => $soonLeeId],
+            ['name' => 'Ribeye Steak', 'description' => 'Premium Cut • Marbled', 'category' => 'beef', 'store_id' => $soonLeeId],
+            ['name' => 'Strip Loin Steak', 'description' => 'Premium Cut • Lean', 'category' => 'beef', 'store_id' => $soonLeeId],
+            ['name' => 'Fresh Carrots', 'description' => 'Local • Per 500g', 'category' => 'vegetables', 'store_id' => $soonLeeId],
+            ['name' => 'Fresh Cabbage', 'description' => 'Local • Per Head', 'category' => 'vegetables', 'store_id' => $soonLeeId],
+            
+            // SupaSave Products
+            ['name' => 'Chicken Breast', 'description' => 'Fresh • Premium Cut', 'category' => 'chicken', 'store_id' => $supaId],
+            ['name' => 'Whole Chicken', 'description' => 'Fresh • Farm Raised', 'category' => 'chicken', 'store_id' => $supaId],
+            ['name' => 'Ribeye Steak', 'description' => 'Premium Cut • Marbled', 'category' => 'beef', 'store_id' => $supaId],
+            ['name' => 'Strip Loin Steak', 'description' => 'Premium Cut • Lean', 'category' => 'beef', 'store_id' => $supaId],
+            ['name' => 'Fresh Carrots', 'description' => 'Local • Per 500g', 'category' => 'vegetables', 'store_id' => $supaId],
+            ['name' => 'Fresh Cabbage', 'description' => 'Local • Per Head', 'category' => 'vegetables', 'store_id' => $supaId],
+        ];
 
-        // Create products
-        $chickenSupaId = DB::table('products')->insertGetId([
-            'name' => 'Chicken Breast',
-            'description' => 'Fresh • Budget Friendly',
-            'category' => 'chicken',
-            'store_id' => $supaId,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        $ribeyeSupaId = DB::table('products')->insertGetId([
-            'name' => 'Ribeye Steak',
-            'description' => 'Premium Quality • Fresh',
-            'category' => 'beef',
-            'store_id' => $supaId,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        $ribeyeSoonId = DB::table('products')->insertGetId([
-            'name' => 'Ribeye Steak',
-            'description' => 'Premium Quality • Fresh',
-            'category' => 'beef',
-            'store_id' => $soonId,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        // Insert price history rows (each row contains 4-month snapshot)
-        DB::table('price_history')->insert([
-            [
-                'product_id' => $chickenSupaId,
-                'current_price' => 3.40,
-                'last_month_price' => 3.45,
-                'two_months_ago_price' => 3.50,
-                'three_months_ago_price' => 3.60,
-                'recorded_date' => $now->toDateString(),
+        foreach ($products as $p) {
+            DB::table('products')->insert(array_merge($p, [
                 'created_at' => $now,
                 'updated_at' => $now,
-            ],
-            [
-                'product_id' => $ribeyeSupaId,
-                'current_price' => 17.95,
-                'last_month_price' => 18.75,
-                'two_months_ago_price' => 18.50,
-                'three_months_ago_price' => 18.00,
-                'recorded_date' => $now->toDateString(),
+            ]));
+        }
+
+        // Get product IDs and insert price histories
+        $products = DB::table('products')->get();
+        foreach ($products as $p) {
+            // Example price history - adjust prices as needed
+            DB::table('price_history')->insert([
+                'product_id' => $p->id,
+                'current_price' => $p->store_id == $soonLeeId ? 3.65 : 3.40,
+                'last_month_price' => $p->store_id == $soonLeeId ? 3.55 : 3.45,
+                'two_months_ago_price' => $p->store_id == $soonLeeId ? 3.60 : 3.50,
+                'three_months_ago_price' => $p->store_id == $soonLeeId ? 3.50 : 3.60,
+                'recorded_date' => $now,
                 'created_at' => $now,
                 'updated_at' => $now,
-            ],
-            [
-                'product_id' => $ribeyeSoonId,
-                'current_price' => 16.90,
-                'last_month_price' => 17.90,
-                'two_months_ago_price' => 17.50,
-                'three_months_ago_price' => 17.20,
-                'recorded_date' => $now->toDateString(),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-        ]);
+            ]);
+        }
     }
 }

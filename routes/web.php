@@ -53,7 +53,9 @@ Route::get('/welcome', fn() => view('customer.welcome'))->name('welcome');
 Route::get('/customer', [ProductController::class, 'index'])->name('customer.main');
 Route::get('/todaysprice', [PriceController::class, 'todaysPrice'])->name('todaysprice')->middleware('auth');
 Route::get('/pricehistory', [PriceController::class, 'priceHistory']);
+// Price trend routes by category and store
 Route::get('/beef-prices', [PriceController::class, 'beefPriceHistory']);
+Route::get('/vegetables-prices', [PriceController::class, 'vegetablesPriceHistory']);
 Route::get('/soonlee-prices', [PriceController::class, 'soonleePriceHistory']);
 Route::get('/supasave-prices', [PriceController::class, 'supasavePriceHistory']);
 Route::get('/{store}-prices/{category}', [PriceController::class, 'storeCategoryPriceHistory']);

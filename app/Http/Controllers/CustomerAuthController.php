@@ -86,9 +86,6 @@ class CustomerAuthController extends Controller
             // The User model casts 'password' => 'hashed', so provide the plain password
             // and let the model handle hashing to avoid double-hashing.
             'password' => $request->password,
-            // Some DB schemas require `store_name` to be present and NOT NULL. Provide
-            // an empty string as a safe default when the signup form doesn't include it.
-            'store_name' => $request->input('store_name', ''),
         ]);
 
         // Fire registered event (useful for sending welcome emails)
