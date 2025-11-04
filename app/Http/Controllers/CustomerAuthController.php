@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+// Password hashing is handled by the User model cast ('password' => 'hashed')
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -83,7 +83,12 @@ class CustomerAuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            // The User model casts 'password' => 'hashed', so provide the plain password
+            // and let the model handle hashing to avoid double-hashing.
+            'password' => $request->password,
+            // Some DB schemas require `store_name` to be present and NOT NULL. Provide
+            // an empty string as a safe default when the signup form doesn't include it.
+            'store_name' => $request->input('store_name', ''),
         ]);
 
         // Fire registered event (useful for sending welcome emails)

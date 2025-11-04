@@ -16,6 +16,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        // Some older migrations require a store_name column to be present and not-null.
+        // Add it to fillable so registration can provide a default if the form doesn't submit one.
+        'store_name',
     ];
 
     protected $hidden = [
